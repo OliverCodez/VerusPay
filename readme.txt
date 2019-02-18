@@ -35,6 +35,8 @@
 
 == Description ==
 
+This Readme.txt required for WordPress library submission.
+
 > **Requires: WooCommerce 2.1+**
 
 This plugin extends WooCommerce, adding the ability to accept cryptocurrency payments in Verus Coin (VRSC) using either an on-store wallet daemon (best for VPS or dedicated hosting stores) or manually configured VRSC addresses (best for shared hosting stores).
