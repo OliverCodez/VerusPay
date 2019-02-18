@@ -11,7 +11,7 @@
  * Domain Path: /i18n/languages/
  *
  * @package   WC-Gateway-Verus
- * @author    John Westbrook
+ * @author    J Oliver Westbrook
  * @category  Admin
  * @copyright Copyright (c) 2019, John Oliver Westbrook
  * 
