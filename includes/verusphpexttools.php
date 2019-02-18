@@ -133,9 +133,9 @@ function getVerus( $command, $hash, $amt ) {
  */
 function verusPrice( $currency ) {
     global $phpextconfig;
-    $currency = strtolower($currency);
+    $currency = strtoupper($currency);
 
-    if ( $currency == 'vrsc' | $currency == 'verus' ) {
+    if ( $currency == 'VRSC' | $currency == 'VERUS' ) {
         $results = json_decode( curlRequest( $phpextconfig['fiat_api'] . 'rawpricedata.php', curl_init(), null ), true );
         return $results['data']['avg_btc'];
     }
