@@ -1,0 +1,65 @@
+/* Admin Section */
+.wc_veruspay_set_css {
+    display: none!important;
+}
+.wc_veruspay_wrapper h2, 
+.wc_veruspay_wrapper h2 {
+    display: block!important;
+    height: 60px;
+    font-size: 2rem!important;
+    line-height: 60px;
+    margin: 10px 0 10px 60px;
+}
+
+.wc_veruspay_wrapper h2:before, 
+.wc_veruspay_wrapper h2:before{
+    width: 60px;
+    content: " ";
+    background-image: url(../../public/img/wc-verus-icon-128x128.png);
+    position: absolute;
+    left: 0;
+    height: 60px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+#mainform > .woo-nav-tab-wrapper+.screen-reader-text+h2+p, 
+.woo-nav-tab-wrapper+.screen-reader-text+.updated+h2+p {
+    font-size: 1rem!important;
+}
+
+.wc-settings-sub-title {
+    font-size: 1.5rem!important;
+    background-color: #ddd;
+    height: 40px;
+    padding: 10px;
+    line-height: 40px;
+}
+
+.wc_veruspay_indent {
+    margin-left: 15px;
+}
+
+.wc_veruspay_transparent_bg {
+    background-color: transparent;
+}
+.wc_veruspay_fiat_rate {
+    position:relative;
+}
+.wc_veruspay_fiat_rate:after {
+    content: "Price updated every 1 min";
+    position: absolute;
+    top: 20px;
+    width: 200px;
+    left: -100px;
+    font-size: .8rem;
+    font-style: italic;
+    color: #757474;
+}
+.wc_veruspay_hidden{
+    display:none!important;
+}
+.wc_veruspay_pointer:hover {
+    cursor: pointer;
+}
