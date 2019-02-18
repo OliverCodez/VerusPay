@@ -1,6 +1,6 @@
 ## VerusPay for WooCommerce
 
- - Contributors: John Westbrook
+ - Contributors: J Oliver Westbrook
  - Tags: woocommerce, payment gateway, gateway, cryptocurrency, blockchain, verus, verus coin, vrsc
  - Requires at least: 3.8
  - Tested up to: 5.0.3
@@ -11,7 +11,7 @@
  * 
  * The MIT License (MIT)
  * 
- * Copyright (c) 2019 John Westbrook
+ * Copyright (c) 2019 John Oliver Westbrook
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
