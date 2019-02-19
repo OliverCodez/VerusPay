@@ -98,7 +98,7 @@ function wc_veruspay_gateway_plugin_links( $links ) {
  * @extends		WC_Payment_Gateway
  * @version		0.1.0
  * @package		WooCommerce/Classes/Payment
- * @author 		John Westbrook
+ * @author 		J Oliver Westbrook
  * @param global $wc_veruspay_text_helper
  */
 add_action( 'plugins_loaded', 'wc_veruspay_gateway_init', 11 );
