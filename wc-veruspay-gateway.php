@@ -12,7 +12,7 @@
  *
  * @package   WC-Gateway-Verus
  * @author    J Oliver Westbrook
- * @category  Admin
+ * @category  Cryptocurrency
  * @copyright Copyright (c) 2019, John Oliver Westbrook
  * 
  * ====================
@@ -47,11 +47,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Setup required files
+// Setup required files for blockchain integration and interaction
 require_once ( dirname(__FILE__) . '/includes/verusphptools.php' );
 require_once ( dirname(__FILE__) . '/includes/verusphpexttools.php' );
+// Get store language
 $wc_veruspay_store_language = get_locale();
 $wc_veruspay_language_file = ( plugin_dir_path( __FILE__ ) . 'languages/' . $wc_veruspay_store_language . '_helper_text.php' );
+// If non-en_US, get file otherwise use en_US for language
 if(file_exists($wc_veruspay_language_file)) {
 	require_once ( $wc_veruspay_language_file );
 }
@@ -74,7 +76,7 @@ function wc_veruspay_add_to_gateways( $gateways ) {
 	return $gateways;
 }
 /**
- * Adds plugin page links
+ * Add plugin links
  * 
  * @since 0.1.0
  * @param array $links
@@ -91,7 +93,7 @@ function wc_veruspay_gateway_plugin_links( $links ) {
 /**
  * VerusPay Payment Gateway
  *
- * Provides a payment gateway for accepting Verus Coin (VRSC) cryptocurrency.
+ * Main class provides a payment gateway for accepting Verus Coin (VRSC) cryptocurrency.
  * We load it later to ensure WC is loaded first since we're extending it.
  *
  * @class 		WC_Gateway_VerusPay
@@ -113,22 +115,22 @@ function wc_veruspay_gateway_init() {
 		 */
 		public function __construct() {
 			global $wc_veruspay_text_helper;
-			// Begin plugin definitions
+			// Begin plugin definitions and define primary method title and description
 			$this->id                 = 'veruspay_gateway';
 			$this->icon               = apply_filters( 'woocommerce_veruspay_icon', plugins_url( '/public/img/wc-veruspay-icon-32x.png', __FILE__ ) );
 			$this->has_fields         = true;
 			$this->method_title       = __( 'VerusPay', 'wc-gateway-veruspay' );
 			$this->method_description = __( $wc_veruspay_text_helper['method_desc'], 'wc-gateway-veruspay' );
-			// What types of products are supported
+			// Define supported types (products allows all woocommerce product types)
 			$this->supports = array(
 				'products'
 			);
 			
-			// Load the settings.
+			// Initialize form fields and settings
 			$this->init_form_fields();
 			$this->init_settings();
 
-			// Check if Test Mode
+			// Check if Test Mode is enabled - change title for admin to be aware during testing
 			$this->test_mode = 'yes' === $this->get_option( 'test_mode' );
 			if ( $this->test_mode ) {
 				$this->title = __( 'Verus Coin (VRSC) TEST MODE', 'wc-gateway-veruspay' );
@@ -137,10 +139,11 @@ function wc_veruspay_gateway_init() {
 				$this->title = __( 'Verus Coin (VRSC)', 'wc-gateway-veruspay' );
 			}
 			// Define user set variables
-			$this->verusQR = '0.0.1'; // Future feature
-			$this->coinTicker = 'VRSC'; // Future feature
-			$this->store_inv_msg = 'Thank you for using our Verus-enabled store!';  // Future feature
-			$this->store_img = 'Future Image Use';  // Future feature
+			$this->verusQR = '0.0.1'; // Future feature for use in advanced Invoice QR Code generation
+			$this->coinTicker = 'VRSC'; // Future feature for use in advanced Invoice QR Code generation
+			$this->store_inv_msg = 'Thank you for using our Verus-enabled store!';  // Future feature for use in advanced Invoice QR Code generation
+			$this->store_img = 'Future Image Use';  // Future feature for use in advanced Invoice QR Code generation
+			// Define various store owner-defined messages and content
 			$this->description  = $this->get_option( 'description' );
 			$this->msg_before_sale = $this->get_option( 'msg_before_sale' );
 			$this->msg_after_sale = $this->get_option( 'msg_after_sale' );
@@ -148,6 +151,7 @@ function wc_veruspay_gateway_init() {
 			$this->email_order = $this->get_option( 'email_order' );
 			$this->email_cancelled = $this->get_option( 'email_cancelled' );
 			$this->email_completed = $this->get_option( 'email_completed' );
+			// Define various store options 
 			$this->enabled = $this->get_option( 'enabled' );
 			$this->storemode = $this->get_option( 'storemode' );
 			$this->sapling = $this->get_option( 'sapling' );
@@ -155,11 +159,13 @@ function wc_veruspay_gateway_init() {
 			$this->pricetime = $this->get_option( 'pricetime' );
 			$this->orderholdtime = $this->get_option( 'orderholdtime' );
 			$this->confirms = $this->get_option( 'confirms' );
+			$this->qr_max_size = $this->get_option( 'qr_max_size' );
+			// Define fee/discount options
 			$this->discount_fee = 'yes' === $this->get_option( 'discount_fee' );
 			$this->verus_dis_title = $this->get_option( 'disc_title' );
 			$this->verus_dis_type = $this->get_option( 'disc_type' );
 			$this->verus_dis_amt = ( $this->get_option( 'disc_amt' ) / 100 );
-			// Clean and count store addresses 
+			// Clean and count store addresses for backup / manual use
 			$wc_veruspay_store_data = $this->get_option( 'storeaddresses' );
 			$this->storeaddresses = preg_replace( '/\s+/', '', $this->get_option( 'storeaddresses' ) );
 			if ( strlen($wc_veruspay_store_data)<10 ) {
@@ -171,12 +177,10 @@ function wc_veruspay_gateway_init() {
 			}
 			$this->usedaddresses = explode( ',', $this->get_option( 'usedaddresses' ));
 			
-			$this->qr_max_size = $this->get_option( 'qr_max_size' );
-			// Actions
+			// Add actions for payment gateway, scripts, thank you page, and emails
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 			add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
 			add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
-			// Customer Emails
 			add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
 		}
 		/**
@@ -191,321 +195,316 @@ function wc_veruspay_gateway_init() {
 					'phpexttools'	 => plugins_url( 'includes/verusphpexttools.php', __FILE__ ),
 					'storecurrency'  => get_woocommerce_currency()
 				) );
+				// Enqueue CSS and JS for admin 
 				wp_enqueue_style( 'veruspay_admin_css', plugins_url( 'admin/css/wc-veruspay-admin.css', __FILE__ ) );
 				wp_enqueue_script( 'wc_veruspay_admin_scripts' );
 			}
+			// If no store addresses are set (used for manual and backup), set var to 0
 			if ( ! isset( $this->addrcount ) ) {
 				$this->addrcount = 0;
-			}						
+			}
+			// Build array of form field data
 			$this->form_fields = apply_filters( 'wc_veruspay_form_fields', array(
+			// Used for feedback and settings within admin
 				'test_msg' => array(
-					'title'			=> '',
-					'type'			=> 'title',
-					'class'			=> 'wc_veruspay_set_css'
+					'title'	=> '',
+					'type' => 'title',
+					'class' => 'wc_veruspay_set_css'
 				),
 				'hidden_set_css' => array(
-					'title'			=> '',
-					'type'			=> 'title',
-					'class'			=> 'wc_veruspay_set_css',
+					'title'	=> '',
+					'type' => 'title',
+					'class' => 'wc_veruspay_set_css',
 				),
+				// Display current VRSC price (updated at interval via jquery in admin js)
 				'currency' => array(
-				  'title'	  		=> __( 'VRSC Fiat Price: '.get_woocommerce_currency_symbol().'<span class="wc_veruspay_fiat_rate">'.verusPrice( get_woocommerce_currency() ).'</span>', 'wc-gateway-veruspay' ),
-				  'type'    		=> 'title',
-				  'description' 	=> '',
-				  'class'			=> 'wc_veruspay_transparent_bg',
-			  ),
-			  
-			  'enabled' => array(
-				  'title'   => __( 'Enable/Disable', 'wc-gateway-veruspay' ),
-				  'type'    => 'checkbox',
-				  'label'   => __( 'Enable VerusPay', 'wc-gateway-veruspay' ),
+				  'title'	=> __( 'VRSC Fiat Price: '.get_woocommerce_currency_symbol().'<span class="wc_veruspay_fiat_rate">'.verusPrice( get_woocommerce_currency() ).'</span>', 'wc-gateway-veruspay' ),
+				  'type' => 'title',
+				  'description' => '',
+				  'class' => 'wc_veruspay_transparent_bg',
+				),
+				// Enable/Disable the VerusPay gateway
+				'enabled' => array(
+				  'title' => __( 'Enable/Disable', 'wc-gateway-veruspay' ),
+				  'type' => 'checkbox',
+				  'label' => __( 'Enable VerusPay', 'wc-gateway-veruspay' ),
 				  'default' => 'yes'
-			  ),
-			  
-			  'storemode' => array(
-				  'title'   => __( 'Store Wallet', 'wc-gateway-veruspay' ),
-				  'type'    => 'checkbox',
-				  'label'   => __( 'Enable Live Wallet Mode', 'wc-gateway-veruspay' ),
+				),
+				// Enalbe/Disable store Live Wallet Mode (blockchain integration)
+				'storemode' => array(
+				  'title' => __( 'Store Wallet', 'wc-gateway-veruspay' ),
+				  'type' => 'checkbox',
+				  'label' => __( 'Enable Live Wallet Mode', 'wc-gateway-veruspay' ),
 				  'description' => '',
 				  'default' => 'yes'
-			  ),
+				),
+				// RPC Settings Title (interactive to show or hide the RPC settings)
 			  'rpc_show' => array(
-				  'title'			=> __( 'RPC Settings', 'wc-gateway-veruspay' ),
-				  'type'			=> 'title',
-				  'description'		=> '',
-				  'class'			=> 'wc-veruspay-gateway-togglerpc wc_veruspay_pointer',
-			  ),
-
-			  'rpc_user' => array(
-				'title'				=> __( 'RPC Username', 'wc-gateway-veruspay' ),
-				'type'				=> 'text',
-				'description'		=> __( 'Enter the RPC username found in the VRSC.conf file on your Verus wallet server', 'wc-gateway-veruspay' ),
-				'default'			=> 'user1234',
-				'desc_tip'			=> true,
-				'class'				=> 'wc-gateway-veruspay-rpcsettings-toggle',
-			  ),
-
-			  'rpc_pass' => array(
-				  'title'			=> __( 'RPC Password', 'wc-gateway-veruspay' ),
-				  'type'			=> 'text',
-				  'description'		=> __( 'Enter the RPC password found in your VRSC.conf file on your Verus wallet server', 'wc-gateway-veruspay' ),
-				  'default'			=> 'pass1234',
-				  'desc_tip'		=> true,
-				  'class'			=> 'wc-gateway-veruspay-rpcsettings-toggle',
-			  ),
-
+				  'title' => __( 'RPC Settings', 'wc-gateway-veruspay' ),
+				  'type' => 'title',
+				  'description' => '',
+				  'class' => 'wc-veruspay-gateway-togglerpc wc_veruspay_pointer',
+				),
+				// RPC Settings
+				'rpc_user' => array(
+					'title' => __( 'RPC Username', 'wc-gateway-veruspay' ),
+					'type' => 'text',
+					'description' => __( 'Enter the RPC username found in the VRSC.conf file on your Verus wallet server', 'wc-gateway-veruspay' ),
+					'default' => 'user1234',
+					'desc_tip' => true,
+					'class' => 'wc-gateway-veruspay-rpcsettings-toggle',
+				),
+				'rpc_pass' => array(
+				  'title' => __( 'RPC Password', 'wc-gateway-veruspay' ),
+				  'type' => 'text',
+				  'description' => __( 'Enter the RPC password found in your VRSC.conf file on your Verus wallet server', 'wc-gateway-veruspay' ),
+				  'default' => 'pass1234',
+				  'desc_tip' => true,
+				  'class' => 'wc-gateway-veruspay-rpcsettings-toggle',
+				),
 			  'rpc_host' => array(
-				'title'			=> __( 'RPC Host or IP', 'wc-gateway-veruspay' ),
-				'type'			=> 'text',
-				'description'		=> __( 'Enter the RPC host or IP of your Verus wallet server (localhost if on this same server)', 'wc-gateway-veruspay' ),
-				'default'			=> 'localhost',
-				'desc_tip'		=> true,
-				'class'				=> 'wc-gateway-veruspay-rpcsettings-toggle',
-			),
-
-			'rpc_port' => array(
-				'title'			=> __( 'RPC Port', 'wc-gateway-veruspay' ),
-				'type'			=> 'text',
-				'description'		=> __( 'Enter the RPC port of your Verus wallet server', 'wc-gateway-veruspay' ),
-				'default'			=> '27486',
-				'desc_tip'		=> true,
-				'class'				=> 'wc-gateway-veruspay-rpcsettings-toggle',
-			),
-
-			'rpc_ssl' => array(
-				'title'			=> __( 'Is SSL Enabled?', 'wc-gateway-veruspay' ),
-				'type'			=> 'checkbox',
-				'description'		=> __( 'Is SSL enabled for RPC on your Verus wallet server?', 'wc-gateway-veruspay' ),
-				'default'			=> '27486',
-				'desc_tip'		=> true,
-				'label'   => __( 'Enable SSL', 'wc-gateway-veruspay' ),
-				'default' => 'no',
-				'class'				=> 'wc-gateway-veruspay-rpcsettings-toggle',
-			),
-
-			'rpc_ca' => array(
-				'title'			=> __( 'RPC SSL CA', 'wc-gateway-veruspay' ),
-				'type'			=> 'text',
-				'description'		=> __( 'Enter the Certificate CA for the RPC of your Verus wallet server', 'wc-gateway-veruspay' ),
-				'default'			=> 'your ca',
-				'desc_tip'		=> true,
-				'class'				=> 'wc-gateway-veruspay-rpcsettings-toggle',
-			),
+					'title' => __( 'RPC Host or IP', 'wc-gateway-veruspay' ),
+					'type' => 'text',
+					'description' => __( 'Enter the RPC host or IP of your Verus wallet server (localhost if on this same server)', 'wc-gateway-veruspay' ),
+					'default' => 'localhost',
+					'desc_tip' => true,
+					'class' => 'wc-gateway-veruspay-rpcsettings-toggle',
+				),
+				'rpc_port' => array(
+					'title' => __( 'RPC Port', 'wc-gateway-veruspay' ),
+					'type' => 'text',
+					'description' => __( 'Enter the RPC port of your Verus wallet server', 'wc-gateway-veruspay' ),
+					'default' => '27486',
+					'desc_tip' => true,
+					'class' => 'wc-gateway-veruspay-rpcsettings-toggle',
+				),
+				'rpc_ssl' => array(
+					'title' => __( 'Is SSL Enabled?', 'wc-gateway-veruspay' ),
+					'type' => 'checkbox',
+					'description' => __( 'Is SSL enabled for RPC on your Verus wallet server?', 'wc-gateway-veruspay' ),
+					'desc_tip' => true,
+					'label' => __( 'Enable SSL', 'wc-gateway-veruspay' ),
+					'default' => 'no',
+					'class' => 'wc-gateway-veruspay-rpcsettings-toggle',
+				),
+				'rpc_ca' => array(
+					'title' => __( 'RPC SSL CA', 'wc-gateway-veruspay' ),
+					'type' => 'text',
+					'description' => __( 'Enter the Certificate CA for the RPC of your Verus wallet server', 'wc-gateway-veruspay' ),
+					'default' => 'your ca',
+					'desc_tip' => true,
+					'class' => 'wc-gateway-veruspay-rpcsettings-toggle',
+				),
+				// Store Address title, interactive (show or hide store address fields)
 			  'addr_show' => array(
-				'title'			=> __( 'Store Addresses', 'wc-gateway-veruspay' ),
-				'type'			=> 'title',
-				'description'		=> '',
-				'class'			=> 'wc-veruspay-gateway-toggleaddr wc_veruspay_pointer',
-			),
-			  'storeaddresses' => array(
-				  'title'			=> __( 'Store VRSC Addresses ' . $this->taddrcount, 'wc-gateway-veruspay' ),
-				  'type'			=> 'textarea',
-				  'description'		=> __( 'Enter VRSC addresses you own. If your store has a lot of traffic, we recommend 500 min.  These will also act as a fallback payment method in case there are issues with the wallet for Live stores.', 'wc-gateway-veruspay' ),
-				  'default'			=> 'Enter at least 500 VRSC addresses YOU OWN, seperated by commas (use the "gett" script to make it easy), e.g. RAoSwhTyhiaTx14j7SeR3k92hqK1n6KMjn,RX7SeR3k92hqv77sH9F1B5yp6ARdnF8ZtR',
-				  'desc_tip'		=> true,
-				  'class'				=> 'wc-gateway-veruspay-addresses-toggle',
-			  ),
-
-			  'usedaddresses'	=> array(	
-				'title'		=> __( 'Used Addresses', 'wc-gateway-veruspay' ),
-				'type'		=> 'textarea',
-				'description'	=> __( 'These are manually entered VRSC addresses which have been used', 'wc-gateway-veruspay' ),
-				'default'		=> '',
-				'desc_tip'		=> true,
-				'class'			=> 'wc-veruspay-disabled-input wc-gateway-veruspay-addresses-toggle'
-			),
-
-			// Content Customizations
-			'cust_show' => array(
-				'title'			=> __( 'Message and Content Customizations', 'wc-gateway-veruspay' ),
-				'type'			=> 'title',
-				'description'		=> '',
-				'class'			=> 'wc-veruspay-gateway-togglecust wc_veruspay_pointer',
-			),
-			'description' => array(
-				'title'       => __( 'Checkout Message', 'wc-gateway-veruspay' ),
-				'type'        => 'textarea',
-				'description' => __( 'A message and any instructions which the customer will see at checkout.', 'wc-gateway-veruspay' ),
-				'default'     => __( 'After you place your order you will see a screen with a valid VRSC store wallet address to send payment via Verus Coin within the time allowed.', 'wc-gateway-veruspay' ),
-				'desc_tip'    => true,
-				'class'			=> 'wc-gateway-veruspay-customization-toggle',
-			),
-			
-			'msg_before_sale' => array(
-				'title'       => __( 'Payment Page Message', 'wc-gateway-veruspay' ),
-				'type'        => 'textarea',
-				'description' => __( 'VerusPay-specific message that will be added to the payment page and email, just below the payment VRSC address.', 'wc-gateway-veruspay' ),
-				'default'     => 'Some additional message to your customer at payment page',
-				'desc_tip'    => true,
-				'class'			=> 'wc-gateway-veruspay-customization-toggle',
-			),
-
-			'msg_after_sale' => array(
-			  'title'       => __( 'Payment Complete Message', 'wc-gateway-veruspay' ),
-			  'type'        => 'textarea',
-			  'description' => __( 'VerusPay-specific message that will be added to the payment completed page and email, the final Thank You page', 'wc-gateway-veruspay' ),
-			  'default'     => 'Some additional Thank You message to your customer after payment completes!',
-			  'desc_tip'    => true,
-			  'class'			=> 'wc-gateway-veruspay-customization-toggle',
-			),
-
-			'msg_cancel' => array(
-			  'title'			=> __( 'Order Timeout Cancel Message', 'wc-gateway-veruspay' ),
-			  'type'			=> 'textarea',
-			  'description'	=> __( 'Text to display to an online shopper who waits too long to send Verus during the purchase', 'wc-gateway-veruspay' ),
-			  'default'		=> 'It looks like your purchase timed-out waiting for a Verus payment in the correct amount.  Sorry for any inconvenience this may have caused and please use the order details below to review your order and place a new one.',
-			  'desc_tip'		=> true,
-			  'class'			=> 'wc-gateway-veruspay-customization-toggle',
-			),
-			'email_order' => array(
-				'title'			=> __( 'Custom Email Message When Order is Placed', 'wc-gateway-veruspay' ),
-				'type'			=> 'textarea',
-				'description'	=> __( 'Text to send to the customer when they place an order.', 'wc-gateway-veruspay' ),
-				'default'		=> 'Text to send to the customer upon order.',
-				'desc_tip'		=> true,
-				'class'			=> 'wc-gateway-veruspay-customization-toggle',
-			  ),
-			  'email_cancelled' => array(
-				'title'			=> __( 'Custom Email Message When Order is Cancelled', 'wc-gateway-veruspay' ),
-				'type'			=> 'textarea',
-				'description'	=> __( 'Text to send to the customer when an order cancels (usually due to non-payment within timeframe).', 'wc-gateway-veruspay' ),
-				'default'		=> 'Text to send to the customer when an order cancels.',
-				'desc_tip'		=> true,
-				'class'			=> 'wc-gateway-veruspay-customization-toggle',
-			  ),
-			  'email_completed' => array(
-				'title'			=> __( 'Custom Email Message When Order is Completed', 'wc-gateway-veruspay' ),
-				'type'			=> 'textarea',
-				'description'	=> __( 'Text to send to the customer when their order is complete (all blocks confirmed).', 'wc-gateway-veruspay' ),
-				'default'		=> 'Text to send to the customer after all blocks are confirmed and order is complete.',
-				'desc_tip'		=> true,
-				'class'			=> 'wc-gateway-veruspay-customization-toggle',
-			  ),
-
-			// Store options
-			'options_show' => array(
-				'title'			=> __( 'Store Options', 'wc-gateway-veruspay' ),
-				'type'			=> 'title',
-				'description'		=> '',
-				'class'			=> 'wc-veruspay-gateway-toggleoptions wc_veruspay_pointer',
-			),
-			'sapling'	=> array(	
-				'title'			=> __( 'Privacy Only', 'wc-gateway-veruspay' ),
-				'type'			=> 'checkbox',
-				'label'			=> __( 'Enforce Sapling Privacy Payments', 'wc-gateway-veruspay' ),
-				'description'		=> '',
-				'default'			=> 'no',
-				'class'			=> 'wc-veruspay-sapling-option wc-gateway-veruspay-options-toggle',
-			),
-			'decimals'	=> array(
-				  'title'		=> __( 'VRSC Decimals', 'wc-gateway-veruspay' ),
-				  'type'		=> 'select',
+					'title' => __( 'Store Addresses', 'wc-gateway-veruspay' ),
+					'type' => 'title',
+					'description' => '',
+					'class' => 'wc-veruspay-gateway-toggleaddr wc_veruspay_pointer',
+				),
+				// Store address fields, unused and used
+				'storeaddresses' => array(
+			  	'title' => __( 'Store VRSC Addresses ' . $this->taddrcount, 'wc-gateway-veruspay' ),
+			  	'type' => 'textarea',
+			  	'description' => __( 'Enter VRSC addresses you own. If your store has a lot of traffic, we recommend 500 min.  These will also act as a fallback payment method in case there are issues with the wallet for Live stores.', 'wc-gateway-veruspay' ),
+			  	'default' => 'Enter at least 500 VRSC addresses YOU OWN, seperated by commas (use the "gett" script to make it easy), e.g. RAoSwhTyhiaTx14j7SeR3k92hqK1n6KMjn,RX7SeR3k92hqv77sH9F1B5yp6ARdnF8ZtR',
+			  	'desc_tip' => true,
+			  	'class' => 'wc-gateway-veruspay-addresses-toggle',
+				),
+				'usedaddresses'	=> array(	
+					'title' => __( 'Used Addresses', 'wc-gateway-veruspay' ),
+					'type' => 'textarea',
+					'description'	=> __( 'These are manually entered VRSC addresses which have been used', 'wc-gateway-veruspay' ),
+					'default' => '',
+					'desc_tip' => true,
+					'class' => 'wc-veruspay-disabled-input wc-gateway-veruspay-addresses-toggle'
+				),
+				// Content title, interactive (show or hide content customization fields)
+				'cust_show' => array(
+					'title' => __( 'Message and Content Customizations', 'wc-gateway-veruspay' ),
+					'type' => 'title',
+					'description' => '',
+					'class' => 'wc-veruspay-gateway-togglecust wc_veruspay_pointer',
+				),
+				// Content Customizations
+				'description' => array(
+					'title' => __( 'Checkout Message', 'wc-gateway-veruspay' ),
+					'type' => 'textarea',
+					'description' => __( 'A message and any instructions which the customer will see at checkout.', 'wc-gateway-veruspay' ),
+					'default' => __( 'After you place your order you will see a screen with a valid VRSC store wallet address to send payment via Verus Coin within the time allowed.', 'wc-gateway-veruspay' ),
+					'desc_tip' => true,
+					'class' => 'wc-gateway-veruspay-customization-toggle',
+				),
+				'msg_before_sale' => array(
+					'title' => __( 'Payment Page Message', 'wc-gateway-veruspay' ),
+					'type' => 'textarea',
+					'description' => __( 'VerusPay-specific message that will be added to the payment page and email, just below the payment VRSC address.', 'wc-gateway-veruspay' ),
+					'default' => 'Some additional message to your customer at payment page',
+					'desc_tip' => true,
+					'class' => 'wc-gateway-veruspay-customization-toggle',
+				),
+				'msg_after_sale' => array(
+			  	'title' => __( 'Payment Complete Message', 'wc-gateway-veruspay' ),
+			  	'type' => 'textarea',
+			  	'description' => __( 'VerusPay-specific message that will be added to the payment completed page and email, the final Thank You page', 'wc-gateway-veruspay' ),
+			  	'default' => 'Some additional Thank You message to your customer after payment completes!',
+			  	'desc_tip' => true,
+			  	'class' => 'wc-gateway-veruspay-customization-toggle',
+				),
+				'msg_cancel' => array(
+			  	'title' => __( 'Order Timeout Cancel Message', 'wc-gateway-veruspay' ),
+			  	'type' => 'textarea',
+			  	'description'	=> __( 'Text to display to an online shopper who waits too long to send Verus during the purchase', 'wc-gateway-veruspay' ),
+			  	'default' => 'It looks like your purchase timed-out waiting for a Verus payment in the correct amount.  Sorry for any inconvenience this may have caused and please use the order details below to review your order and place a new one.',
+			  	'desc_tip' => true,
+			  	'class' => 'wc-gateway-veruspay-customization-toggle',
+				),
+				'email_order' => array(
+					'title' => __( 'Custom Email Message When Order is Placed', 'wc-gateway-veruspay' ),
+					'type' => 'textarea',
+					'description'	=> __( 'Text to send to the customer when they place an order.', 'wc-gateway-veruspay' ),
+					'default' => 'Text to send to the customer upon order.',
+					'desc_tip' => true,
+					'class' => 'wc-gateway-veruspay-customization-toggle',
+			  	),
+				'email_cancelled' => array(
+					'title' => __( 'Custom Email Message When Order is Cancelled', 'wc-gateway-veruspay' ),
+					'type' => 'textarea',
+					'description'	=> __( 'Text to send to the customer when an order cancels (usually due to non-payment within timeframe).', 'wc-gateway-veruspay' ),
+					'default' => 'Text to send to the customer when an order cancels.',
+					'desc_tip' => true,
+					'class' => 'wc-gateway-veruspay-customization-toggle',
+				),
+				'email_completed' => array(
+					'title' => __( 'Custom Email Message When Order is Completed', 'wc-gateway-veruspay' ),
+					'type' => 'textarea',
+					'description'	=> __( 'Text to send to the customer when their order is complete (all blocks confirmed).', 'wc-gateway-veruspay' ),
+					'default' => 'Text to send to the customer after all blocks are confirmed and order is complete.',
+					'desc_tip' => true,
+					'class' => 'wc-gateway-veruspay-customization-toggle',
+				),
+				// Store Option title, interactive (show or hide options)
+				'options_show' => array(
+					'title' => __( 'Store Options', 'wc-gateway-veruspay' ),
+					'type' => 'title',
+					'description' => '',
+					'class' => 'wc-veruspay-gateway-toggleoptions wc_veruspay_pointer',
+				),
+				// Store options
+				'sapling'	=> array(	
+					'title' => __( 'Privacy Only', 'wc-gateway-veruspay' ),
+					'type' => 'checkbox',
+					'label' => __( 'Enforce Sapling Privacy Payments', 'wc-gateway-veruspay' ),
+					'description' => '',
+					'default' => 'no',
+					'class' => 'wc-veruspay-sapling-option wc-gateway-veruspay-options-toggle',
+				),
+				'decimals' => array(
+				  'title' => __( 'VRSC Decimals', 'wc-gateway-veruspay' ),
+				  'type' => 'select',
 				  'description'	=> __( 'Choose the max decimals to use for VRSC prices (up to 8).', 'wc-gateway-veruspay' ),
-				  'default'		=> '4',
-				  'desc_tip'		=> true,
-				  'options'		=> array(
-									  '1'	=> __( '1', 'wc-gateway-veruspay' ),
-									  '2'	=> __( '2', 'wc-gateway-veruspay' ),
-									  '3'	=> __( '3', 'wc-gateway-veruspay' ),
-									  '4'	=> __( '4', 'wc-gateway-veruspay' ),
-									  '5'	=> __( '5', 'wc-gateway-veruspay' ),
-									  '6'	=> __( '6', 'wc-gateway-veruspay' ),
-									  '7'	=> __( '7', 'wc-gateway-veruspay' ),
-									  '8'	=> __( '8', 'wc-gateway-veruspay' ),
-									  ),
-				  'class'			=> 'wc-gateway-veruspay-options-toggle wc-enhanced-select',
-			),
-			'pricetime'		=> array(
-				  'title'		=> __( 'Price timeout', 'wc-gateway-veruspay' ),
-				  'type'		=> 'text',
+				  'default' => '4',
+				  'desc_tip' => true,
+				  'options' => array(
+						'1'	=> __( '1', 'wc-gateway-veruspay' ),
+						'2'	=> __( '2', 'wc-gateway-veruspay' ),
+						'3'	=> __( '3', 'wc-gateway-veruspay' ),
+						'4'	=> __( '4', 'wc-gateway-veruspay' ),
+						'5'	=> __( '5', 'wc-gateway-veruspay' ),
+						'6'	=> __( '6', 'wc-gateway-veruspay' ),
+						'7'	=> __( '7', 'wc-gateway-veruspay' ),
+						'8'	=> __( '8', 'wc-gateway-veruspay' ),
+					),
+				  'class' => 'wc-gateway-veruspay-options-toggle wc-enhanced-select',
+				),
+				'pricetime' => array(
+				  'title' => __( 'Price timeout', 'wc-gateway-veruspay' ),
+				  'type' => 'text',
 				  'description' => __( 'Set the time (in minutes) before realtime VRSC calculated price expires at checkout.', 'wc-gateway-veruspay' ),
 				  'default'	=> '15',
-				  'desc_tip'	=> true,
-				  'class'			=> 'wc-gateway-veruspay-options-toggle',
+				  'desc_tip' => true,
+				  'class' => 'wc-gateway-veruspay-options-toggle',
 			  ),
-			'orderholdtime'	=> array(
-				  'title'			=> __( 'Order Wait Time', 'wc-gateway-veruspay' ),
-				  'type'			=> 'select',
+				'orderholdtime'	=> array(
+				  'title' => __( 'Order Wait Time', 'wc-gateway-veruspay' ),
+				  'type' => 'select',
 				  'description'	=> __( 'Set the time (in minutes) to wait for the customer to make payment before cancelling the order. Does not impact already placed/pending orders.', 'wc-gateway-veruspay' ),
-				  'default'		=> '20',
-				  'desc_tip'		=> true,
-				  'options'		=> array(
-					'20'	=> __( '20', 'wc-gateway-veruspay' ),
-					'25'	=> __( '25', 'wc-gateway-veruspay' ),
-					'30'	=> __( '30', 'wc-gateway-veruspay' ),
-					'45'	=> __( '45', 'wc-gateway-veruspay' ),
-					'60'	=> __( '60', 'wc-gateway-veruspay' ),
+				  'default' => '20',
+				  'desc_tip' => true,
+				  'options' => array(
+						'20' => __( '20', 'wc-gateway-veruspay' ),
+						'25' => __( '25', 'wc-gateway-veruspay' ),
+						'30' => __( '30', 'wc-gateway-veruspay' ),
+						'45' => __( '45', 'wc-gateway-veruspay' ),
+						'60' => __( '60', 'wc-gateway-veruspay' ),
 					),
-				  'class'			=> 'wc-gateway-veruspay-options-toggle wc-enhanced-select',
-			  ),
-			  'confirms'		=> array(
-				'title'		=> __( 'Confirmations Required', 'wc-gateway-veruspay' ),
-				'type'		=> 'text',
-				'description' => __( 'Set the number of block confirmations required before an order is considered complete.', 'wc-gateway-veruspay' ),
-				'default'	=> '20',
-				'desc_tip'	=> true,
-				'class'			=> 'wc-gateway-veruspay-options-toggle',
-			),
-			'qr_max_size' => array(
-				'title'			=> __( 'Default QR Max Size', 'wc-gateway-veruspay' ),
-				'type'			=> 'text',
-				'description'	=> __( 'Enter a number for the max size of QR images generated during customer checkout', 'wc-gateway-veruspay' ),
-				'default'		=> '400',
-				'desc_tip'		=> true,
-				'class'			=> 'wc-gateway-veruspay-options-toggle',
+				  'class' => 'wc-gateway-veruspay-options-toggle wc-enhanced-select',
+				),
+			  'confirms' => array(
+					'title' => __( 'Confirmations Required', 'wc-gateway-veruspay' ),
+					'type' => 'text',
+					'description' => __( 'Set the number of block confirmations required before an order is considered complete.', 'wc-gateway-veruspay' ),
+					'default'	=> '20',
+					'desc_tip' => true,
+					'class' => 'wc-gateway-veruspay-options-toggle',
+				),
+				'qr_max_size' => array(
+					'title' => __( 'Default QR Max Size', 'wc-gateway-veruspay' ),
+					'type' => 'text',
+					'description'	=> __( 'Enter a number for the max size of QR images generated during customer checkout', 'wc-gateway-veruspay' ),
+					'default' => '400',
+					'desc_tip' => true,
+					'class' => 'wc-gateway-veruspay-options-toggle',
 		  	),
-			// Discount or Fee Options
-			'discount_fee' => array(
-				  'title'           => __( 'Set Discount/Fee?', 'wc-gateway-veruspay' ),
-				  'type'            => 'checkbox',
-				  'label'			=> 'Set a discount or fee for using VRSC as payment method?',
-				  'description'     => __( 'Setup a discount or fee, in %, applied to purchases during checkout for using VRSC payments.', 'wc-gateway-versupay' ),
-				  'desc_tip'		=> true,
-				  'class'			=> 'wc-gateway-veruspay-setdiscount wc-gateway-veruspay-options-toggle',
-			  ),
-			  
-			  'disc_title'		=> array(
-				  'title'			=> __( 'Title (visible in checkout)', 'wc-gateway-veruspay' ),
-				  'type'			=> 'text',
+				// Discount or Fee Options
+				'discount_fee' => array(
+				  'title' => __( 'Set Discount/Fee?', 'wc-gateway-veruspay' ),
+				  'type' => 'checkbox',
+				  'label' => 'Set a discount or fee for using VRSC as payment method?',
+				  'description' => __( 'Setup a discount or fee, in %, applied to purchases during checkout for using VRSC payments.', 'wc-gateway-versupay' ),
+				  'desc_tip' => true,
+				  'class' => 'wc-gateway-veruspay-setdiscount wc-gateway-veruspay-options-toggle',
+				),
+				'disc_title' => array(
+				  'title' => __( 'Title (visible in checkout)', 'wc-gateway-veruspay' ),
+				  'type' => 'text',
 				  'description'	=> __( 'This is the title, seen in checkout, of your discount or fee (should be short)', 'wc-gateway-veruspay' ),
-				  'default'		=> __( 'This is the title, seen in checkout, of your discount or fee (should be short)', 'wc-gateway-veruspay' ),
-				  'desc_tip'		=> true,
-				  'class'			=> 'wc-gateway-veruspay-discount-toggle wc-gateway-veruspay-options-toggle',
-			  ),
-			  
-			  'disc_type'	=> array(
-				  'title'		=> __( 'Type (Discount or Fee?)', 'wc-gateway-veruspay' ),
-				  'type'		=> 'select',
-				  'class'		=> 'wc-enhanced-select',
+				  'default' => __( 'This is the title, seen in checkout, of your discount or fee (should be short)', 'wc-gateway-veruspay' ),
+				  'desc_tip' => true,
+				  'class' => 'wc-gateway-veruspay-discount-toggle wc-gateway-veruspay-options-toggle',
+				),  
+				'disc_type'	=> array(
+				  'title' => __( 'Type (Discount or Fee?)', 'wc-gateway-veruspay' ),
+				  'type' => 'select',
+				  'class' => 'wc-enhanced-select',
 				  'description'	=> __( 'Choose whether to discount or charge an extra fee for using Verus', 'wc-gateway-veruspay' ),
-				  'default'		=> 'Discount',
-				  'desc_tip'		=> true,
-				  'options'		=> array(
-									  '-' => __( 'Discount', 'wc-gateway-veruspay' ),
-									  '+'	   => __( 'Fee', 'wc-gateway-veruspay' ),
-									  ),
-				  'class'			=> 'wc-gateway-veruspay-discount-toggle wc-gateway-veruspay-options-toggle',
-				  ),
-			  
-			  'disc_amt' => array(
-				  'title'		=> __( 'Amount (%)', 'wc-gateway-veruspay' ),
-				  'type'		=> 'text',
+				  'default' => 'Discount',
+				  'desc_tip' => true,
+				  'options' => array(
+						'-' => __( 'Discount', 'wc-gateway-veruspay' ),
+						'+'	=> __( 'Fee', 'wc-gateway-veruspay' ),
+					),
+				  'class' => 'wc-gateway-veruspay-discount-toggle wc-gateway-veruspay-options-toggle',
+				), 
+				'disc_amt' => array(
+				  'title' => __( 'Amount (%)', 'wc-gateway-veruspay' ),
+				  'type' => 'text',
 				  'description'	=> __( 'Amount to discount or charge as a fee for using Verus (in a number representing %)', 'wc-gateway-veruspay' ),
-				  'default'		=> __( 'Amount to charge or discount as a % e.g. for 10% enter simple 10', 'wc-gateway-veruspay' ),
-				  'desc_tip'		=> true,
-				  'class'			=> 'wc-gateway-veruspay-discount-toggle wc-gateway-veruspay-options-toggle',
-			  ),
-			  
-			  'test_mode' => array(
-				  'title'       => _( 'Test VerusPay', 'wc-gateway-veruspay' ),
-				  'label'       => 'Enable Test Mode',
-				  'type'        => 'checkbox',
+				  'default' => __( 'Amount to charge or discount as a % e.g. for 10% enter simple 10', 'wc-gateway-veruspay' ),
+				  'desc_tip' => true,
+				  'class' => 'wc-gateway-veruspay-discount-toggle wc-gateway-veruspay-options-toggle',
+				),  
+				'test_mode' => array(
+				  'title' => _( 'Test VerusPay', 'wc-gateway-veruspay' ),
+				  'label' => 'Enable Test Mode',
+				  'type' => 'checkbox',
 				  'description' => __( 'Test Mode shows VerusPay only for logged in Admins', 'wc-gateway-versupay' ),
-				  'desc_tip'		=> true,
-				  'class'		=> 'wc-gateway-veruspay-options-toggle',
-			  ),
-			) );
-			// Setup RPC data
+				  'desc_tip' => true,
+				  'class' => 'wc-gateway-veruspay-options-toggle',
+				),
+			) 
+		);
+			// Setup RPC data to rpc array
 			$wc_veruspay_rpc_settings = array(
 				'rpc_user' => $this->get_option( 'rpc_user' ),
 				'rpc_pass' => $this->get_option( 'rpc_pass' ),
@@ -514,15 +513,18 @@ function wc_veruspay_gateway_init() {
 				'rpc_ssl' => $this->get_option( 'rpc_ssl' ),
 				'rpc_ca' => $this->get_option( 'rpc_ca' ),
 			);
-			// serialize and save config
+			// serialize and save config data, write to file
 			$wc_veruspay_serializedData = serialize($wc_veruspay_rpc_settings);
 			if ( strlen( $this->get_option( 'rpc_user' ) ) > 6 && strlen( $this->get_option( 'rpc_pass' ) ) > 6 ) {
+				// Write rpc connection data to config file, prepend php to disable direct access/viewing of data from web users
 				file_put_contents(dirname(__FILE__) . '/includes/veruspay_config.php', '<?php '.$wc_veruspay_serializedData);
+				// Remove data from form fields and database to prevent a database/wordpress breach gaining access to RPC login data
 				$this->update_option( 'rpc_user', 'hidden' );
 				$this->update_option( 'rpc_pass', 'hidden' );
+				// Set class to signal js to refresh upon saving
 				$this->form_fields[ 'rpc_show' ][ 'class' ] = 'wc-veruspay-gateway-togglerpc wc_veruspay_pointer rpc_updated';
 			}
-			
+			// Clean up store address list for database storage
 			if ( (\strpos($this->get_option( 'storeaddresses' ), 'e.g.') ) === false ) {
 				$wc_veruspay_address_data = $this->get_option( 'storeaddresses' );
 				if ( strlen($wc_veruspay_address_data)<10 ) {
@@ -536,6 +538,7 @@ function wc_veruspay_gateway_init() {
 					$this->form_fields[ 'storeaddresses' ][ 'title' ] = __( 'Store VRSC Addresses ' . $wc_veruspay_address_count, 'wc-gateway-veruspay' );
 				}
 			}
+			// Check store status and RPC connection variants and update store feedback to admin accordingly
 			if ( $this->get_option( 'enabled' ) == 'yes' && $this->get_option( 'storemode' ) == 'no' && strlen($this->get_option( 'storeaddresses' ))<10 ) {
 				$this->update_option( 'enabled', 'no' );
 				$this->update_option( 'sapling', 'no' );
@@ -628,6 +631,7 @@ function wc_veruspay_gateway_init() {
 			}
 			$wc_veruspay_verus_rate = verusPrice(get_woocommerce_currency());
 			$wc_veruspay_verus_price = number_format(( WC()->cart->total / $wc_veruspay_verus_rate ), $this->decimals );
+			// Enqueue the scripts and styles for store/front end use
 			add_action( 'wp_enqueue_scripts', 'so_enqueue_scripts' );
 			wp_register_script( 'wc_veruspay_scripts', plugins_url( 'public/js/wc-veruspay-scripts.js', __FILE__ ) );
 			wp_localize_script( 'wc_veruspay_scripts', 'veruspay_params', array(
@@ -646,25 +650,36 @@ function wc_veruspay_gateway_init() {
 		 */
 		public function payment_fields() {
 			global $wc_veruspay_text_helper;
+			// Get cart total including tax and shipping where applicable 
 			$wc_veruspay_price = WC_Payment_Gateway::get_order_total();
 			
+			// Get payment method and store currency and symbol
 			$wc_veruspay_payment_method = WC()->session->get('chosen_payment_method');
 			$order = new WC_Order($post->ID);
 			$order = $order->get_id();
 			$wc_veruspay_currency_symbol = get_woocommerce_currency_symbol();
+			
+			// Get the current rate of Verus from the phpext script and api call
 			$wc_veruspay_verus_rate = verusPrice(get_woocommerce_currency());
+
+			// Calculate the total cart in Verus Coin 
 			$wc_veruspay_verus_price = number_format( ( $wc_veruspay_price / $wc_veruspay_verus_rate ), $this->decimals );
 
-			// Calculate times
+			// Calculate order times and timeouts
 			$wc_veruspay_time_start = strtotime(date("Y-m-d H:i:s", time())); // Get time now, used in calculating countdown
 			$wc_veruspay_time_end = strtotime('+'.$this->pricetime.' minutes', $wc_veruspay_time_start); // Setup countdown target time using order hold time data
 			$wc_veruspay_sec_remaining = $wc_veruspay_time_end - $wc_veruspay_time_start; // Get difference between expire time and now in seconds        
 			$wc_veruspay_time_remaining = gmdate("i:s", $wc_veruspay_sec_remaining); // Format time-remaining for view
 			$wc_veruspay_pricetimesec = ($this->pricetime * 60);
+
+			// Setup refresh to occur on store-owner-defined price timeout
 			header("Refresh:".$wc_veruspay_pricetimesec);
+			
+			// Hidden divs for price and address generating feedback on click
 			echo '<div class="wc_veruspay_processing-address" id="wc_veruspay_generate_order">'.$wc_veruspay_text_helper['msg_modal_gen_addr'].'</div>';
 			echo '<div class="wc_veruspay_processing-address" id="wc_veruspay_updating_price">'.$wc_veruspay_text_helper['msg_modal_update_price'].'</div>';
-					// Create hidden fields for price and time updated data
+
+			// Create hidden fields for price and time updated data
 			echo '<input type="hidden" name="wc_veruspay_verus_address" value=""> 
 				<input type="hidden" name="wc_veruspay_verus_price" value="' . $wc_veruspay_verus_price . '">
 				<input type="hidden" name="wc_veruspay_verus_rate" value="' . $wc_veruspay_verus_rate . '">
@@ -676,7 +691,7 @@ function wc_veruspay_gateway_init() {
 				<input type="hidden" name="wc_veruspay_verus_memo" value="' . $this->store_inv_msg . '">
 				<input type="hidden" name="wc_veruspay_verus_img" value="' . $this->store_img . '">'; 
 			
-			// Setup Sapling checkbox
+			// Setup Sapling checkbox if Sapling is not enforced by store owner setting
 			$wc_veruspay_sapling_option = '';
 			if( is_checkout() && $wc_veruspay_payment_method == 'veruspay_gateway' && $this->sapling == 'no' && testRPC() == '404' && $this->storemode == 'yes' ) {
 				$wc_veruspay_sapling_option = '<div class="wc_veruspay_sapling-option">
@@ -689,8 +704,10 @@ function wc_veruspay_gateway_init() {
 				echo '<input id="veruspay_enforce_sapling" type="hidden" name="verus_sapling" value="verus_sapling">';
 			}
 
+			// Include checkout html 
 			require_once( plugin_dir_path( __FILE__ ) . 'includes/wc-veruspay-checkout.php');
-		
+			
+			// Include optional description set by store owner
 			if ( $this->description ) {
 				echo wpautop( wp_kses_post( $this->description ) );
 			}
@@ -712,6 +729,7 @@ function wc_veruspay_gateway_init() {
 		public function process_payment( $order_id ) {
 			global $wc_veruspay_text_helper;
 			$order = wc_get_order( $order_id );
+			// On process set the order to on-hold and reduce stock
 			$order->update_status( 'on-hold', __( $wc_veruspay_text_helper['awaiting_payment'], 'wc-gateway-veruspay' ) );
 			$order->reduce_order_stock();
 			WC()->cart->empty_cart();
