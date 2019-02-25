@@ -6,7 +6,7 @@
  - Tested up to: 5.0.3
  - Requires WooCommerce at least: 2.1
  - Tested WooCommerce up to: 3.5.4
- - Stable Tag: 0.1.0
+ - Stable Tag: 0.1.1
  * ====================
  * 
  * The MIT License (MIT)
@@ -95,5 +95,34 @@ The text domain is `wc-gateway-veruspay`.
 
 == Changelog ==
 
+= 2019.02.25 - version 0.1.1-a =
+
+- Fix bug with QR Invoice format
+- Add hide function of QR Invoice if Sapling purchase (sapling not currently supported in Verus Mobile)
+
+
+= 2019.02.24 - version 0.1.1 =
+
+- Add Verus Mobile Invoice compatible QR codes for orders
+- Add admin customization for memo and image url within Invoice QRs
+
+
 = 2019.02.11 - version 0.1.0 =
- * Initial Release
+
+ * Initial Release Includes the Following Features:
+ 
+- Verus Coin (VRSC) support
+- Sapling zk-SNARK private payment support as an option to the customer or enforced by the store
+- Verus blockchain integration in Live mode allows dynamic address generation and live status monitoring of payments for both transparent and private.
+- Manual mode allows use of the plugin with a pool of addresses imported by the store owner.
+- A script is included for exporting a list of transparent addresses to a text file to import into the store.
+- Fallback to manual mode if Live mode fails
+- Enforce Sapling option for store owner removes the option at checkout, all Verus payments must be Sapling.
+- Message customization for store owners.
+- VRSC Decimal definition for store owners.
+- Price timeout allows the store owner to define for how many minutes a Verus / Fiat price will display before getting a new price at checkout.
+- Order wait time allows the store owner to define how long an order will remain open before cancelled while waiting for the full payment amount to arrive from the customer at the VRSC address.
+- Confirmations required allows the store owner to define how many blockchain confirmations are required before a payment is considered final and the customer's order is considered completed.
+- QR Code size option in PX for the store owner
+- Discount or Fee option for store owners allows a discount or fee % to be set for when a customer chooses to pay in Verus Coin (VRSC).
+- Test mode to allow enabling the plugin only for logged in Admins

@@ -6,7 +6,7 @@
  * Author: J Oliver Westbrook
  * Author URI: https://github.com/joliverwestbrook/
  * Copyright: (c) 2019 John Oliver Westbrook (johnwestbrook@pm.me)
- * Version: 0.1.0
+ * Version: 0.1.1-a
  * Text Domain: wc-gateway-veruspay
  * Domain Path: /i18n/languages/
  *

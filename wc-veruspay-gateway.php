@@ -6,7 +6,7 @@
  * Author: J Oliver Westbrook
  * Author URI: https://github.com/joliverwestbrook/
  * Copyright: (c) 2019 John Oliver Westbrook (johnwestbrook@pm.me)
- * Version: 0.1.1
+ * Version: 0.1.1-a
  * Text Domain: wc-gateway-veruspay
  * Domain Path: /i18n/languages/
  *
@@ -98,7 +98,7 @@ function wc_veruspay_gateway_plugin_links( $links ) {
  *
  * @class 		WC_Gateway_VerusPay
  * @extends		WC_Payment_Gateway
- * @version		0.1.1
+ * @version		0.1.1-a
  * @package		WooCommerce/Classes/Payment
  * @author 		J Oliver Westbrook
  * @param global $wc_veruspay_text_helper
