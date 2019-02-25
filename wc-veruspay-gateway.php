@@ -139,7 +139,7 @@ function wc_veruspay_gateway_init() {
 				$this->title = __( 'Verus Coin (VRSC)', 'wc-gateway-veruspay' );
 			}
 			// Define user set variables
-			$this->verusQR = '0.0.1'; // For Invoice QR codes
+			$this->verusQR = '0.1.0'; // For Invoice QR codes
 			$this->coinTicker = 'VRSC'; // Coin ticker for Invoice
 			$this->store_inv_msg = $this->get_option( 'qr_invoice_memo' );  // Store Invoice message or product name (for single product checkout stores)
 			$this->store_img = $this->get_option( 'qr_invoice_image' );   // Store Logo or product logo 
@@ -1019,15 +1019,23 @@ function wc_veruspay_order_received_body( $order ) {
 			$wc_veruspay_verus_address = get_post_meta( $order_id, '_wc_veruspay_verus_address', true ); // Get the verus address setup for this order at time order was placed
 			$wc_veruspay_verus_price = get_post_meta( $order_id, '_wc_veruspay_verus_price', true ); // Get verus price active at time order was placed (within the timeout period)
 			$wc_veruspay_hold_time = get_post_meta( $order_id, '_wc_veruspay_verus_orderholdtime', true );  // Get order hold timeout value active at time order was placed
-			$verus_qr_inv_array = array( // Future Feature
+			$wc_veruspay_qr_inv_array = array( // Future Feature
 				'verusQR' => $wc_veruspay_class->verusQR,
 				'coinTicker' => $wc_veruspay_class->coinTicker,
 				'address' => $wc_veruspay_verus_address,
-				'amount' => $wc_veruspay_verus_price,
+				'amount' => str_replace(',', '', $wc_veruspay_verus_price)*100000000,
 				'memo' => get_post_meta( $order_id, '_wc_veruspay_verus_memo', true ),
 				'image' => get_post_meta( $order_id, '_wc_veruspay_verus_img', true ),
 			);
-			$verus_qr_inv_code = getQRCode( urlencode(json_encode($verus_qr_inv_array,true)), $wc_veruspay_class->qr_max_size); // Get QR code to match Verus invoice in VerusQR JSON format
+			if ( get_post_meta( $order_id, '_wc_veruspay_verus_sapling', true ) != 'verus_sapling' ) {
+				$wc_veruspay_qr_inv_code = getQRCode( urlencode(json_encode($wc_veruspay_qr_inv_array,true)), $wc_veruspay_class->qr_max_size); // Get QR code to match Verus invoice in VerusQR JSON format
+				$wc_veruspay_qr_toggle_show = ' ';
+				$wc_veruspay_qr_toggle_width = ' ';
+			}
+			if ( get_post_meta( $order_id, '_wc_veruspay_verus_sapling', true ) == 'verus_sapling' ) {
+				$wc_veruspay_qr_toggle_show = 'wc_veruspay_qr_block_noinv';
+				$wc_veruspay_qr_toggle_width = 'wc_veruspay_qr_width_noinv';
+			}
 			$wc_veruspay_qr_code = getQRCode( $wc_veruspay_verus_address, $wc_veruspay_class->qr_max_size); // Get QR code to match Verus address, size set by store owner
 			$wc_veruspay_order_mode = get_post_meta( $order_id, '_wc_veruspay_verus_mode', true );
 			$wc_veruspay_confirmations = get_post_meta( $order_id, '_wc_veruspay_verus_confirms', true ); // Get current confirm requirement count
