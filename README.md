@@ -34,8 +34,8 @@ THE SOFTWARE.
 
 > **Requires: WooCommerce 2.1+**
 
-- Download the latest release for WordPress here: [Lastest Release](https://github.com/joliverwestbrook/VerusPay/releases/latest)
-- Build a WordPress plugin zip: Download source or clone, into a folder called "veruspay-woocommerce" or similar. Zip that folder and upload as a plugin within WordPress.
+- Download the latest release for WordPress here: [Lastest Release](https://github.com/VerusCoin/VerusPay/releases/latest/)
+- Build a WordPress plugin zip: Clone the source into a folder called "veruspay-woocommerce" or similar. Zip that folder and upload as a plugin within WordPress.  NOTE: if you download a Zip from Github you will need to extract the folder within, then create a zip from that folder before installing.
 
 This plugin extends WooCommerce, adding the ability to accept cryptocurrency payments in Verus Coin (VRSC) using either an on-store wallet daemon (best for VPS or dedicated hosting stores) or manually configured VRSC addresses (best for shared hosting stores).
 
@@ -43,7 +43,7 @@ When an order is submitted via the VerusPay gateway, the order will be placed "o
 
 ## More Details
  - Learn about the [Verus Coin official site](https://veruscoin.io) for more information about the community project
- - Join the [Verus Coin Discord](https://discord.gg/VRKMP2S) for support. 
+ - Join the [Verus Coin Discord](https://discord.gg/VRKMP2S) for support.
  - More documentation coming in a next release.
  
 ## Requirements
@@ -60,10 +60,11 @@ Manual Mode is always a "fallback", even for Live Mode operation, but also allow
 
 ## Plugin Installation
 
-1. Be sure you're running WooCommerce 2.1+ in your store.
-2. Either: (1) upload the entire `woocommerce-gateway-veruspay` folder to the `/wp-content/plugins/` directory, or (2) upload the .zip file with the plugin under **Plugins &gt; Add New &gt; Upload**
-3. Activate the plugin through the **Plugins** menu in WordPress
-4. Go to **WooCommerce &gt; Settings &gt; Checkout** or **WooCommerce &gt; Settings &gt; Payments** in newer versions, and select "VerusPay" to configure
+1. If you need help setting up WordPress, follow this guide for your OS: https://www.digitalocean.com/community/tutorials/how-to-install-wordpress-with-lamp-on-ubuntu-18-04
+2. Be sure you're running WooCommerce 2.1+ in your store. THIS MUST BE INSTALLED, ACTIVATED, AND CONFIGURED FIRST.
+3. Install the latest .zip release file, found at `/releases/latest` of the github repo (or create a zip from a cloned folder of the repo) at **Plugins &gt; Add New &gt; Upload**
+4. Activate the plugin through the **Plugins** menu in WordPress
+5. Go to **WooCommerce &gt; Settings &gt; Checkout** or **WooCommerce &gt; Settings &gt; Payments** in newer versions, and select "VerusPay" to configure
 
 ## Verus Wallet Installation
 
