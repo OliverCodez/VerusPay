@@ -208,3 +208,27 @@ pre.wc_veruspay_verus_address {
   .wc_veruspay_timelimit button {
     padding: 8px !important;
   }
+.wc_veruspay_qr_block {
+    padding: 10px;
+    text-align: center;
+    float:left;
+    width:50%;
+}
+.wc_veruspay_qr_title {
+    display: block;
+    width: 100%;
+    font-size: 20px;
+    font-weight: bold;
+    color: #007bff;
+}
+.wc_veruspay_custom_msg {
+    display: block;
+    float: left;
+    text-align: left;
+    width: 100%;
+}
+@media screen and (max-width:767px) {
+    .wc_veruspay_qr_block {
+        width: 100%;
+    }
+  } 
