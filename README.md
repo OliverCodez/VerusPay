@@ -6,7 +6,7 @@
  - Tested up to: 5.0.3
  - Requires WooCommerce at least: 2.1
  - Tested WooCommerce up to: 3.5.4
- - Stable Tag: 0.1.0
+ - Stable Tag: 0.1.1
 
 ## The MIT License (MIT)
  
@@ -93,10 +93,22 @@ You can contact me via the Verus Coin official Discord at https://discord.gg/VRK
 
 ## Changelog
 
+### 2019.02.25 - version 0.1.1-a
+
+- Fix bug with QR Invoice format
+- Add hide function of QR Invoice if Sapling purchase (sapling not currently supported in Verus Mobile)
+
+
+### 2019.02.24 - version 0.1.1
+
+- Add Verus Mobile Invoice compatible QR codes for orders
+- Add admin customization for memo and image url within Invoice QRs
+
+
 ### 2019.02.11 - version 0.1.0
  * Initial Release Includes the Following Features:
  
- - Verus Coin (VRSC) support
+- Verus Coin (VRSC) support
 - Sapling zk-SNARK private payment support as an option to the customer or enforced by the store
 - Verus blockchain integration in Live mode allows dynamic address generation and live status monitoring of payments for both transparent and private.
 - Manual mode allows use of the plugin with a pool of addresses imported by the store owner.

@@ -6,7 +6,7 @@
  * Author: J Oliver Westbrook
  * Author URI: https://github.com/joliverwestbrook/
  * Copyright: (c) 2019 John Oliver Westbrook (johnwestbrook@pm.me)
- * Version: 0.1.0
+ * Version: 0.1.1-a
  * Text Domain: wc-gateway-veruspay
  * Domain Path: /i18n/languages/
  *
@@ -59,6 +59,8 @@ $wc_veruspay_text_helper = array(
 	'total_in' => 'Total in ',
 	'check_status' => 'Check Status',
 	'price_powered_by' => 'Price via VerusPay API',
+	'title_qr_invoice' => 'Verus Mobile Invoice',
+	'title_qr_address' => 'Verus Coin Address',
 	'title_on_hold' => 'Please Send Exactly ',
 	'title_ordered' => 'Order Pending Payment',
 	'title_pending' => 'Order Pending Confirmations',

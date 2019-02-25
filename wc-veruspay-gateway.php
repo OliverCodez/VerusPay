@@ -6,7 +6,7 @@
  * Author: J Oliver Westbrook
  * Author URI: https://github.com/joliverwestbrook/
  * Copyright: (c) 2019 John Oliver Westbrook (johnwestbrook@pm.me)
- * Version: 0.1.0
+ * Version: 0.1.1-a
  * Text Domain: wc-gateway-veruspay
  * Domain Path: /i18n/languages/
  *
@@ -98,7 +98,7 @@ function wc_veruspay_gateway_plugin_links( $links ) {
  *
  * @class 		WC_Gateway_VerusPay
  * @extends		WC_Payment_Gateway
- * @version		0.1.0
+ * @version		0.1.1-a
  * @package		WooCommerce/Classes/Payment
  * @author 		J Oliver Westbrook
  * @param global $wc_veruspay_text_helper
@@ -139,10 +139,10 @@ function wc_veruspay_gateway_init() {
 				$this->title = __( 'Verus Coin (VRSC)', 'wc-gateway-veruspay' );
 			}
 			// Define user set variables
-			$this->verusQR = '0.0.1'; // Future feature for use in advanced Invoice QR Code generation
-			$this->coinTicker = 'VRSC'; // Future feature for use in advanced Invoice QR Code generation
-			$this->store_inv_msg = 'Thank you for using our Verus-enabled store!';  // Future feature for use in advanced Invoice QR Code generation
-			$this->store_img = 'Future Image Use';  // Future feature for use in advanced Invoice QR Code generation
+			$this->verusQR = '0.1.0'; // For Invoice QR codes
+			$this->coinTicker = 'VRSC'; // Coin ticker for Invoice
+			$this->store_inv_msg = $this->get_option( 'qr_invoice_memo' );  // Store Invoice message or product name (for single product checkout stores)
+			$this->store_img = $this->get_option( 'qr_invoice_image' );   // Store Logo or product logo 
 			// Define various store owner-defined messages and content
 			$this->description  = $this->get_option( 'description' );
 			$this->msg_before_sale = $this->get_option( 'msg_before_sale' );
@@ -453,6 +453,22 @@ function wc_veruspay_gateway_init() {
 					'type' => 'text',
 					'description'	=> __( 'Enter a number for the max size of QR images generated during customer checkout', 'wc-gateway-veruspay' ),
 					'default' => '400',
+					'desc_tip' => true,
+					'class' => 'wc-gateway-veruspay-options-toggle',
+				),
+				'qr_invoice_memo' => array(
+					'title' => __( 'Invoice QR Memo Text', 'wc-gateway-veruspay' ),
+					'type' => 'text',
+					'description'	=> __( 'Enter a message or store identification to display in the Invoice memo', 'wc-gateway-veruspay' ),
+					'default' => 'Thank you for using our Verus-enabled store!',
+					'desc_tip' => true,
+					'class' => 'wc-gateway-veruspay-options-toggle',
+				),
+				'qr_invoice_image' => array(
+					'title' => __( 'Invoice QR Image', 'wc-gateway-veruspay' ),
+					'type' => 'text',
+					'description'	=> __( 'Enter url to store logo image', 'wc-gateway-veruspay' ),
+					'default' => 'https://veruscoin.io/img/VRSClogo.svg',
 					'desc_tip' => true,
 					'class' => 'wc-gateway-veruspay-options-toggle',
 		  	),
@@ -1003,15 +1019,23 @@ function wc_veruspay_order_received_body( $order ) {
 			$wc_veruspay_verus_address = get_post_meta( $order_id, '_wc_veruspay_verus_address', true ); // Get the verus address setup for this order at time order was placed
 			$wc_veruspay_verus_price = get_post_meta( $order_id, '_wc_veruspay_verus_price', true ); // Get verus price active at time order was placed (within the timeout period)
 			$wc_veruspay_hold_time = get_post_meta( $order_id, '_wc_veruspay_verus_orderholdtime', true );  // Get order hold timeout value active at time order was placed
-			//$verus_qr_inv_array = array( // Future Feature
-			//	'verusQR' => $wc_veruspay_class->verusQR,
-			//	'coinTicker' => $wc_veruspay_class->coinTicker,
-			//	'address' => $wc_veruspay_verus_address,
-			//	'amount' => $wc_veruspay_verus_price,
-			//	'memo' => get_post_meta( $order_id, '_wc_veruspay_verus_memo', true ),
-			//	'image' => get_post_meta( $order_id, '_wc_veruspay_verus_img', true ),
-			//);
-			//$verus_qr_inv_code = getQRCode( urlencode(json_encode($verus_qr_inv_array,true)), $wc_veruspay_class->qr_max_size); // Future Feature - Get QR code to match Verus invoice in VerusQR JSON format
+			$wc_veruspay_qr_inv_array = array( // Future Feature
+				'verusQR' => $wc_veruspay_class->verusQR,
+				'coinTicker' => $wc_veruspay_class->coinTicker,
+				'address' => $wc_veruspay_verus_address,
+				'amount' => str_replace(',', '', $wc_veruspay_verus_price)*100000000,
+				'memo' => get_post_meta( $order_id, '_wc_veruspay_verus_memo', true ),
+				'image' => get_post_meta( $order_id, '_wc_veruspay_verus_img', true ),
+			);
+			if ( get_post_meta( $order_id, '_wc_veruspay_verus_sapling', true ) != 'verus_sapling' ) {
+				$wc_veruspay_qr_inv_code = getQRCode( urlencode(json_encode($wc_veruspay_qr_inv_array,true)), $wc_veruspay_class->qr_max_size); // Get QR code to match Verus invoice in VerusQR JSON format
+				$wc_veruspay_qr_toggle_show = ' ';
+				$wc_veruspay_qr_toggle_width = ' ';
+			}
+			if ( get_post_meta( $order_id, '_wc_veruspay_verus_sapling', true ) == 'verus_sapling' ) {
+				$wc_veruspay_qr_toggle_show = 'wc_veruspay_qr_block_noinv';
+				$wc_veruspay_qr_toggle_width = 'wc_veruspay_qr_width_noinv';
+			}
 			$wc_veruspay_qr_code = getQRCode( $wc_veruspay_verus_address, $wc_veruspay_class->qr_max_size); // Get QR code to match Verus address, size set by store owner
 			$wc_veruspay_order_mode = get_post_meta( $order_id, '_wc_veruspay_verus_mode', true );
 			$wc_veruspay_confirmations = get_post_meta( $order_id, '_wc_veruspay_verus_confirms', true ); // Get current confirm requirement count
@@ -1106,12 +1130,12 @@ function wc_veruspay_order_received_body( $order ) {
 				header("Refresh:0");
 			}
 			if ( $wc_veruspay_balance_in === false && $wc_veruspay_sec_remaining > 0 ) {
+				// Add custom set additional post complete sale message
+				if ( $wc_veruspay_class->msg_before_sale ) {
+					$wc_veruspay_process_custom_msg = wpautop( wptexturize( $wc_veruspay_class->msg_before_sale ) );
+				}
 				echo '<input type="hidden" name="wc_veruspay_verus_orderholdtime" value="' . $wc_veruspay_hold_time . '">';
 				require_once( plugin_dir_path( __FILE__ ) . 'includes/wc-veruspay-process.php');
-			}
-			// Add custom set additional post complete sale message
-			if ( $wc_veruspay_class->msg_before_sale ) {
-				echo wpautop( wptexturize( $wc_veruspay_class->msg_before_sale ) );
 			}
 		}
 		// If order is completed it is paid in full and has all confirmations per store owner settings

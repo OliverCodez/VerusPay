@@ -6,7 +6,7 @@
  * Author: J Oliver Westbrook
  * Author URI: https://github.com/joliverwestbrook/
  * Copyright: (c) 2019 John Oliver Westbrook (johnwestbrook@pm.me)
- * Version: 0.1.0
+ * Version: 0.1.1-a
  * Text Domain: wc-gateway-veruspay
  * Domain Path: /i18n/languages/
  *
@@ -62,7 +62,9 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </button>
             </div>
         </div>
-        <p class="wc_veruspay_verus_address"><?php echo $wc_veruspay_qr_code; ?></p>
+        <p class="wc_veruspay_qr_block <?php echo $wc_veruspay_qr_toggle_show; ?>"><span class="wc_veruspay_qr_title"><?php echo $wc_veruspay_text_helper['title_qr_invoice']; ?>:</span><?php echo $wc_veruspay_qr_inv_code; ?></p>
+        <p class="wc_veruspay_qr_block <?php echo $wc_veruspay_qr_toggle_width; ?>"><span class="wc_veruspay_qr_title"><?php echo $wc_veruspay_text_helper['title_qr_address']; ?>:</span><?php echo $wc_veruspay_qr_code; ?></p>
+        <p class="wc_veruspay_custom_msg"><?php echo $wc_veruspay_process_custom_msg; ?></p>
     </div>
 </div>
 <script>
