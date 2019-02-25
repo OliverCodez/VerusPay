@@ -1023,7 +1023,7 @@ function wc_veruspay_order_received_body( $order ) {
 				'verusQR' => $wc_veruspay_class->verusQR,
 				'coinTicker' => $wc_veruspay_class->coinTicker,
 				'address' => $wc_veruspay_verus_address,
-				'amount' => floor(str_replace(',', '', $wc_veruspay_verus_price)*100000000),
+				'amount' => floor(round(str_replace(',', '', $wc_veruspay_verus_price)*100000000)),
 				'memo' => get_post_meta( $order_id, '_wc_veruspay_verus_memo', true ),
 				'image' => get_post_meta( $order_id, '_wc_veruspay_verus_img', true ),
 			);
