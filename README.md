@@ -3,7 +3,7 @@
  - Contributors: J Oliver Westbrook
  - Tags: woocommerce, payment gateway, gateway, cryptocurrency, blockchain, verus, verus coin, vrsc
  - Requires WordPress at least: 3.8
- - Tested up to: 5.0.3
+ - Tested up to: 5.1
  - Requires WooCommerce at least: 2.1
  - Tested WooCommerce up to: 3.5.4
  - Stable Tag: 0.1.1
