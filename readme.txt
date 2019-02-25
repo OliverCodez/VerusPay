@@ -3,7 +3,7 @@
  - Contributors: J Oliver Westbrook
  - Tags: woocommerce, payment gateway, gateway, cryptocurrency, blockchain, verus, verus coin, vrsc
  - Requires at least: 3.8
- - Tested up to: 5.0.3
+ - Tested up to: 5.1
  - Requires WooCommerce at least: 2.1
  - Tested WooCommerce up to: 3.5.4
  - Stable Tag: 0.1.1
@@ -38,6 +38,9 @@
 This Readme.txt required for WordPress library submission.
 
 > **Requires: WooCommerce 2.1+**
+
+- Download the latest release for WordPress here: https://github.com/joliverwestbrook/VerusPay/releases/latest
+- Build a WordPress plugin zip: Download source or clone, into a folder called "veruspay-woocommerce" or similar. Zip that folder and upload as a plugin within WordPress.
 
 This plugin extends WooCommerce, adding the ability to accept cryptocurrency payments in Verus Coin (VRSC) using either an on-store wallet daemon (best for VPS or dedicated hosting stores) or manually configured VRSC addresses (best for shared hosting stores).
 
