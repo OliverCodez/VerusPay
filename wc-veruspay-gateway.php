@@ -307,7 +307,7 @@ function wc_veruspay_gateway_init() {
 			  	'title' => __( 'Store VRSC Addresses ' . $this->taddrcount, 'wc-gateway-veruspay' ),
 			  	'type' => 'textarea',
 			  	'description' => __( 'Enter VRSC addresses you own. If your store has a lot of traffic, we recommend 500 min.  These will also act as a fallback payment method in case there are issues with the wallet for Live stores.', 'wc-gateway-veruspay' ),
-			  	'default' => 'Enter at least 500 VRSC addresses YOU OWN, seperated by commas (use the "gett" script to make it easy), e.g. RAoSwhTyhiaTx14j7SeR3k92hqK1n6KMjn,RX7SeR3k92hqv77sH9F1B5yp6ARdnF8ZtR',
+			  	'default' => '',
 			  	'desc_tip' => true,
 			  	'class' => 'wc-gateway-veruspay-addresses-toggle',
 				),
