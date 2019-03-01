@@ -30,7 +30,7 @@ Last, download the scripts by issuing the following commands:
 `cd veruspayserverinstall`
 `chmod +x *`
 
-* Make sure you are in the folder: `~/veruspayserverinstall` for the remainder of this guide!
+#### Make sure you are in the folder: `~/veruspayserverinstall` for the remainder of this guide!
 
 ### 4 - Run the server config script
 
