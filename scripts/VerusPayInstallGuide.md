@@ -52,7 +52,7 @@ First, let's get Verus syncing up while we finish the install. To do this, start
 `screen`
 `./verus-cli/verusd -mint -daemon`
 
-To disconnect from the screen issue: CTRL-D
+To disconnect from the screen issue: CTRL-A-D
 
 Now run script_2 from your SSH login by issuing `./script_2` from your home folder.
 
