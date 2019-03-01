@@ -109,14 +109,14 @@ Now copy the output and edit your wp-config.php file.  Use the following line re
 `sudo nano /var/www/YOURDOMAIN/html/wp-config.php`
 
 Inside the file find the section that has the 8 lines we are replacing. It looks like this:
-```define('AUTH_KEY',         'put your unique phrase here');
+``define('AUTH_KEY',         'put your unique phrase here');
 define('SECURE_AUTH_KEY',  'put your unique phrase here');
 define('LOGGED_IN_KEY',    'put your unique phrase here');
 define('NONCE_KEY',        'put your unique phrase here');
 define('AUTH_SALT',        'put your unique phrase here');
 define('SECURE_AUTH_SALT', 'put your unique phrase here');
 define('LOGGED_IN_SALT',   'put your unique phrase here');
-define('NONCE_SALT',       'put your unique phrase here');```
+define('NONCE_SALT',       'put your unique phrase here');``
 
 Move your cursor to the top line, press CTRL-K and it will remove it, repeat for each line.
 
@@ -124,13 +124,13 @@ After you've removed the placeholder lines, paste the salt you copied.
 
 Now change the database name, username, and password to match what you created in Step 9, the placeholder section in the config file looks like this: 
 
-```define('DB_NAME', 'wordpress');
+``define('DB_NAME', 'wordpress');
 
 /** MySQL database username */
 define('DB_USER', 'wordpressuser');
 
 /** MySQL database password */
-define('DB_PASSWORD', 'password');```
+define('DB_PASSWORD', 'password');``
 
 Lastly, add the following line to the file, just after `define('DB_COLLATE', '');`:
 
@@ -155,9 +155,3 @@ Notes:
 * If you reboot your server you will need to SSH in and start the Verus daemon.  Refer to Step 5 on how to start the daemon.
 
 * You can create bash scripts and crontabs to keep the daemon alive, start automatically after a reboot, etc. Ask me in Discord how if interested.
-
-*
-
-
-
-
