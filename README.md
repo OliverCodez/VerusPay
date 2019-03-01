@@ -3,10 +3,10 @@
  - Contributors: J Oliver Westbrook
  - Tags: woocommerce, payment gateway, gateway, cryptocurrency, blockchain, verus, verus coin, vrsc
  - Requires WordPress at least: 3.8
- - Tested up to: 5.0.3
+ - Tested up to: 5.1
  - Requires WooCommerce at least: 2.1
  - Tested WooCommerce up to: 3.5.4
- - Stable Tag: 0.1.1
+ - Stable Tag: 0.1.2
 
 ## The MIT License (MIT)
  
@@ -34,7 +34,8 @@ THE SOFTWARE.
 
 > **Requires: WooCommerce 2.1+**
 
-Download the latest release for WordPress here: [Lastest Release](https://github.com/Nine27/VerusPay/releases/latest)
+- Download the latest release for WordPress here: [Lastest Release](https://veruspay.io/latest/)
+- Build a WordPress plugin zip: Clone the source into a folder called "veruspay-woocommerce" or similar. Zip that folder and upload as a plugin within WordPress.  NOTE: if you download a Zip from Github you will need to extract the folder within, then create a zip from that folder before installing.
 
 This plugin extends WooCommerce, adding the ability to accept cryptocurrency payments in Verus Coin (VRSC) using either an on-store wallet daemon (best for VPS or dedicated hosting stores) or manually configured VRSC addresses (best for shared hosting stores).
 
@@ -42,7 +43,7 @@ When an order is submitted via the VerusPay gateway, the order will be placed "o
 
 ## More Details
  - Learn about the [Verus Coin official site](https://veruscoin.io) for more information about the community project
- - Join the [Verus Coin Discord](https://discord.gg/VRKMP2S) for support. 
+ - Join the [Verus Coin Discord](https://discord.gg/VRKMP2S) for support.
  - More documentation coming in a next release.
  
 ## Requirements
@@ -59,10 +60,11 @@ Manual Mode is always a "fallback", even for Live Mode operation, but also allow
 
 ## Plugin Installation
 
-1. Be sure you're running WooCommerce 2.1+ in your store.
-2. Either: (1) upload the entire `woocommerce-gateway-veruspay` folder to the `/wp-content/plugins/` directory, or (2) upload the .zip file with the plugin under **Plugins &gt; Add New &gt; Upload**
-3. Activate the plugin through the **Plugins** menu in WordPress
-4. Go to **WooCommerce &gt; Settings &gt; Checkout** or **WooCommerce &gt; Settings &gt; Payments** in newer versions, and select "VerusPay" to configure
+1. If you need help setting up WordPress, follow this guide for your OS: https://www.digitalocean.com/community/tutorials/how-to-install-wordpress-with-lamp-on-ubuntu-18-04
+2. Be sure you're running WooCommerce 2.1+ in your store. THIS MUST BE INSTALLED, ACTIVATED, AND CONFIGURED FIRST.
+3. Install the latest .zip release file, found at `/releases/latest` of the github repo (or create a zip from a cloned folder of the repo) at **Plugins &gt; Add New &gt; Upload**
+4. Activate the plugin through the **Plugins** menu in WordPress
+5. Go to **WooCommerce &gt; Settings &gt; Checkout** or **WooCommerce &gt; Settings &gt; Payments** in newer versions, and select "VerusPay" to configure
 
 ## Verus Wallet Installation
 
@@ -91,7 +93,45 @@ There are many optional settings to play with, I recommend playing with and twea
 ## Support
 You can contact me via the Verus Coin official Discord at https://discord.gg/VRKMP2S as user `John Westbrook#1979` or via email at johnwestbrook@pm.me.
 
+## Frequently Asked Questions
+
+**What is the text domain for translations?**
+The text domain is `veruspay-verus-gateway`.
+
+**How can I change the styling (CSS) of the checkout pages?**
+CSS options are being added in a later release to the Admin section. For now, most themes come with a section where you can add your own CSS styling and you can add customizations this way.
+
+**Does this plugin work with a shared hosting plan or a host that does not have SSH access?**
+Yes! But it will be "Manual Mode" only, meaning it is not directly connected or integrated with the blockchain and relies on transparent addresses you enter in the store settings (zs Sapling addresses are not allowed).
+
+**Can I "enforce" privacy Sapling payments?**
+Yes, there is an option in the payment gateway settings within WooCommerce->Settings->Payments to enforce privacy "zs" payments.  This works in Live Mode only.
+
+## Screenshots
+ 
+1. This is the main settings area for VerusPay within WooCommerce's `Settings->Payments` section. Each of the headings expand upon clicking.
+2. The RPC Settings section is where the store owner enters the connection settings for Verus blockchain integration.
+3. Store owners input VRSC transparent addresses in the "Store VRSC Addresses" text field which are used when the store is in manual mode, either by the store owner's choice or as a fallback if there is any issue in connecting with the blockchain.
+4. The Message and Content Customizations section allows store owners to create custom messages to be used throughout the purchase process when a customer pays with Verus.
+5. Store Options allow the store owner to define many of the attributes of the checkout and purchase process with regards to timeouts, privacy, and QR codes.
+6. The Discount/Fee option allows a store owner to define either an additional fee or a discount which is applied to customers who checkout using Verus.
+7. At checkout, this is what the Verus payment option looks like to the customer, although CSS may be applied by advanced users to slightly alter this.
+8. After a customer proceeds to purchase, this is the screen they are presented with where they are able to pay and see payment receipt occur live.
+9. After payment is detected on the blockchain, the purchase waits for the store-set minimum confirmations and delivers the digital product or completes the sale when it's reached.
+
 ## Changelog
+
+### 2019.02.28 - version 0.1.2
+
+- Simplify code functions
+- Remove cURL, phpexttools, easybitcoin
+- Create wp_remote_post and get functions for all cURL requests
+- Consolidate all blockchain integration functions into `wc-veruspay-chaintools.php`
+- Rename all functions to unique names
+- Edit text domain and slug to match as veruspay-verus-gateway
+- Include uninstall script for clean uninstallation of plugin
+- Improve readme file
+- Rename screenshots
 
 ### 2019.02.25 - version 0.1.1-a
 

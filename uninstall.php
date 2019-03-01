@@ -1,10 +1,10 @@
-<?php 
+<?php
 /**
- * VerusPay Verus Gateway Confirming
+ * VerusPay Verus Gateway Uninstall
  *
- * Confirming a Verus payment on the blockchain.
+ * Uninstalling VerusPay deletes schedules, tables, and options.
  *
- * @package VerusPay Verus Gateway\Confirming
+ * @package VerusPay Verus Gateway\Uninstaller
  * @version 0.1.2
  * @author    J Oliver Westbrook
  * @category  Cryptocurrency
@@ -37,17 +37,16 @@
  * ====================
  *
  */
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-} ?>
-<h1 class="entry-title"><?php echo $wc_veruspay_text_helper['title_paid']; ?></h1>
-<div class="wc_veruspay_payment_container">
-    <p class="wc_veruspay_processing-payment"><?php echo $wc_veruspay_text_helper['msg_confirming_payment']; ?><?php echo $wc_veruspay_block_progress.' / '.$wc_veruspay_confirmations; ?></p> 
-    <noscript>
-        <form method="post" action=""><button type="submit" name="woocommerce_check_status" value="check_status"><?php echo $wc_veruspay_text_helper['check_status']; ?></button></form>
-    </noscript>
-    <div id="wc-<?php echo esc_attr( $wc_veruspay_class->id ); ?>-vrsc-form" class="wc-payment-form" style="background:transparent;">
-        <pre class="wc_veruspay_verus_address" id="verusAddress"><?php if ( substr($wc_veruspay_verus_address, 0, 2) !== 'zs' ) { echo '<a style="color:#fff!important" target="_BLANK" href="https://explorer.veruscoin.io/address/'.$wc_veruspay_verus_address.'">'.$wc_veruspay_verus_address.'</a>'; } else { echo $wc_veruspay_verus_address; } ?></pre>
-    </div>
-</div>
-<?php echo header("Refresh:15"); ?>
+// if uninstall.php is not called by WordPress, die
+if (!defined('WP_UNINSTALL_PLUGIN')) {
+    die;
+}
+global $wpdb;
+
+// Delete scheduled hooks.
+wp_clear_scheduled_hook( 'woocommerce_cancel_unpaid_submitted' );
+
+// Delete options.
+$wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE 'woocommerce_veruspay_%';" );
+
+wp_cache_flush();
