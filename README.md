@@ -6,7 +6,7 @@
  - Tested up to: 5.1
  - Requires WooCommerce at least: 2.1
  - Tested WooCommerce up to: 3.5.4
- - Stable Tag: 0.1.1
+ - Stable Tag: 0.1.2
 
 ## The MIT License (MIT)
  
@@ -93,7 +93,45 @@ There are many optional settings to play with, I recommend playing with and twea
 ## Support
 You can contact me via the Verus Coin official Discord at https://discord.gg/VRKMP2S as user `John Westbrook#1979` or via email at johnwestbrook@pm.me.
 
+## Frequently Asked Questions
+
+**What is the text domain for translations?**
+The text domain is `veruspay-verus-gateway`.
+
+**How can I change the styling (CSS) of the checkout pages?**
+CSS options are being added in a later release to the Admin section. For now, most themes come with a section where you can add your own CSS styling and you can add customizations this way.
+
+**Does this plugin work with a shared hosting plan or a host that does not have SSH access?**
+Yes! But it will be "Manual Mode" only, meaning it is not directly connected or integrated with the blockchain and relies on transparent addresses you enter in the store settings (zs Sapling addresses are not allowed).
+
+**Can I "enforce" privacy Sapling payments?**
+Yes, there is an option in the payment gateway settings within WooCommerce->Settings->Payments to enforce privacy "zs" payments.  This works in Live Mode only.
+
+## Screenshots
+ 
+1. This is the main settings area for VerusPay within WooCommerce's `Settings->Payments` section. Each of the headings expand upon clicking.
+2. The RPC Settings section is where the store owner enters the connection settings for Verus blockchain integration.
+3. Store owners input VRSC transparent addresses in the "Store VRSC Addresses" text field which are used when the store is in manual mode, either by the store owner's choice or as a fallback if there is any issue in connecting with the blockchain.
+4. The Message and Content Customizations section allows store owners to create custom messages to be used throughout the purchase process when a customer pays with Verus.
+5. Store Options allow the store owner to define many of the attributes of the checkout and purchase process with regards to timeouts, privacy, and QR codes.
+6. The Discount/Fee option allows a store owner to define either an additional fee or a discount which is applied to customers who checkout using Verus.
+7. At checkout, this is what the Verus payment option looks like to the customer, although CSS may be applied by advanced users to slightly alter this.
+8. After a customer proceeds to purchase, this is the screen they are presented with where they are able to pay and see payment receipt occur live.
+9. After payment is detected on the blockchain, the purchase waits for the store-set minimum confirmations and delivers the digital product or completes the sale when it's reached.
+
 ## Changelog
+
+### 2019.02.28 - version 0.1.2
+
+- Simplify code functions
+- Remove cURL, phpexttools, easybitcoin
+- Create wp_remote_post and get functions for all cURL requests
+- Consolidate all blockchain integration functions into `wc-veruspay-chaintools.php`
+- Rename all functions to unique names
+- Edit text domain and slug to match as veruspay-verus-gateway
+- Include uninstall script for clean uninstallation of plugin
+- Improve readme file
+- Rename screenshots
 
 ### 2019.02.25 - version 0.1.1-a
 
