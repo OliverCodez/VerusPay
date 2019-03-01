@@ -1,7 +1,7 @@
 
-### Server, LAMP, and Wallet Setup and Configuration Instructions
+# Server, LAMP, and Wallet Setup and Configuration Instructions
 
-## 1 - Get a server with ubuntu 18.04 OS and at min 2GB RAM 
+### 1 - Get a server with ubuntu 18.04 OS and at min 2GB RAM 
 
 You can get $100 credit with DigitalOcean if you use my referral link (this also helps continue supporting the project as I'll get $25 of credit toward the hosted veruspay.io server after you spend $25)
 
