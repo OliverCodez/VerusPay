@@ -7,9 +7,9 @@ You can get $100 credit with DigitalOcean if you use my referral link (this also
 
 Link: https://m.do.co/c/13c092042583
 
-2 - SSH in and change the root password when prompted
+### 2 - SSH in and change the root password when prompted
 
-3 - Create new Sudo user with the following commands, replacing USERNAME with the username you want:
+### 3 - Create new Sudo user with the following commands, replacing USERNAME with the username you want:
 
 `adduser USERNAME`
 `usermod -aG sudo USERNAME`
@@ -32,11 +32,11 @@ Last, download the scripts by issuing the following commands:
 
 * Make sure you are in the folder: `~/veruspayserverinstall` for the remainder of this guide!
 
-4 - Run the server config script
+### 4 - Run the server config script
 
 Now run script_1 from your SSH login by issuing `./script_1`
 
-5 - Run verus in screen and Apache install script
+### 5 - Run verus in screen and Apache install script
 
 First, let's get Verus syncing up while we finish the install. To do this, start a new screen and then start the daemon:
 
@@ -47,11 +47,11 @@ To disconnect from the screen issue: CTRL-D
 
 Now run script_2 from your SSH login by issuing `./script_2` from your home folder.
 
-6 - Now run the new website setup script.  This will setup a your site in a way that later you can add additional websites to the same server!
+### 6 - Now run the new website setup script.  This will setup a your site in a way that later you can add additional websites to the same server!
 
 Now run script_3 from your SSH login by issuing `./script_3` from your home folder.
 
-7 - Setup MySQL and PHP
+### 7 - Setup MySQL and PHP
 
 You will be prompted during this process and need to follow this guide as the script runs.
 
@@ -71,13 +71,13 @@ Next, you'll be at a mysql> prompt, issue each of the following commands, changi
 `FLUSH PRIVILEGES;`
 `exit;`
 
-8 - Now setup SSL, choosing option 2 when prompted.  If you have an error, make sure your domain is pointing to your server's IP with A records for both the domain and the www of your domain and that your IP is accessible over port 443. You can test this first with `telnet YOURIP 443`
+### 8 - Now setup SSL, choosing option 2 when prompted.  If you have an error, make sure your domain is pointing to your server's IP with A records for both the domain and the www of your domain and that your IP is accessible over port 443. You can test this first with `telnet YOURIP 443`
 
 Now run script_5 from your SSH login by issuing `./script_5` from your home folder.
 
 Press ENTER when prompted.
 
-9 - Setup WordPress Database
+### 9 - Setup WordPress Database
 
 Be sure to modify the following commands before you issue/paste them in ssh! Modify the following:
 
@@ -93,11 +93,11 @@ Remember these three values!  You'll use them later.
 `FLUSH PRIVILEGES;`
 `exit;`
 
-10 - Setup PHP Modules and WordPress Files
+### 10 - Setup PHP Modules and WordPress Files
 
 Next, run script_6 from your SSH login by issuing `./script_6` from your home folder.
 
-11 - Setup WordPress Config file
+### 11 - Setup WordPress Config file
 
 This last step requires editing the WordPress wp-config.php file.  To make life easier when replacing the salt section, use CTRL-K to cut the lines that you'll be replacing. To do this, move your cursor to the line to remove, press CTRL-K and the line disappears.  Do this for the 8 lines we will be changing, then you can paste your new salt generated into that section of the file.
 
@@ -141,7 +141,7 @@ Save with CTRL-O and exit with CTRL-X.
 
 If you are lost in this part of the guide, refer to https://www.digitalocean.com/community/tutorials/how-to-install-wordpress-with-lamp-on-ubuntu-18-04#step-5-%E2%80%93-configuring-the-wordpress-directory beginning at the heading "Setting up the WordPress Configuration File" 
 
-Step 12 - Completing Setup
+### Step 12 - Completing Setup
 
 Lastly, issue the following command: 
 
