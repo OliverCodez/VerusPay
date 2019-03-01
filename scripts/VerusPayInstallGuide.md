@@ -1,6 +1,15 @@
 
 # Server, LAMP, and Wallet Setup and Configuration Instructions
 
+What this guide and accompanying scripts will do:
+
+Setup a new, unconfigured server with your first domain name (or a first domain) with WordPress and Verus CLI wallet.  You'll then need to configure WordPress as normal, install WooCommerce and then VerusPay plugin.  Here's what you'll end up with after this guide and scripts:
+- Apache2 with multi-domain support
+- MySQL
+- PHP
+- WordPress base install
+- Sync'd up Verus CLI wallet
+
 ### 1 - Get a server with ubuntu 18.04 OS and at min 2GB RAM 
 
 You can get $100 credit with DigitalOcean if you use my referral link (this also helps continue supporting the project as I'll get $25 of credit toward the hosted veruspay.io server after you spend $25)
