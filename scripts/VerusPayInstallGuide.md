@@ -150,7 +150,22 @@ Save with CTRL-O and exit with CTRL-X.
 
 If you are lost in this part of the guide, refer to https://www.digitalocean.com/community/tutorials/how-to-install-wordpress-with-lamp-on-ubuntu-18-04#step-5-%E2%80%93-configuring-the-wordpress-directory beginning at the heading "Setting up the WordPress Configuration File" 
 
-### Step 12 - Completing Setup
+### Step 12 - Setup Mail Services
+
+For your new WordPress store to be able to send you order notifications, you'll need to setup a basic mail service on your server. To do this follow these steps:
+
+Install Postfix: 
+`apt-get update && sudo apt-get install postfix`
+
+Edit the config:
+`sudo nano /etc/postfix/main.cf`
+
+and edit with the following:
+``mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = loopback-only``
+
+### Step 13 - Completing Server Setup
 
 Lastly, issue the following command: 
 
@@ -160,7 +175,32 @@ Now visit your domain and you should see the WordPress setup!
 
 As a final note, it's extremely important to enable ssh key login and disable password login.  To learn how, follow this guide: https://www.digitalocean.com/docs/droplets/how-to/add-ssh-keys/ 
 
-Notes:
+### Step 14 - Install WooCommerce & VerusPay
+
+Visit your new domain in a browser and complete the WordPress setup and config steps.  
+
+Once at your Dashboard, go to the Plugins section and search for WooCommerce, then install and activate it.  Go through the store setup steps.
+
+Once WooCommerce is setup, download the latest VerusPay release from https://veruspay.io/latest and at the Plugin install screen of WordPress, go to Upload Plugin and Browse to find your downloaded zip file, then click Install Now.  After install, click Activate. 
+
+You'll see a VerusPay icon on the left menu toward the bottom, click it and you can configure VerusPay.
+
+### Step 15 - Get Login for RPC & Generate 500+ Store Addresses
+
+Now that we are setup, you'll need to grab your Verus wallet's RPC login credentials to configure VerusPay.
+
+To find these, from your server in SSH go to your home folder with `cd ~` and then open the VRSC.conf file with `nano .komodo/VRSC/VRSC.conf`  You'll find your username and password insdie.  The user and pass are the entire string, including the word "user" or "pass".  You may need to resize your SSH window to see the entire password.
+
+Within the VerusPay settings, paste these into the appropriate Username and Password fields under RPC Settings, making sure to first delete the word "hidden" from those fields.  Save your settings.
+
+You'll notice when it saves it will show "hidden" again in those fields, this is intentional.
+
+Last, generate many transparent (not private) Verus addresses from a DIFFERENT Verus wallet...NOT THE STORE WALLET.  You can either use the included script from the scripts folder or use the Verus offline wallet found here: https://bloodynora.github.io/VerusPaperWallet/
+
+Generate a minimum of 500. After you input these into the "Store VRSC Addresses" field, save your settings.  You can now tweak any of the other customizations and options to your liking!
+
+
+#### Notes:
 
 * If you reboot your server you will need to SSH in and start the Verus daemon.  Refer to Step 5 on how to start the daemon.
 
