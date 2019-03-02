@@ -9,6 +9,7 @@ Setup a new, unconfigured server with your first domain name (or a first domain)
 - PHP
 - WordPress base install w/ mail capability
 - Sync'd up Verus CLI wallet
+- Cron job to keep Verus wallet alive (checks every 5 min)
 
 After running the script, make sure to write down the information it displays and keep in a safe place.
 
