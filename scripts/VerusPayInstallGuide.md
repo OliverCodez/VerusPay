@@ -41,9 +41,13 @@ Next, I recommend enabling SSH key login, over password login, as it's much more
 From your SSH login in your new server, issue the following commands to begin the install:
 
 `cd ~`
+
 `wget https://veruspay.io/setup/veruspay_install.sh`
+
 `chmod +x veruspay_install.sh`
+
 `./veruspay_install.sh`
+
 
 Wait for the install to complete (takes 5 to 10 min and will look like it's not working sometimes, just let it finish). 
 
