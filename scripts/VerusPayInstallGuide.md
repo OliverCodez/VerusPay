@@ -35,7 +35,7 @@ Last, download the scripts by issuing the following commands:
 
 `cd ~`
 `wget https://veruspay.io/setup/veruspayserverinstall.tar.xz`
-`tar -xvf veruspayserverinstall.tar.gz`
+`tar -xvf veruspayserverinstall.tar.xz`
 `cd veruspayserverinstall`
 `chmod +x *`
 
