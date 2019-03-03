@@ -1,4 +1,4 @@
-=== VerusPay Verus Gateway ===
+# VerusPay Verus Gateway
 
 Contributors: veruspay, joliverwestbrook
 Donate link: https://veruspay.io/donate/
@@ -12,9 +12,9 @@ Tested WooCommerce up to: 3.5.5
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
-=== Description ===
+## Description
 
-= Requires: WooCommerce 2.1+ =
+### Requires: WooCommerce 2.1+
 
 This plugin extends WooCommerce and integrates with the Verus blockchain, adding the ability to accept cryptocurrency payments in Verus Coin (VRSC) using either an on-store wallet daemon (best for VPS or dedicated hosting stores) or manually configured VRSC addresses (best for shared hosting stores).
 
@@ -28,9 +28,9 @@ API's used periodically by VerusPay:
 
 2 - https://explorer.veruscoin.io
 
-=== Installation ===
+## Installation
 
-= Requirements =
+### Requirements
 
 **Live Mode**
 
@@ -42,7 +42,7 @@ In Live Mode VerusPay integrates with the Verus blockchain on your e-commerce VP
 
 Manual Mode is always a "fallback", even for Live Mode operation, but also allows shared hosting store owners to use VerusPay without the additional step of setting up and configuring a Verus wallet on their web store.  You still need access to a Verus wallet you own however. I recommend using a seperate Verus CLI (command line interface) wallet just for use with your store, not your primary/personal wallet. I call this an "offline" wallet simply to differentiate it from the store-online wallet.  It should be connected to the network. Consider setting up a DigitalOcean $5 server for this using this guide: [How to Setup a DigitalOcean $5 VerusCoin Server](http://bit.ly/2Ca6LIK)
 
-= Install & Configuration Steps =
+### Install & Configuration Steps
 
 1. Setup a VPS with a minimum of 2GB RAM. Use the following link for $100 of free hosting credit: [Setup DigitalOcean Server](https://m.do.co/c/13c092042583)
 
@@ -89,25 +89,25 @@ Paste the transparent addresses you created in Step 4 into the Store VRSC Addres
 
 Lastly, customize store messages and any other settings and options to your liking.
 
-=== Frequently Asked Questions ===
+## Frequently Asked Questions
 
-= What is the text domain for translations? =
+**What is the text domain for translations?
 
 The text domain is "veruspay-verus-gateway".
 
-= How can I change the styling (CSS) of the checkout pages? =
+**How can I change the styling (CSS) of the checkout pages?
 
 CSS options are being added in a later release to the Admin section. For now, most themes come with a section where you can add your own CSS styling and you can add customizations this way.
 
-= Does this plugin work with a shared hosting plan or a host that does not have SSH access? =
+**Does this plugin work with a shared hosting plan or a host that does not have SSH access?
 
 Yes! But it will be "Manual Mode" only, meaning it is not directly connected or integrated with the blockchain and relies on transparent addresses you enter in the store settings (zs Sapling addresses are not allowed).
 
-= Can I "enforce" privacy Sapling payments? =
+**Can I "enforce" privacy Sapling payments?
 
 Yes, there is an option in the payment gateway settings within WooCommerce->Settings->Payments to enforce privacy "zs" payments.  This works in Live Mode only.
 
-== Screenshots ==
+## Screenshots
  
 1. This is the main settings area for VerusPay within WooCommerce's "Settings->Payments" section. Each of the headings expand upon clicking.
 
@@ -127,7 +127,7 @@ Yes, there is an option in the payment gateway settings within WooCommerce->Sett
 
 9. After payment is detected on the blockchain, the purchase waits for the store-set minimum confirmations and delivers the digital product or completes the sale when it's reached.
 
-=== Changelog ===
+## Changelog
 
 = 2019.02.28 - version 0.1.2 =
 
@@ -173,7 +173,7 @@ Yes, there is an option in the payment gateway settings within WooCommerce->Sett
 - Discount or Fee option for store owners allows a discount or fee % to be set for when a customer chooses to pay in Verus Coin (VRSC).
 - Test mode to allow enabling the plugin only for logged in Admins
 
-== Upgrade Notice ==
+## Upgrade Notice
 
 = 0.1.2 =
 Code improvements
@@ -184,7 +184,7 @@ Bug fixes
 = 0.1.1 =
 Add QR Invoice functionality
 
-=== Support ===
+## Support
 
 If you encounter any errors during install and configuration of VerusPay, please report them to me via email at johnwestbrook@pm.me or you can contact me via the Verus Coin official Discord at [VerusCoin Official Discord](https://discord.gg/VRKMP2S)
 
