@@ -1,6 +1,6 @@
 # VerusPay Verus Gateway
 
-Contributors: veruspay, joliverwestbrook
+- Contributors: veruspay, joliverwestbrook
 Donate link: https://veruspay.io/donate/
 Tags: woocommerce, payment gateway, gateway, cryptocurrency, blockchain, verus, verus coin, vrsc
 Requires at least: 3.8
