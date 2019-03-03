@@ -1,15 +1,25 @@
 # VerusPay Verus Gateway
 
 -Contributors: veruspay, joliverwestbrook
+
 -Donate link: https://veruspay.io/donate/
+
 -Tags: woocommerce, payment gateway, gateway, cryptocurrency, blockchain, verus, verus coin, vrsc
+
 -Requires at least: 3.8
+
 -Tested up to: 5.1
+
 -Requires PHP: 7.0
+
 -Stable tag: 0.1.2
+
 -Requires WooCommerce at least: 2.1
+
 -Tested WooCommerce up to: 3.5.5
+
 -License: MIT
+
 -License URI: https://opensource.org/licenses/MIT
 
 ## Description
