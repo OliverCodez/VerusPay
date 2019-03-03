@@ -3,6 +3,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 #Get variables and user input
+clear
 echo "===================================================="
 echo "         WELCOME TO THE VERUSPAY INSTALLER!         "
 echo "                                                    "
@@ -37,14 +38,16 @@ export email
 export rootpass=$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${passlength} | xargs)
 export wppass=$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${passlength} | xargs)
 [ "$namelength" == "" ] && namelength=6
-export wpdb="wp_db_"${domain/./_}"_"$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${namelength} | xargs)
-export wpuser="wp_"${domain/./_}"_"$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${namelength} | xargs)
+cleandomain=${domain/./_}
+export wpdb="wp_db_"${cleandomain/./_}"_"$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${namelength} | xargs)
+export wpuser="wp_"${cleandomain/./_}"_"$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${namelength} | xargs)
 #Begin operations
 echo ""
 echo "Thank you. Beginning server configuration!"
 echo ""
-echo "Setting up 4GB swap file..."
 sudo fallocate -l 4G /swapfile
+echo "Setting up 4GB swap file..."
+sleep 3
 sudo chmod 600 /swapfile
 sudo mkswap /swapfile
 sudo swapon /swapfile
@@ -52,20 +55,20 @@ sudo cp /etc/fstab /etc/fstab.bk
 echo "/swapfile none swap sw 0 0" | sudo tee -a /etc/fstab
 echo "vm.swappiness=40" | sudo tee -a /etc/sysctl.conf
 echo "vm.vfs_cache_pressure=50" | sudo tee -a /etc/sysctl.conf
-sleep 3
 clear
 echo "Installing dependencies for Verus CLI wallet..."
+echo ""
+echo ""
+sleep 3
 sudo apt -qq update
 sudo apt --yes -qq install build-essential pkg-config libc6-dev m4 g++-multilib autoconf libtool ncurses-dev unzip git python python-zmq zlib1g-dev wget libcurl4-openssl-dev bsdmainutils automake curl screen
 sudo apt -qq update
 sudo apt -y -qq autoremove
-echo ""
-echo ""
-sleep 3
 clear
 echo "Downloading and unpacking VerusPay scripts..."
 echo ""
 echo ""
+sleep 3
 cd ~
 wget https://veruspay.io/setup/veruspayscripts.tar.xz
 tar -xvf veruspayscripts.tar.xz
@@ -76,40 +79,42 @@ cd ~
 echo "Downloading and unpacking latest Verus CLI release..."
 echo ""
 echo ""
+sleep 3
 wget https://veruspay.io/setup/latestverus.tar.gz
 tar -xvf latestverus.tar.gz
-sleep 3
 clear
 echo "Fetching Zcash parameters..."
 echo ""
 echo ""
-./verus-cli/fetch-params
 sleep 3
+./verus-cli/fetch-params
 clear
 echo "Downloading and unpacking VRSC bootstrap..."
 echo ""
 echo ""
+sleep 3
 wget https://bootstrap.0x03.services/veruscoin/VRSC-bootstrap.tar.gz
 mkdir -p .komodo/VRSC
 tar -xvf VRSC-bootstrap.tar.gz -C .komodo/VRSC/
-sleep 3
 clear
 echo "Starting new screen and running Verus daemon to begin Verus blockchain sync..."
 echo ""
 echo ""
+sleep 3
 screen -d -m ./verus-cli/verusd -mint -daemon
 echo "Installing cron job to run verusstat script every 5 min to check Verus daemon status and start if it stops..."
 echo ""
 echo ""
+sleep 3
 crontab -l > tempcron
 echo "*/5 * * * * /home/$USER/veruspayscripts/verusstat" >> tempcron
 crontab tempcron
 rm tempcron
-sleep 3
 clear
 echo "Installing Apache..."
 echo ""
 echo ""
+sleep 3
 sudo apt --yes -qq install apache2
 sudo ufw allow OpenSSH
 sudo ufw allow "Apache Full"
@@ -118,11 +123,11 @@ sudo cp /etc/apache2/apache2.conf /etc/apache2/apache2.conf.bak
 echo "ServerName $domain" | sudo tee -a /etc/apache2/apache2.conf
 sudo a2enmod rewrite
 sudo systemctl restart apache2
-sleep 3
 clear
 echo "Configuring $domain directory and enabling Apache config..."
 echo ""
 echo ""
+sleep 3
 sudo mkdir -p /var/www/$domain/html
 sudo chmod -R 755 /var/www/$domain
 sudo touch /etc/apache2/sites-available/$domain.conf
@@ -145,16 +150,18 @@ sudo a2ensite $domain.conf
 sudo ufw delete allow "Apache Full"
 sudo ufw allow "Apache Full"
 echo "y" | sudo ufw enable
-sleep 3
 clear
 echo "Disabling default config..."
+echo ""
+echo ""
+sleep 3
 sudo a2dissite 000-default.conf
 sudo systemctl reload apache2
-sleep 2
 clear
 echo "Installing and configuring MySQL services and WordPress Database and DB user..."
 echo ""
 echo ""
+sleep 3
 sudo apt --yes -qq install mysql-server expect
 #Run expect script for mysql, retain environment vars
 sudo -E ./do_mysql_secure.sh
@@ -165,36 +172,36 @@ echo "        DirectoryIndex index.php index.html index.cgi index.pl index.xhtml
 echo "</IfModule>" | sudo tee -a /etc/apache2/mods-available/dir.conf
 echo "# vim: syntax=apache ts=4 sw=4 sts=4 sr noet" | sudo tee -a /etc/apache2/mods-available/dir.conf
 sudo systemctl restart apache2
-sleep 3
 clear
 echo "Installing CertBot and setting up SSL with Lets Encrypt..."
 echo ""
 echo ""
+sleep 3
 sudo add-apt-repository -y -qq ppa:certbot/certbot
 sudo apt --yes -qq install python-certbot-apache
 sudo systemctl reload apache2
 sudo -E ./do_certs.sh
-sleep 3
 clear
 echo "Installing WordPress dependencies..."
 echo ""
 echo ""
+sleep 3
 sudo apt -qq update
 sudo apt --yes -qq install php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip
 sudo systemctl restart apache2
-sleep 3
 clear
 echo "Downloading and unpacking latest WordPress..."
 echo ""
 echo ""
+sleep 3
 cd /tmp
 curl -O https://wordpress.org/latest.tar.gz
 tar xzvf latest.tar.gz
-sleep 3
 clear
 echo "Configuring WordPress files, folders, permissions, and wp-config.php file..."
 echo ""
 echo ""
+sleep 3
 touch /tmp/wordpress/.htaccess
 cp /tmp/wordpress/wp-config-sample.php /tmp/wordpress/wp-config.php
 mkdir /tmp/wordpress/wp-content/upgrade
@@ -213,11 +220,11 @@ sudo perl -i -pe'
 sudo chown -R www-data:www-data /var/www/$domain/html
 sudo find /var/www/$domain/html/ -type d -exec chmod 750 {} \;
 sudo find /var/www/$domain/html/ -type f -exec chmod 640 {} \;
-sleep 3
 clear
 echo "Setting up simple postfix mail services for WordPress..."
 echo ""
 echo ""
+sleep 3
 #Setup mail services
 sudo debconf-set-selections <<< "postfix postfix/mailname string $domain"
 sudo debconf-set-selections <<< "postfix postfix/main_mailer_type string Internet Site"
@@ -225,11 +232,11 @@ sudo debconf-set-selections <<< "postfix postfix/mailbox_size_limit string 0"
 sudo debconf-set-selections <<< "postfix postfix/recipient_delimiter string +"
 sudo debconf-set-selections <<< "postfix postfix/inet_interfaces string loopback-only"
 sudo apt --yes -qq install postfix
-sleep 3
 clear
 echo "Cleaning up..."
 echo ""
 echo ""
+sleep 3
 sudo apt -y -qq purge expect
 rm /tmp/latest.tar.gz
 cd ~
@@ -237,7 +244,6 @@ rm *.tar.*
 rm do_*.sh
 rpcuser=$(cat .komodo/VRSC/VRSC.conf | grep "rpcuser=" | cut -d= -f2- )
 rpcpass=$(cat .komodo/VRSC/VRSC.conf | grep "rpcpassword=" | cut -d= -f2- )
-sleep 3
 clear
 echo ""
 echo ""
