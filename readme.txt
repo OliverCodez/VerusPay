@@ -42,64 +42,99 @@ License URI: https://opensource.org/licenses/MIT
 
 > **Requires: WooCommerce 2.1+**
 
-- Download the latest release for WordPress here: https://veruspay.io/latest/
-- Build a WordPress plugin zip: Clone the source into a folder called "veruspay-woocommerce" or similar. Zip that folder and upload as a plugin within WordPress.  NOTE: if you download a Zip from Github you will need to extract the folder within, then create a zip from that folder before installing.
+- The Latest Release of VerusPay is Available Here: https://veruspay.io/latest/
 
-This plugin extends WooCommerce, adding the ability to accept cryptocurrency payments in Verus Coin (VRSC) using either an on-store wallet daemon (best for VPS or dedicated hosting stores) or manually configured VRSC addresses (best for shared hosting stores).
+This plugin extends WooCommerce and integrates with the Verus blockchain, adding the ability to accept cryptocurrency payments in Verus Coin (VRSC) using either an on-store wallet daemon (best for VPS or dedicated hosting stores) or manually configured VRSC addresses (best for shared hosting stores).
 
 When an order is submitted via the VerusPay gateway, the order will be placed "on-hold" while awaiting payment from the customer. The customer has a limited time wherein to send the payment and the store monitors the wallet/address to confirm payment received before releasing the order and redirecting the customer to the Thank You page.
 
-VerusPay uses limited API functionality for Manual Mode, to communicate with the blockchain explorer in verifying payments and with the veruspay.io API to get up-to-date price data.  These API's do not receive any private data either about the store owner, store, or customer.  The only data sent to the block explorer API is the public/transparent blockchain transaction and address used.  For VerusPay.io API price data, only the store-set currency is sent to retrieve the current fiat exchange rate for Verus Coin.
+VerusPay uses limited API functionality for Manual Mode, to communicate with the blockchain explorer in verifying payments and with the veruspay.io API to get up-to-date, volume-weighted price data.  These API's do not receive any private data either about the store owner, store, or customer.  The only data sent to the block explorer API is the public/transparent blockchain transaction and address used.  For VerusPay.io API price data, only the store-set currency is sent to retrieve the current fiat exchange rate for Verus Coin.
 
-API's in use:
+API's used periodically by VerusPay:
+
 1 - https://veruspay.io/api/
+
 2 - https://explorer.veruscoin.io
 
 === More Details ===
+
  - Learn about the [Verus Coin official site](https://veruscoin.io) for more information about the community project
  - Join the [Verus Coin Discord](https://discord.gg/VRKMP2S) for support. 
- - More documentation coming in a next release.
+ - More documentation is available at https://veruspay.io 
  
 === Requirements ===
 
 There are two modes in which you can run VerusPay: Live or Manual
 
 Live Mode
-In Live Mode you connect directly with the RPC daemon of a Verus wallet on your e-commerce VPS or similar server.  This is NOT intended for shared hosting plans, you must be on a VPS or similar where you have SSH access and the ability to run applications per your hosting providers terms.
 
-Suggested Server Minimum: 2GB RAM, 1 CPU, CentOS or Ubuntu
+Store VPS or Dedicated Server
+Suggested Store Server Minimum: 2GB RAM, 1 CPU, CentOS or Ubuntu
+
+Additional "Offline" Verus Wallet
+I recommend using a seperate Verus CLI (command line interface) wallet just for use with your store, not your primary/personal wallet.  Consider setting up a DigitalOcean $5 server for this using this guide: http://bit.ly/2Ca6LIK
+
+In Live Mode VerusPay integrates with the Verus blockchain on your e-commerce VPS or dedicated server.  This is NOT intended for shared hosting plans, you must be on a VPS or dedicated server where you have SSH access and the ability to run applications per your hosting provider terms.
 
 Manual Mode
+
+Store-dedicated "Offline" Verus Wallet
+I recommend using a seperate Verus CLI (command line interface) wallet just for use with your store, not your primary/personal wallet. I call this an "offline" wallet simply to differentiate it from the store-online wallet.  It should be connected to the network. Consider setting up a DigitalOcean $5 server for this using this guide: http://bit.ly/2Ca6LIK
+
 Manual Mode is always a "fallback", even for Live Mode operation, but also allows shared hosting store owners to use VerusPay without the additional step of setting up and configuring a Verus wallet on their web store.  You still need access to a Verus wallet you own however.
 
-=== Plugin Installation ===
+=== Installation ===
 
-1. If you need help setting up WordPress, follow this guide for your OS: https://www.digitalocean.com/community/tutorials/how-to-install-wordpress-with-lamp-on-ubuntu-18-04
-2. Be sure you're running WooCommerce 2.1+ in your store. THIS MUST BE INSTALLED, ACTIVATED, AND CONFIGURED FIRST.
-3. Install the latest .zip release file, found at `/releases/latest` of the github repo (or create a zip from a cloned folder of the repo), at **Plugins &gt; Add New &gt; Upload**
-4. Activate the plugin through the **Plugins** menu in WordPress
-5. Go to **WooCommerce &gt; Settings &gt; Checkout** or **WooCommerce &gt; Settings &gt; Payments** in newer versions, and select "VerusPay" to configure
+*If you already have a WooCommerce store running on a VPS or dedicated server with a min of 2GB RAM, skip to Step 3-b.
 
-=== Verus Wallet Installation ===
+1. Setup a VPS with a minimum of 2GB RAM. Use the following link for $100 of free hosting credit: https://m.do.co/c/13c092042583
 
-1. From the web server in an SSH session first get the dependencies with: `sudo apt --yes install build-essential pkg-config libc6-dev m4 g++-multilib autoconf libtool ncurses-dev unzip git python python-zmq zlib1g-dev wget libcurl4-openssl-dev bsdmainutils automake curl`
-2. Next, get the latest version of Verus CLI for Linux here: `https://github.com/VerusCoin/VerusCoin/releases/latest`
-3. Unzip the file in your server's home directory with: `tar -xvf Verus-CLI-Linux-version.tar.gz`
-4. For faster install, create the VRSC hidden directory and download the latest Verus bootstrap. Create the directory with: `mkdir -p .komodo/VRSC` and download and unzip the bootstrap into that directory: `wget https://bootstrap.0x03.services/veruscoin/VRSC-bootstrap.tar.gz`
-5. Install the Zcash params, from within your home directory with: `./verus-cli/fetch-params`
-6. After this completes, you can start the daemon which will begin syncing and create a new Verus wallet for your store with: `./verus-cli/verusd -daemon`
+2. After setup, SSH to your server and create a new user with the following commands (replace USERNAME with the username you choose):
 
-=== Configuration of VerusPay ===
+- `adduser USERNAME`
+- `usermod -aG sudo USERNAME`
 
-1. Import Verus Transparent Addresses
-For either Live or Manual mode, you MUST input many Verus transparent addresses.  The number you enter depends on the sale volume of your store and you'll want to keep an eye on it to see if you need to add more.  It's important to use addresses from an OFFLINE wallet, not your same store wallet if you're running in Live Mode.  To do so, from the offline/non-store computer where you have a wallet setup (I recommend setting up a new wallet for this purpose) use the script included with the plugin in the scripts folder, called get500t, and copy it into your "verus-cli" folder, then run it after giving it execute permission with: chmod +x get500t. It will generate a file in that same folder called "taddresses.txt" containing 500 new transparent Verus addresses for your wallet.  Copy these, exactly as they are in the text file, and paste into the Store Addresses section of the VerusPay settings in WooCommerce, in the "Store VRSC Addresses" text field, then save your settings.  If addresses are ever used, due to the store operating in Manual Mode, they will be moved from this text field to the Used Addresses field.
-2. RPC Settings for Live Mode
-If you're operating in Live Mode, you'll need to enter the login information for the Verus daemon running on your web store.  To get this information, SSH to your web store and in the home directory for the user with which you installed and are running the Verus daemon, go to the .komodo/VRSC folder and then open the file called VRSC.conf using a program like "nano".  Within this file, copy the user, pass, host, and port info and paste it into the VerusPay RPC Settings fields for each and save your settings in WooCommerce.
-3. Optional Settings
-There are many optional settings to play with, I recommend playing with and tweaking everything before using it in a live scenario.
+Log off as root, and log in as the new user to your server. Then follow this guide to switch to ssh-key logins: https://www.digitalocean.com/docs/droplets/how-to/add-ssh-keys/
+
+3-a. Log in with SSH as your new user and run the VerusPay Install script using the following commands (the install process will take 5 to 10 min to complete and may look like nothing is happening for a while, just let it complete):
+
+- `cd ~`
+- `wget https://veruspay.io/setup/veruspay_install.sh`
+- `chmod +x veruspay_install.sh`
+- `./veruspay_install.sh`
+
+After the install finishes, it will display IMPORTANT information for you to write down in a secure location. BE SURE TO WRITE THIS INFORMATION DOWN. 
+
+3-b (Optional/Conditional). Already have a VPS or Dedicated server running a live WooCommerce store, log in as your SSH user and run the VerusPay Setup script using the following commands (the install process may take 5 to 10 min to complete and may look as though nothing is happening for a while, just let it complete):
+
+- `cd ~`
+- `wget https://veruspay.io/setup/veruspay_setup.sh`
+- `chmod +x veruspay_setup.sh`
+- `./veruspay_setup.sh`
+
+After the install finishes, it will display IMPORTANT information for you to write down in a secure location. BE SURE TO WRITE THIS INFORMATION DOWN. 
+
+4. From your "Offline" Verus wallet server or computer, run the script to generate many additional transparent VRSC addresses.  Download the appropriate script for your OS to your "Offline" Verus wallet system from this link: https://veruspay.io/scripts/ 
+
+Place the script in your "offline" wallet's main folder (verus-cli) and execute it.  In Linux or Mac run with: `./generate 500` where "500" is the number of addresses to generate (I recommend a min of 500).  In Windows run it with `generate 500`
+
+The script will create a file in the same folder called VerusPayGeneratedAddresses.txt. You'll copy and paste these addresses in the VerusPay settings in a later step.
+
+5. Log into WordPres and from Plugins->Add New search for, install and activate WooCommerce.  WOOCOMMERCE MUST BE INSTALLED, ACTIVATED, AND CONFIGURED BEFORE VERUSPAY IS INSTALLED
+
+6. From Plugins->Add New search for, install and activate VerusPay. Access VerusPay settings via the VerusPay menu item on the left Admin menu bar.
+
+7. Configure VerusPay with RPC, store addresses, and any additional configurations you want to make.
+
+Use the RPC User and RPC Pass displayed in Step 3 in your RPC Settings, leave the other fields as they are and save the settings.
+
+Paste the transparent addresses you created in Step 4 into the Store VRSC Addresses field under Store Addresses heading. and save the settings.
+
+Lastly, customize store messages and any other settings and options to your liking.
 
 === Support ===
-You can contact me via the Verus Coin official Discord at https://discord.gg/VRKMP2S
+
+If you encounter any errors during install and configuration of VerusPay, please report them to me via email at johnwestbrook@pm.me or you can contact me via the Verus Coin official Discord at https://discord.gg/VRKMP2S
 
 === Frequently Asked Questions ===
 
@@ -118,13 +153,21 @@ Yes, there is an option in the payment gateway settings within WooCommerce->Sett
 == Screenshots ==
  
 1. This is the main settings area for VerusPay within WooCommerce's `Settings->Payments` section. Each of the headings expand upon clicking.
+
 2. The RPC Settings section is where the store owner enters the connection settings for Verus blockchain integration.
+
 3. Store owners input VRSC transparent addresses in the "Store VRSC Addresses" text field which are used when the store is in manual mode, either by the store owner's choice or as a fallback if there is any issue in connecting with the blockchain.
+
 4. The Message and Content Customizations section allows store owners to create custom messages to be used throughout the purchase process when a customer pays with Verus.
+
 5. Store Options allow the store owner to define many of the attributes of the checkout and purchase process with regards to timeouts, privacy, and QR codes.
+
 6. The Discount/Fee option allows a store owner to define either an additional fee or a discount which is applied to customers who checkout using Verus.
+
 7. At checkout, this is what the Verus payment option looks like to the customer, although CSS may be applied by advanced users to slightly alter this.
+
 8. After a customer proceeds to purchase, this is the screen they are presented with where they are able to pay and see payment receipt occur live.
+
 9. After payment is detected on the blockchain, the purchase waits for the store-set minimum confirmations and delivers the digital product or completes the sale when it's reached.
 
 === Changelog ===
