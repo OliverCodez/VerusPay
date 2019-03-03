@@ -42,8 +42,6 @@ License URI: https://opensource.org/licenses/MIT
 
 > **Requires: WooCommerce 2.1+**
 
-- The Latest Release of VerusPay is Available Here: https://veruspay.io/latest/
-
 This plugin extends WooCommerce and integrates with the Verus blockchain, adding the ability to accept cryptocurrency payments in Verus Coin (VRSC) using either an on-store wallet daemon (best for VPS or dedicated hosting stores) or manually configured VRSC addresses (best for shared hosting stores).
 
 When an order is submitted via the VerusPay gateway, the order will be placed "on-hold" while awaiting payment from the customer. The customer has a limited time wherein to send the payment and the store monitors the wallet/address to confirm payment received before releasing the order and redirecting the customer to the Thank You page.
@@ -60,7 +58,7 @@ API's used periodically by VerusPay:
 
  - Learn about the [Verus Coin official site](https://veruscoin.io) for more information about the community project
  - Join the [Verus Coin Discord](https://discord.gg/VRKMP2S) for support. 
- - More documentation is available at https://veruspay.io 
+ - More documentation is available at [VerusPay Official Site](https://veruspay.io)
  
 === Requirements ===
 
@@ -72,14 +70,14 @@ Store VPS or Dedicated Server
 Suggested Store Server Minimum: 2GB RAM, 1 CPU, CentOS or Ubuntu
 
 Additional "Offline" Verus Wallet
-I recommend using a seperate Verus CLI (command line interface) wallet just for use with your store, not your primary/personal wallet.  Consider setting up a DigitalOcean $5 server for this using this guide: http://bit.ly/2Ca6LIK
+I recommend using a seperate Verus CLI (command line interface) wallet just for use with your store, not your primary/personal wallet.  Consider setting up a DigitalOcean $5 server for this using this guide: [How to Setup a DigitalOcean $5 VerusCoin Server](http://bit.ly/2Ca6LIK)
 
 In Live Mode VerusPay integrates with the Verus blockchain on your e-commerce VPS or dedicated server.  This is NOT intended for shared hosting plans, you must be on a VPS or dedicated server where you have SSH access and the ability to run applications per your hosting provider terms.
 
 Manual Mode
 
 Store-dedicated "Offline" Verus Wallet
-I recommend using a seperate Verus CLI (command line interface) wallet just for use with your store, not your primary/personal wallet. I call this an "offline" wallet simply to differentiate it from the store-online wallet.  It should be connected to the network. Consider setting up a DigitalOcean $5 server for this using this guide: http://bit.ly/2Ca6LIK
+I recommend using a seperate Verus CLI (command line interface) wallet just for use with your store, not your primary/personal wallet. I call this an "offline" wallet simply to differentiate it from the store-online wallet.  It should be connected to the network. Consider setting up a DigitalOcean $5 server for this using this guide: [How to Setup a DigitalOcean $5 VerusCoin Server](http://bit.ly/2Ca6LIK)
 
 Manual Mode is always a "fallback", even for Live Mode operation, but also allows shared hosting store owners to use VerusPay without the additional step of setting up and configuring a Verus wallet on their web store.  You still need access to a Verus wallet you own however.
 
@@ -87,14 +85,14 @@ Manual Mode is always a "fallback", even for Live Mode operation, but also allow
 
 *If you already have a WooCommerce store running on a VPS or dedicated server with a min of 2GB RAM, skip to Step 3-b.
 
-1. Setup a VPS with a minimum of 2GB RAM. Use the following link for $100 of free hosting credit: https://m.do.co/c/13c092042583
+1. Setup a VPS with a minimum of 2GB RAM. Use the following link for $100 of free hosting credit: [Setup DigitalOcean Server](https://m.do.co/c/13c092042583)
 
 2. After setup, SSH to your server and create a new user with the following commands (replace USERNAME with the username you choose):
 
 - `adduser USERNAME`
 - `usermod -aG sudo USERNAME`
 
-Log off as root, and log in as the new user to your server. Then follow this guide to switch to ssh-key logins: https://www.digitalocean.com/docs/droplets/how-to/add-ssh-keys/
+Log off as root, and log in as the new user to your server. Then follow this guide to switch to ssh-key logins: [How to Setup SSH-Key Login](https://www.digitalocean.com/docs/droplets/how-to/add-ssh-keys/)
 
 3-a. Log in with SSH as your new user and run the VerusPay Install script using the following commands (the install process will take 5 to 10 min to complete and may look like nothing is happening for a while, just let it complete):
 
@@ -114,7 +112,7 @@ After the install finishes, it will display IMPORTANT information for you to wri
 
 After the install finishes, it will display IMPORTANT information for you to write down in a secure location. BE SURE TO WRITE THIS INFORMATION DOWN. 
 
-4. From your "Offline" Verus wallet server or computer, run the script to generate many additional transparent VRSC addresses.  Download the appropriate script for your OS to your "Offline" Verus wallet system from this link: https://veruspay.io/setup/scripts/
+4. From your "Offline" Verus wallet server or computer, run the script to generate many additional transparent VRSC addresses.  Download the appropriate script for your OS to your "Offline" Verus wallet system from this link: [VerusPay Helper Scripts](https://veruspay.io/setup/scripts/)
 
 Place the script in your "offline" wallet's main folder (verus-cli) and execute it.  In Linux or Mac run with: `./getaddresses.sh 500` where "500" is the number of addresses to generate (I recommend a min of 500).  In Windows run it with `getaddresses.bat 500`
 
@@ -134,12 +132,12 @@ Lastly, customize store messages and any other settings and options to your liki
 
 === Support ===
 
-If you encounter any errors during install and configuration of VerusPay, please report them to me via email at johnwestbrook@pm.me or you can contact me via the Verus Coin official Discord at https://discord.gg/VRKMP2S
+If you encounter any errors during install and configuration of VerusPay, please report them to me via email at johnwestbrook@pm.me or you can contact me via the Verus Coin official Discord at [VerusCoin Official Discord](https://discord.gg/VRKMP2S)
 
 === Frequently Asked Questions ===
 
 **What is the text domain for translations?**
-The text domain is `veruspay-verus-gateway`.
+The text domain is "veruspay-verus-gateway".
 
 **How can I change the styling (CSS) of the checkout pages?**
 CSS options are being added in a later release to the Admin section. For now, most themes come with a section where you can add your own CSS styling and you can add customizations this way.
@@ -152,7 +150,7 @@ Yes, there is an option in the payment gateway settings within WooCommerce->Sett
 
 == Screenshots ==
  
-1. This is the main settings area for VerusPay within WooCommerce's `Settings->Payments` section. Each of the headings expand upon clicking.
+1. This is the main settings area for VerusPay within WooCommerce's "Settings->Payments" section. Each of the headings expand upon clicking.
 
 2. The RPC Settings section is where the store owner enters the connection settings for Verus blockchain integration.
 
@@ -177,7 +175,7 @@ Yes, there is an option in the payment gateway settings within WooCommerce->Sett
 - Simplify code functions
 - Remove cURL, phpexttools, easybitcoin
 - Create wp_remote_post and get functions for all cURL requests
-- Consolidate all blockchain integration functions into `wc-veruspay-chaintools.php`
+- Consolidate all blockchain integration functions into "wc-veruspay-chaintools.php"
 - Rename all functions to unique names
 - Edit text domain and slug to match as veruspay-verus-gateway
 - Include uninstall script for clean uninstallation of plugin
