@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: VerusPay Verus Gateway
- * Plugin URI: https://developer.wordpress.org/plugins/veruspay-verus-gateway/
+ * Plugin URI: https://wordpress.org/plugins/veruspay-verus-gateway/
  * Description: Accept Verus Coin (VRSC) cryptocurrency in your online WooCommerce store for physical or digital products.
  * Version: 0.1.2
  * Author: J Oliver Westbrook
