@@ -100,12 +100,12 @@ clear
 echo "Starting new screen and running Verus daemon to begin Verus blockchain sync..."
 echo ""
 echo ""
-sleep 3
+sleep 6
 screen -d -m ./verus-cli/verusd -mint -daemon
 echo "Installing cron job to run verusstat script every 5 min to check Verus daemon status and start if it stops..."
 echo ""
 echo ""
-sleep 3
+sleep 6
 crontab -l > tempcron
 echo "*/5 * * * * /home/$USER/veruspayscripts/verusstat" >> tempcron
 crontab tempcron
@@ -127,7 +127,7 @@ clear
 echo "Configuring $domain directory and enabling Apache config..."
 echo ""
 echo ""
-sleep 3
+sleep 6
 sudo mkdir -p /var/www/$domain/html
 sudo chmod -R 755 /var/www/$domain
 sudo touch /etc/apache2/sites-available/$domain.conf
@@ -161,7 +161,7 @@ clear
 echo "Installing and configuring MySQL services and WordPress Database and DB user..."
 echo ""
 echo ""
-sleep 3
+sleep 6
 sudo apt --yes -qq install mysql-server expect
 #Run expect script for mysql, retain environment vars
 sudo -E ./do_mysql_secure.sh
@@ -176,8 +176,8 @@ clear
 echo "Installing CertBot and setting up SSL with Lets Encrypt..."
 echo ""
 echo ""
-sleep 3
-sudo add-apt-repository -y -qq ppa:certbot/certbot
+sleep 6
+sudo add-apt-repository -y ppa:certbot/certbot
 sudo apt --yes -qq install python-certbot-apache
 sudo systemctl reload apache2
 sudo -E ./do_certs.sh
@@ -201,7 +201,7 @@ clear
 echo "Configuring WordPress files, folders, permissions, and wp-config.php file..."
 echo ""
 echo ""
-sleep 3
+sleep 6
 touch /tmp/wordpress/.htaccess
 cp /tmp/wordpress/wp-config-sample.php /tmp/wordpress/wp-config.php
 mkdir /tmp/wordpress/wp-content/upgrade
