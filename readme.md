@@ -1,26 +1,16 @@
 # VerusPay Verus Gateway
 
--Contributors: veruspay, joliverwestbrook
-
--Donate link: https://veruspay.io/donate/
-
--Tags: woocommerce, payment gateway, gateway, cryptocurrency, blockchain, verus, verus coin, vrsc
-
--Requires at least: 3.8
-
--Tested up to: 5.1
-
--Requires PHP: 7.0
-
--Stable tag: 0.1.2
-
--Requires WooCommerce at least: 2.1
-
--Tested WooCommerce up to: 3.5.5
-
--License: MIT
-
--License URI: https://opensource.org/licenses/MIT
+- Contributors: veruspay, joliverwestbrook
+- Donate link: https://veruspay.io/donate/
+- Tags: woocommerce, payment gateway, gateway, cryptocurrency, blockchain, verus, verus coin, vrsc
+- Requires at least: 3.8
+- Tested up to: 5.1
+- Requires PHP: 7.0
+- Stable tag: 0.1.2
+- Requires WooCommerce at least: 2.1
+- Tested WooCommerce up to: 3.5.5
+- License: MIT
+- License URI: https://opensource.org/licenses/MIT
 
 ## Description
 
@@ -58,26 +48,33 @@ Manual Mode is always a "fallback", even for Live Mode operation, but also allow
 
 2. After setup, SSH to your server and create a new user with the following commands (replace USERNAME with the username you choose):
 
-- `adduser USERNAME`
-- `usermod -aG sudo USERNAME`
+`adduser USERNAME`
+
+`usermod -aG sudo USERNAME`
 
 Log off as root, and log in as the new user to your server. Then follow this guide to switch to ssh-key logins: [How to Setup SSH-Key Login](https://www.digitalocean.com/docs/droplets/how-to/add-ssh-keys/)
 
 3-a. Log in with SSH as your new user and run the VerusPay Install script using the following commands (the install process will take 5 to 10 min to complete and may look like nothing is happening for a while, just let it complete):
 
-- `cd ~`
-- `wget https://veruspay.io/setup/veruspay_install.sh`
-- `chmod +x veruspay_install.sh`
-- `./veruspay_install.sh`
+`cd ~`
+
+`wget https://veruspay.io/setup/veruspay_install.sh`
+
+`chmod +x veruspay_install.sh`
+
+`./veruspay_install.sh`
 
 After the install finishes, it will display IMPORTANT information for you to write down in a secure location. BE SURE TO WRITE THIS INFORMATION DOWN. 
 
 3-b (Optional/Conditional). Already have a VPS or Dedicated server running a live WooCommerce store, log in as your SSH user and run the VerusPay Setup script using the following commands (the install process may take 5 to 10 min to complete and may look as though nothing is happening for a while, just let it complete):
 
-- `cd ~`
-- `wget https://veruspay.io/setup/veruspay_setup.sh`
-- `chmod +x veruspay_setup.sh`
-- `./veruspay_setup.sh`
+`cd ~`
+
+`wget https://veruspay.io/setup/veruspay_setup.sh`
+
+`chmod +x veruspay_setup.sh`
+
+`./veruspay_setup.sh`
 
 After the install finishes, it will display IMPORTANT information for you to write down in a secure location. BE SURE TO WRITE THIS INFORMATION DOWN. 
 
