@@ -38,9 +38,8 @@ export email
 export rootpass=$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${passlength} | xargs)
 export wppass=$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${passlength} | xargs)
 [ "$namelength" == "" ] && namelength=6
-cleandomain=${domain/./_}
-export wpdb="wp_db_"${cleandomain/./_}"_"$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${namelength} | xargs)
-export wpuser="wp_"${cleandomain/./_}"_"$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${namelength} | xargs)
+export wpdb="wp_db_"$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${namelength} | xargs)
+export wpuser="wp_us_"$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${namelength} | xargs)
 #Begin operations
 echo ""
 echo "Thank you. Beginning server configuration!"
