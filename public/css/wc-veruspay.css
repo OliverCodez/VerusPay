@@ -248,6 +248,11 @@ pre.wc_veruspay_address {
 .wc_veruspay_qr_width_noinv {
     width:100%;
 }
+.wc_veruspay_qr_width_noinv img {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
 .wc_veruspay_qr_title {
     display: block;
     width: 100%;
