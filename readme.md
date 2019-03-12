@@ -8,7 +8,7 @@
 - Requires PHP: 7.0
 - Stable tag: 0.1.2
 - Requires WooCommerce at least: 2.1
-- Tested WooCommerce up to: 3.5.5
+- Tested WooCommerce up to: 3.5.6
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
 
@@ -144,6 +144,7 @@ Yes, there is an option in the payment gateway settings within WooCommerce->Sett
 - Rewrite all payment functions for multi-coin inclusion
 - Rewrite checkout process functions for multicoin compatibility
 - Added PIRATE ARRR as a payment option
+- Add PIRATE ARRR media icon files
 
 = 2019.02.28 - version 0.1.2 =
 
