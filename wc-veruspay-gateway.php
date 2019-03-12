@@ -732,7 +732,6 @@ function wc_veruspay_init() {
 		 * @access public
 		 * @param global $wc_veruspay_text_helper
 		 * @param WC_Payment_Gateway $wc_veruspay_price
-		 * @param WC_Order $order
 		 */
 		public function payment_fields() {
 			global $wc_veruspay_text_helper;
@@ -741,8 +740,6 @@ function wc_veruspay_init() {
 			
 			// Get payment method and store currency and symbol
 			$wc_veruspay_payment_method = WC()->session->get('chosen_payment_method');
-			$order = new WC_Order($post->ID);
-			$order = $order->get_id();
 
 			// Check if coin has been selected, if not attempt to activate VRSC
 			if ( ! empty( $_POST['wc_veruspay_coin'] ) ) {
