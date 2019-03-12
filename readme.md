@@ -136,6 +136,15 @@ Yes, there is an option in the payment gateway settings within WooCommerce->Sett
 
 ## Changelog
 
+= 2019.03.12 - version 0.2.0 =
+
+- Rewrite primary admin form to include multiple coins
+- Rewrite primary blockchain integration scripts
+- Implement new blockchain integration mechanism
+- Rewrite all payment functions for multi-coin inclusion
+- Rewrite checkout process functions for multicoin compatibility
+- Added PIRATE ARRR as a payment option
+
 = 2019.02.28 - version 0.1.2 =
 
 - Simplify code functions
@@ -181,6 +190,9 @@ Yes, there is an option in the payment gateway settings within WooCommerce->Sett
 - Test mode to allow enabling the plugin only for logged in Admins
 
 ## Upgrade Notice
+
+= 0.2.0 =
+Major Release - New Crypto Payment Method Pirate ARRR Implemented
 
 = 0.1.2 =
 Code improvements

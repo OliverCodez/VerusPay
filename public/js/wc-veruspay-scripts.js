@@ -16,6 +16,9 @@ var updateCheckout = function() {
 	};
 	t.trigger_update_checkout();
 }
+var updatePayment = function() {
+	jQuery('#wc_veruspay_updating_price').fadeIn();
+}
 setInterval( function() {
 	updateCheckout();
 	var nowtime = jQuery.now();
@@ -77,7 +80,10 @@ jQuery(function($){
 		});
 		// For change payment method
 		$('form.checkout').on( 'change', 'input[name^="payment_method"]', function() {
-            updateCheckout();
+			updateCheckout();
+		});
+		$('form.checkout').on( 'change', '#wc_veruspay_coin', function() {
+      updatePayment();
 		});
 		  var a = document.getElementById('wc_veruspay_timeleft');
 		  var a = a.innerHTML.split(':');
