@@ -49,10 +49,6 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-// TESTING
-ini_set('display_errors', 'On');
-error_reporting(E_ALL);
-// TESTING
 
 global $wc_veruspay_phpextconfig;
 $wc_veruspay_phpextconfig = array(
@@ -289,9 +285,17 @@ function wc_veruspay_init() {
 					'title' => __( 'Verus Wallet IP/Path', 'veruspay-verus-gateway' ),
 					'type' => 'text',
 					'description' => __( 'Enter the IP address of your Verus Wallet server (or leave localhost if on this server)', 'veruspay-verus-gateway' ),
-					'default' => 'localhost/chaintools',
+					'default' => 'localhost',
 					'desc_tip' => true,
 					'class' => 'wc_veruspay_setwalletip-toggle wc_veruspay_walletsettings-toggle',
+				),
+				'vrsc_ssl'	=> array(
+					'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
+					'type' => 'checkbox',
+					'label' => __( 'Enable SSL connection (remote only - recommended)', 'veruspay-verus-gateway' ),
+					'description' => '',
+					'default' => 'yes',
+					'class' => 'wc_veruspay_walletsettings-toggle',
 				),
 				// FUTURE USE
 				//'vrsc_explorer' => array(
@@ -329,9 +333,17 @@ function wc_veruspay_init() {
 					'title' => __( 'PIRATE Wallet IP/Path', 'veruspay-verus-gateway' ),
 					'type' => 'text',
 					'description' => __( 'Enter the IP address of your Pirate Wallet server (or leave localhost if on this server)', 'veruspay-verus-gateway' ),
-					'default' => 'localhost/chaintools',
+					'default' => 'localhost',
 					'desc_tip' => true,
 					'class' => 'wc_veruspay_setwalletip-toggle wc_veruspay_walletsettings-toggle',
+				),
+				'arrr_ssl'	=> array(
+					'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
+					'type' => 'checkbox',
+					'label' => __( 'Enable SSL connection (remote only - recommended)', 'veruspay-verus-gateway' ),
+					'description' => '',
+					'default' => 'yes',
+					'class' => 'wc_veruspay_walletsettings-toggle',
 				),
 				'arrr_sapling'	=> array(	
 					'title' => __( 'ARRR Privacy', 'veruspay-verus-gateway' ),
@@ -567,11 +579,35 @@ function wc_veruspay_init() {
 			)
 		);
 			// Set wallet data to wallet array, passes back to class
+			if ( $this->get_option('vrsc_ssl') == 'yes' ) {
+				if ( strpos ( $this->get_option('vrsc_ip'), 'localhost' ) !== false ) {
+					$this->update_option( 'vrsc_ssl', 'no' );
+					$wc_veruspay_protovrsc = 'http';
+				}
+				else {
+					$wc_veruspay_protovrsc = 'https';
+				}
+			}
+			else {
+				$wc_veruspay_protovrsc = 'http';
+			}
+			if ( $this->get_option('arrr_ssl') == 'yes' ) {
+				if ( strpos ( $this->get_option('arrr_ip'), 'localhost' ) !== false ) {
+					$this->update_option( 'arrr_ssl', 'no' );
+					$wc_veruspay_protoarrr = 'http';
+				}
+				else {
+					$wc_veruspay_protoarrr = 'https';
+				}
+			}
+			else {
+				$wc_veruspay_protoarrr = 'http';
+			}
 			$wc_veruspay_wallets = array(
 				'vrsc' => array(
 					'enabled' => $this->get_option( 'vrsc_enable' ),
 					'name' => 'Verus Coin (VRSC)',
-					'ip' => $this->get_option( 'vrsc_ip' ),
+					'ip' => $wc_veruspay_protovrsc . '://' . $this->get_option( 'vrsc_ip' ) . '/veruschaintools',
 					// FUTURE USE
 					//'explorer' => $this->get_option( 'vrsc_explorer' ),
 					'stat' => false,
@@ -583,7 +619,7 @@ function wc_veruspay_init() {
 				'arrr' => array(
 					'enabled' => $this->get_option( 'arrr_enable' ),
 					'name' => 'Pirate (ARRR)',
-					'ip' => $this->get_option( 'arrr_ip' ),
+					'ip' => $wc_veruspay_protoarrr . '://' . $this->get_option( 'arrr_ip' ) . '/veruschaintools',
 					// FUTURE USE
 					//'explorer' => null,
 					'stat' => false,

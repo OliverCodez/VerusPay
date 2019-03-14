@@ -61,9 +61,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function wc_veruspay_stat( $wc_veruspay_wallet, $coin ) {
     // Create new wallet connection to compatible Daemon
-    $url = 'http://'.$wc_veruspay_wallet[ 'ip' ];
+    $url = $wc_veruspay_wallet[ 'ip' ];
     // Get response data
     $response = wp_remote_post( $url, array(
+        'sslverify' => false,
         'headers'     => array( 'Content-Type' => 'application/json; charset=utf-8' ),
         'body' => array(
                     'exec' => 'test',
@@ -92,7 +93,7 @@ function wc_veruspay_stat( $wc_veruspay_wallet, $coin ) {
 }
 // Function to access blockchain using wordpress built-in wp_remote_post 
 function wc_veruspay_go( $wc_veruspay_wallet, $coin, $exec, $hash, $amt ){
-    $url = 'http://'.$wc_veruspay_wallet[ 'ip' ];
+    $url = $wc_veruspay_wallet[ 'ip' ];
     $body = array(
         'coin' => $coin,
         'exec' => $exec,
@@ -101,6 +102,7 @@ function wc_veruspay_go( $wc_veruspay_wallet, $coin, $exec, $hash, $amt ){
     );
     // Get blockchain data from method and params
     $response = wp_remote_post( $url, array(
+        'sslverify' => false,
         'headers' => array( 'Content-Type' => 'application/json; charset=utf-8' ),
 	    'body' => $body,
 	    'method' => 'GET',
