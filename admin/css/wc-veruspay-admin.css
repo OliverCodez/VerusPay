@@ -37,6 +37,24 @@
     line-height: 40px;
 }
 
+.wc_veruspay_title-sub {
+	background: transparent !important;
+    font-size: 1.2rem !important;
+    padding: 0 !important;
+	height: 24px !important;
+    line-height: 24px !important;
+    margin: 0;
+    margin-top: 20px;
+    border-bottom: gray 1px solid;
+    max-width: 700px;
+}
+
+.wc_veruspay_title-sub-small {
+    font-weight: normal !important;
+    font-size: 12px !important;
+    font-style: italic !important;
+    padding: 0 10px !important;
+}
 .wc_veruspay_indent {
     margin-left: 15px;
 }
