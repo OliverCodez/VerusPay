@@ -16,7 +16,7 @@
 
 ### Requires: WooCommerce 2.1+
 
-This plugin extends WooCommerce and integrates with the Verus blockchain, adding the ability to accept cryptocurrency payments in Verus Coin (VRSC) using either an on-store wallet daemon (best for VPS or dedicated hosting stores) or manually configured VRSC addresses (best for shared hosting stores).
+This plugin extends WooCommerce and integrates with the Verus blockchain, adding the ability to accept cryptocurrency payments in Verus Coin (VRSC) using either an on-store wallet daemon (not recommended) or in conjunction with a remote wallet server (recommended).
 
 When an order is submitted via the VerusPay gateway, the order will be placed "on-hold" while awaiting payment from the customer. The customer has a limited time wherein to send the payment and the store monitors the wallet/address to confirm payment received before releasing the order and redirecting the customer to the Thank You page.
 
@@ -38,39 +38,27 @@ If only acting as a store, with your crypto wallets on a remote server, virtuall
 
 **Crypto Wallet Daemon Server**
 
-This can be the same server as your web store (NOT RECOMMENDED) or a remote and dedicated wallet daemon server (RECOMMENDED).  In either case, it is recommended that the Wallet server have a minimum of 2GB of RAM only if it also has a 4GB SWAP.  Otherwise more RAM.
+This can be the same server as your web store (NOT RECOMMENDED) or a remote and dedicated wallet daemon server (RECOMMENDED).  It is recommended that the Wallet server have a minimum of 2GB of RAM only if it also has a 4GB SWAP.  Otherwise more RAM.
 
 Consider setting up a DigitalOcean server for this using this guide: [How to Setup a DigitalOcean $5 VerusCoin Server](http://bit.ly/2Ca6LIK) but choose a 2GB minimum server as your Wallet Server.
 
-The following install steps assume you are using a remotely dedicated Wallet Daemon server to host your crypto wallets.  If you are using them on the same server as your store, simply run the install script mentioned in step 3 below from your store server and when prompted, choose the option that it is the same server.
+Follow this guide to setup your crypto wallet daemon server and the Verus Chain Tools, required for full blockchain integrated features of VerusPay:
+
+[Wallet Server & Verus Chain Tools Install Guide and Script](https://github.com/joliverwestbrook/VerusPayInstallScripts/blob/master/README.md)
+
+After the install finishes, it will display IMPORTANT information for you to write down in a secure location. BE SURE TO WRITE THIS INFORMATION DOWN. 
 
 ### Install & Configuration Steps
 
 **Configure Your Wallet Daemon Server:**
 
-1. Setup a VPS with a minimum of 2GB RAM. Use the following link for $100 of free hosting credit: [Setup DigitalOcean Server](https://m.do.co/c/13c092042583)
+1. Configure Wallet Settings
 
-2. After setup, SSH to your server and create a new user with the following commands (replace USERNAME with the username you choose):
+After you install VerusPay, configure each coin's Wallet Settings.  You must use the Verus Chain Tools installation script either on a remote Wallet Server (recommended) or on your store server, by following [this guide](https://github.com/joliverwestbrook/VerusPayInstallScripts/blob/master/README.md)
 
-`adduser USERNAME`
+If using a remote wallet server, it is recommended to enable SSL.  If your wallet deamons are local to your store server, https is disabled.
 
-`usermod -aG sudo USERNAME`
-
-Log off as root, and log in as the new user to your server. Then follow this guide to switch to ssh-key logins: [How to Setup SSH-Key Login](https://www.digitalocean.com/docs/droplets/how-to/add-ssh-keys/)
-
-3. Log in with SSH as your new user and run the VerusPay Install script using the following commands (the install process will take 5 to 10 min to complete and may look like nothing is happening for a while, just let it complete):
-
-`cd ~`
-
-`wget https://veruspay.io/setup/veruspay_chaintools_install.sh`
-
-`chmod +x veruspay_chaintools_install.sh`
-
-`./veruspay_chaintools_install.sh`
-
-After the install finishes, it will display IMPORTANT information for you to write down in a secure location. BE SURE TO WRITE THIS INFORMATION DOWN. 
-
-4. As best practice for all Daemons with transparent addresses (e.g. Verus), it is required to generate and input a LOT of additional transaparent wallet addresses as a means of backup in case your Wallet Daemon server goes down.  
+2. As best practice for all Daemons with transparent addresses (e.g. Verus), it is required to generate and input a LOT of additional transaparent wallet addresses as a means of backup in case your Wallet Daemon server goes down.  
 
 To do so, from a DIFFERENT server (not your new wallet daemon server...we'll call this your "offline" wallet), run the script to generate many additional transparent VRSC addresses.  Download the appropriate script for your OS to your "Offline" Verus wallet system from this link: [VerusPay Helper Scripts](https://veruspay.io/setup/scripts/)
 
@@ -78,17 +66,7 @@ Place the script in your "offline" wallet's main folder (verus-cli) and execute 
 
 The script will create a file in the same folder called VerusPayGeneratedAddresses.txt. You'll copy and paste these addresses in the VerusPay settings in a later step.
 
-5. Log into WordPres and from Plugins->Add New search for, install and activate WooCommerce.  WOOCOMMERCE MUST BE INSTALLED, ACTIVATED, AND CONFIGURED BEFORE VERUSPAY IS INSTALLED
-
-6. From Plugins->Add New search for, install and activate VerusPay. Access VerusPay settings via the VerusPay menu item on the left Admin menu bar.
-
-7. Configure VerusPay with your wallet paths, store addresses, and any additional configurations you want to make.
-
-For the Wallet IP/Path, if your wallet daemon server is remote (as recommended) simply put the IP address of that remote server for each daemon. It is not required that all daemons be on the same remote server, each can be different.  If your wallet daemons are on the same server as your web store, leave the default of "localhost".
-
-Paste the transparent addresses you created in Step 4 into the Store Addresses field under Store Addresses heading for any compatible crypto and save your settings.
-
-Lastly, customize store messages and any other settings and options to your liking.
+3. Lastly, customize store messages and any other settings and options to your liking.
 
 ## Frequently Asked Questions
 
@@ -102,17 +80,17 @@ CSS options are being added in a later release to the Admin section. For now, mo
 
 **Does this plugin work with a shared hosting plan or a host that does not have SSH access?
 
-Yes! But it will be "Manual Mode" only, meaning it is not directly connected or integrated with the blockchain and relies on transparent addresses you enter in the store settings (zs Sapling addresses are not allowed).
+Yes! Because it is recommended you setup a remotely dedicated wallet server, your store can be on any capable hosting plan.  You can also use "manual mode" for any transparent-capable wallet (e.g. Verus)
 
 **Can I "enforce" privacy Sapling payments?
 
-Yes, there is an option in the payment gateway settings within WooCommerce->Settings->Payments to enforce privacy "zs" payments.  This works in Live Mode only.
+Yes, there is an option in the payment gateway settings within WooCommerce->Settings->Payments to enforce privacy "zs" payments.
 
 ## Screenshots
  
 1. This is the main settings area for VerusPay within WooCommerce's "Settings->Payments" section. Each of the headings expand upon clicking.
 
-2. The RPC Settings section is where the store owner enters the connection settings for Verus blockchain integration.
+2. The Wallet Settings section is where the store owner enters the connection settings for blockchain integration.
 
 3. Store owners input VRSC transparent addresses in the "Store VRSC Addresses" text field which are used when the store is in manual mode, either by the store owner's choice or as a fallback if there is any issue in connecting with the blockchain.
 
