@@ -85,11 +85,13 @@ jQuery(function($){
 		$('form.checkout').on( 'change', '#wc_veruspay_coin', function() {
       updatePayment();
 		});
-		  var a = document.getElementById('wc_veruspay_timeleft');
+		if ($('#wc_veruspay_timeleft').length > 0) {
+			var a = document.getElementById('wc_veruspay_timeleft');
 		  var a = a.innerHTML.split(':');
 		  var expiretime = ((+a[0]) * 60 + (+a[1]));
 		  var expiretime = new Date(Date.parse(new Date()) + expiretime * 1000);
 		  initializeMinCountDown('wc_veruspay_timeleft', expiretime);
+		}
 	});
 });
 
