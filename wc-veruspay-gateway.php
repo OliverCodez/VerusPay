@@ -1096,66 +1096,69 @@ add_action( 'woocommerce_order_status_on-hold', 'wc_veruspay_set_address' ); //C
 function wc_veruspay_set_address( $order_id ) {
 	global $wc_veruspay_text_helper;
 	$wc_veruspay_class = new WC_Gateway_VerusPay();
-	// If store is in Native mode and reachable, get a fresh address
-	$wc_veruspay_coin = get_post_meta( $order_id, '_wc_veruspay_coin', true );
-	if ( $wc_veruspay_class->wallets[$wc_veruspay_coin]['enabled'] == 'yes' ) {
-		if ( $wc_veruspay_class->wallets[$wc_veruspay_coin]['stat'] === true ) {
-			if ( get_post_meta( $order_id, '_wc_veruspay_sapling', true ) == 'yes' ) { // If Sapling is enabled, get a sapling address
-				$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getnewsapling', null, null );
-				while ( wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getbalance', $wc_veruspay_address, null) > 0 ) {
+	// Only proceed if processing a VerusPay payment
+	if ( ! empty( get_post_meta( $order_id, '_wc_veruspay_coin', true ) ) ) {
+		// If store is in Native mode and reachable, get a fresh address
+		$wc_veruspay_coin = get_post_meta( $order_id, '_wc_veruspay_coin', true );
+		if ( $wc_veruspay_class->wallets[$wc_veruspay_coin]['enabled'] == 'yes' ) {
+			if ( $wc_veruspay_class->wallets[$wc_veruspay_coin]['stat'] === true ) {
+				if ( get_post_meta( $order_id, '_wc_veruspay_sapling', true ) == 'yes' ) { // If Sapling is enabled, get a sapling address
 					$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getnewsapling', null, null );
-				} //FUTURE-if ( check address format - if bad return default address; ) { update the meta } else { update the meta with gotten new address }
-				update_post_meta( $order_id, '_wc_veruspay_address', sanitize_text_field( $wc_veruspay_address ) );
-				update_post_meta( $order_id, '_wc_veruspay_mode', sanitize_text_field( 'live' ) ); // May not rely on this in the future, may change to live wallet uptime at checkout
-				$wc_veruspay_order_time = strtotime(date("Y-m-d H:i:s", time()));
-				update_post_meta( $order_id, '_wc_veruspay_ordertime', sanitize_text_field( $wc_veruspay_order_time ) );
-			}
-			else { // If Not Sapling, get Transparent
-				$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getnewaddress', null, null );
-				while ( wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getbalance', $wc_veruspay_address, null ) > 0 ) {
-					$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getnewaddress', null, null );
+					while ( wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getbalance', $wc_veruspay_address, null) > 0 ) {
+						$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getnewsapling', null, null );
+					} //FUTURE-if ( check address format - if bad return default address; ) { update the meta } else { update the meta with gotten new address }
+					update_post_meta( $order_id, '_wc_veruspay_address', sanitize_text_field( $wc_veruspay_address ) );
+					update_post_meta( $order_id, '_wc_veruspay_mode', sanitize_text_field( 'live' ) ); // May not rely on this in the future, may change to live wallet uptime at checkout
+					$wc_veruspay_order_time = strtotime(date("Y-m-d H:i:s", time()));
+					update_post_meta( $order_id, '_wc_veruspay_ordertime', sanitize_text_field( $wc_veruspay_order_time ) );
 				}
-					//FUTURE-if ( check address format - if bad return default address; ) { update the meta } else { update the meta with gotten new address }
-				update_post_meta( $order_id, '_wc_veruspay_address', sanitize_text_field( $wc_veruspay_address ) );
-				update_post_meta( $order_id, '_wc_veruspay_mode', sanitize_text_field( 'live' ) );
-				$wc_veruspay_order_time = strtotime(date("Y-m-d H:i:s", time()));
-				update_post_meta( $order_id, '_wc_veruspay_ordertime', sanitize_text_field( $wc_veruspay_order_time ) );
+				else { // If Not Sapling, get Transparent
+					$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getnewaddress', null, null );
+					while ( wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getbalance', $wc_veruspay_address, null ) > 0 ) {
+						$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getnewaddress', null, null );
+					}
+						//FUTURE-if ( check address format - if bad return default address; ) { update the meta } else { update the meta with gotten new address }
+					update_post_meta( $order_id, '_wc_veruspay_address', sanitize_text_field( $wc_veruspay_address ) );
+					update_post_meta( $order_id, '_wc_veruspay_mode', sanitize_text_field( 'live' ) );
+					$wc_veruspay_order_time = strtotime(date("Y-m-d H:i:s", time()));
+					update_post_meta( $order_id, '_wc_veruspay_ordertime', sanitize_text_field( $wc_veruspay_order_time ) );
+				}
 			}
-		}
-		// If wallet stat is false (manual mode)
-		else if ( $wc_veruspay_class->wallets[$wc_veruspay_coin]['stat'] === false && $wc_veruspay_class->wallets[$wc_veruspay_coin]['addrcount'] > 2 ){
-			$wc_veruspay_address = reset( $wc_veruspay_class->wallets[$wc_veruspay_coin]['addresses'] );
-			while ( is_numeric( wc_veruspay_get( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getbalance', $wc_veruspay_address, null ) ) && wc_veruspay_get( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getbalance', $wc_veruspay_address, null ) > 0 ) {
+			// If wallet stat is false (manual mode)
+			else if ( $wc_veruspay_class->wallets[$wc_veruspay_coin]['stat'] === false && $wc_veruspay_class->wallets[$wc_veruspay_coin]['addrcount'] > 2 ){
+				$wc_veruspay_address = reset( $wc_veruspay_class->wallets[$wc_veruspay_coin]['addresses'] );
+				while ( is_numeric( wc_veruspay_get( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getbalance', $wc_veruspay_address, null ) ) && wc_veruspay_get( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getbalance', $wc_veruspay_address, null ) > 0 ) {
+					if ( ( $wc_veruspay_key = array_search( $wc_veruspay_address, $wc_veruspay_class->wallets[$wc_veruspay_coin]['addresses'] ) ) !== false ) {
+						unset( $wc_veruspay_class->wallets[$wc_veruspay_coin]['addresses'][$wc_veruspay_key] );
+					}
+					$wc_veruspay_class->update_option( $wc_veruspay_coin . '_storeaddresses', implode( ','.PHP_EOL, $wc_veruspay_class->wallets[$wc_veruspay_coin]['addresses'] ) );
+					array_push( $wc_veruspay_class->wallets[$wc_veruspay_coin]['usedaddresses'], $wc_veruspay_address );
+					$wc_veruspay_class->update_option( $wc_veruspay_coin . '_usedaddresses', trim( implode( ','.PHP_EOL, $wc_veruspay_class->wallets[$wc_veruspay_coin]['usedaddresses'] ),"," ) );
+					
+					$wc_veruspay_address = reset( $wc_veruspay_class->wallets[$wc_veruspay_coin]['addresses'] );
+					if( strlen( $wc_veruspay_address ) < 10 ) {
+						// IMPROVE THIS - Error handling
+						die($wc_veruspay_text_helper['severe_error']); // Need a more elegant error
+					}
+				}
 				if ( ( $wc_veruspay_key = array_search( $wc_veruspay_address, $wc_veruspay_class->wallets[$wc_veruspay_coin]['addresses'] ) ) !== false ) {
 					unset( $wc_veruspay_class->wallets[$wc_veruspay_coin]['addresses'][$wc_veruspay_key] );
 				}
 				$wc_veruspay_class->update_option( $wc_veruspay_coin . '_storeaddresses', implode( ','.PHP_EOL, $wc_veruspay_class->wallets[$wc_veruspay_coin]['addresses'] ) );
 				array_push( $wc_veruspay_class->wallets[$wc_veruspay_coin]['usedaddresses'], $wc_veruspay_address );
 				$wc_veruspay_class->update_option( $wc_veruspay_coin . '_usedaddresses', trim( implode( ','.PHP_EOL, $wc_veruspay_class->wallets[$wc_veruspay_coin]['usedaddresses'] ),"," ) );
-				
-				$wc_veruspay_address = reset( $wc_veruspay_class->wallets[$wc_veruspay_coin]['addresses'] );
-				if( strlen( $wc_veruspay_address ) < 10 ) {
-					// IMPROVE THIS - Error handling
-					die($wc_veruspay_text_helper['severe_error']); // Need a more elegant error
-				}
+				update_post_meta( $order_id, '_wc_veruspay_address', sanitize_text_field( $wc_veruspay_address ) );
+				update_post_meta( $order_id, '_wc_veruspay_mode', sanitize_text_field( 'manual' ) );
+				$wc_veruspay_order_time = strtotime(date("Y-m-d H:i:s", time()));
+				update_post_meta( $order_id, '_wc_veruspay_ordertime', sanitize_text_field( $wc_veruspay_order_time ) );
 			}
-			if ( ( $wc_veruspay_key = array_search( $wc_veruspay_address, $wc_veruspay_class->wallets[$wc_veruspay_coin]['addresses'] ) ) !== false ) {
-				unset( $wc_veruspay_class->wallets[$wc_veruspay_coin]['addresses'][$wc_veruspay_key] );
+			else {
+				die($wc_veruspay_text_helper['severe_error']);
 			}
-			$wc_veruspay_class->update_option( $wc_veruspay_coin . '_storeaddresses', implode( ','.PHP_EOL, $wc_veruspay_class->wallets[$wc_veruspay_coin]['addresses'] ) );
-			array_push( $wc_veruspay_class->wallets[$wc_veruspay_coin]['usedaddresses'], $wc_veruspay_address );
-			$wc_veruspay_class->update_option( $wc_veruspay_coin . '_usedaddresses', trim( implode( ','.PHP_EOL, $wc_veruspay_class->wallets[$wc_veruspay_coin]['usedaddresses'] ),"," ) );
-			update_post_meta( $order_id, '_wc_veruspay_address', sanitize_text_field( $wc_veruspay_address ) );
-			update_post_meta( $order_id, '_wc_veruspay_mode', sanitize_text_field( 'manual' ) );
-			$wc_veruspay_order_time = strtotime(date("Y-m-d H:i:s", time()));
-			update_post_meta( $order_id, '_wc_veruspay_ordertime', sanitize_text_field( $wc_veruspay_order_time ) );
 		}
-		else {
+		else { 
 			die($wc_veruspay_text_helper['severe_error']);
 		}
-	}
-	else { 
-		die($wc_veruspay_text_helper['severe_error']);
 	}
 }
 /** 
