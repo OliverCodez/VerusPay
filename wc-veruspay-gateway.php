@@ -707,7 +707,7 @@ function wc_veruspay_init() {
 						if ( strlen( $wc_veruspay_wallets[$key]['addresses'] ) < 10 ) {
 							$this->update_option( $key . '_enable', 'no' );
 							$wc_veruspay_is_enabled[] = 'no';
-							$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_on_noaddr'];
+							$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_off_noaddr'];
 						}
 						else {
 							$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_off_addr'];
