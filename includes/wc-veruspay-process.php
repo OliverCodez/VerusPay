@@ -2,10 +2,10 @@
 /**
  * VerusPay Verus Gateway Process
  *
- * Processing a Verus payment.
+ * Processing a crypto payment.
  *
  * @package VerusPay Verus Gateway\Process
- * @version 0.1.2
+ * @version 0.2.0
  * @author    J Oliver Westbrook
  * @category  Cryptocurrency
  * @copyright Copyright (c) 2019, John Oliver Westbrook
@@ -40,19 +40,19 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } ?>
-<h1 class="entry-title"><?php echo $wc_veruspay_text_helper['title_on_hold']; ?><span style="color:#007bff !important;"><?php echo $wc_veruspay_verus_price; ?></span> VRSC:</h1>
+<h1 class="entry-title"><?php echo $wc_veruspay_text_helper['title_on_hold']; ?><span style="color:#007bff !important;"><?php echo $wc_veruspay_price; ?></span> <?php echo strtoupper($wc_veruspay_coin); ?>:</h1>
 <div class="wc_veruspay_payment_container">
     <p class="wc_veruspay_processing-payment"><?php echo $wc_veruspay_text_helper['msg_waiting_payment']; ?> <span id="wc_veruspay_timeleft"><?php echo $wc_veruspay_time_remaining; ?></span> mins</p> 
     <noscript><p class="wc_veruspay_timelimit" data-time="<?php echo $wc_veruspay_time_remaining; ?>">
         <form method="post" action=""><button type="submit" name="woocommerce_check_status" value="check_status"><?php echo $wc_veruspay_text_helper['check_status']; ?></button></form>
     </p></noscript>
     <div id="wc-<?php echo esc_attr( $wc_veruspay_class->id ); ?>-vrsc-form" class="wc-payment-form" style="background:transparent;">
-        <pre class="wc_veruspay_verus_address" id="verusAddress"><?php echo $wc_veruspay_verus_address; ?></pre>
+        <pre class="wc_veruspay_address" id="verusAddress"><?php echo $wc_veruspay_address; ?></pre>
         <noscript><style>.wc_veruspay_address_tooltip{display:none;}</style></noscript>
         <div class="wc_veruspay_address_tooltip">
             <div class="wc_veruspay_address_copy-button">
                 <button onclick="copyAddress()" onmouseout="outFunc()">
-                <span class="wc_veruspay_address_tooltip-text" id="wc_veruspay_address_tooltip">Copy Verus Address</span>
+                <span class="wc_veruspay_address_tooltip-text" id="wc_veruspay_address_tooltip">Copy Address</span>
                 Copy Address
                 </button>
             </div>
@@ -76,7 +76,7 @@ function copyAddress() {
 
 function outFunc() {
   var tooltip = document.getElementById("wc_veruspay_address_tooltip");
-  tooltip.innerHTML = "Copy Verus Address";
+  tooltip.innerHTML = "Copy Address";
 }
 
 </script>

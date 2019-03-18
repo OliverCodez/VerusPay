@@ -2,10 +2,10 @@
 /**
  * VerusPay Verus Gateway Confirming
  *
- * Confirming a Verus payment on the blockchain.
+ * Confirming a crypto payment on the blockchain.
  *
  * @package VerusPay Verus Gateway\Confirming
- * @version 0.1.2
+ * @version 0.2.0
  * @author    J Oliver Westbrook
  * @category  Cryptocurrency
  * @copyright Copyright (c) 2019, John Oliver Westbrook
@@ -47,7 +47,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         <form method="post" action=""><button type="submit" name="woocommerce_check_status" value="check_status"><?php echo $wc_veruspay_text_helper['check_status']; ?></button></form>
     </noscript>
     <div id="wc-<?php echo esc_attr( $wc_veruspay_class->id ); ?>-vrsc-form" class="wc-payment-form" style="background:transparent;">
-        <pre class="wc_veruspay_verus_address" id="verusAddress"><?php if ( substr($wc_veruspay_verus_address, 0, 2) !== 'zs' ) { echo '<a style="color:#fff!important" target="_BLANK" href="https://explorer.veruscoin.io/address/'.$wc_veruspay_verus_address.'">'.$wc_veruspay_verus_address.'</a>'; } else { echo $wc_veruspay_verus_address; } ?></pre>
+        <pre class="wc_veruspay_address" id="verusAddress"><?php if ( substr($wc_veruspay_address, 0, 2) !== 'zs' ) { echo '<a style="color:#fff!important" target="_BLANK" href="' . $wc_veruspay_phpextconfig['vrsc_address'] . $wc_veruspay_address . '">' . $wc_veruspay_address . '</a>'; } else { echo $wc_veruspay_address; } ?></pre>
     </div>
 </div>
 <?php echo header("Refresh:15"); ?>
