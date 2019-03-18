@@ -86,6 +86,26 @@ Yes! Because it is recommended you setup a remotely dedicated wallet server, you
 
 Yes, there is an option in the payment gateway settings within WooCommerce->Settings->Payments to enforce privacy "zs" payments.
 
+**I'm running a Woocommerce shop on an Azure hosted WebApp / Shared Host / Godaddy / Dreamhost / etc. Can I use this guide: [veruspay.io/setup](https://veruspay.io/setup)?
+
+Yes, you can follow the published guide from GitHub and just follow the recommended procedure (your wallet server will be a seperate/new server you setup with DigitalOcean).
+
+**How do I withdraw funds from my store wallet(s)?
+
+If you are withdrawing "transparent" funds (e.g. from sales made to Verus "R" addresses):
+
+Login with SSH to the server hosting the wallet daemon and issue the following command, replacing the appropriate address and amount variables:
+
+For Verus: `/opt/verus/verus.sh sendtoaddress "RECEIVEADDRESS" AMOUNT`
+
+If you are withdrawing "private" or "sapling" funds (e.g. from sales made to a "zs" address):
+
+Login with SSH to the server hosting the wallet daemon and issue the following command for the applicable wallet, replacing the appropriate address and amount variables:
+
+For Verus: `/opt/verus/verus.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"address\": \"RECEIVEADDRESS\", \"amount\":AMOUNT}]"`
+
+For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"address\": \"RECEIVEADDRESS\", \"amount\":AMOUNT}]"`
+
 ## Screenshots
  
 1. This is the main settings area for VerusPay within WooCommerce's "Settings->Payments" section. Each of the headings expand upon clicking.
