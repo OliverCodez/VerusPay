@@ -5,7 +5,7 @@
  * Confirming a crypto payment on the blockchain.
  *
  * @package VerusPay Verus Gateway\Confirming
- * @version 0.2.0
+ * @version 0.3.0
  * @author    J Oliver Westbrook
  * @category  Cryptocurrency
  * @copyright Copyright (c) 2019, John Oliver Westbrook

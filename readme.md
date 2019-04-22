@@ -6,7 +6,7 @@
 - Requires at least: 3.8
 - Tested up to: 5.1.1
 - Requires PHP: 7.0
-- Stable tag: 0.1.2
+- Stable tag: 0.3.0
 - Requires WooCommerce at least: 2.1
 - Tested WooCommerce up to: 3.5.6
 - License: MIT
@@ -128,6 +128,13 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 
 ## Changelog
 
+= 2019.03.22 - version 0.3.0 =
+
+- Rewrite chaintools functions for multi explorer support
+- Add KMD and ZEC explorer data
+- Add KMD support for the plugin
+- Add wallet management support
+
 = 2019.03.12 - version 0.2.0 =
 
 - Rewrite primary admin form to include multiple coins
@@ -185,6 +192,9 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 - Test mode to allow enabling the plugin only for logged in Admins
 
 ## Upgrade Notice
+
+= 0.3.0 =
+New coin support added for Komodo KMD
 
 = 0.2.0 =
 Major Release - New Crypto Payment Method Pirate ARRR Implemented
