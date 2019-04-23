@@ -77,30 +77,39 @@ jQuery( function( $ ) {
 		});
 
 		// Refresh balances
-		var checkBals = function() {
+		var refreshBalance = function() {
 			$( ".wc_veruspay_bal_admin" ).each(function() {
 				var ccoin = $(this).attr("data-coin");
 				var ctype = $(this).attr("data-type");
 				var update = $(this).attr('id');
 				$.ajax({
-					type: "GET",
+					type: "POST",
 					data: { "veruspayajax":"1", "veruspaycommand":"balance", "coin":ccoin, "type":ctype },
 					success: function(response){
-						var numfixed = parseFloat(response).toFixed(8)
 						if ( response == 0 ) {
+							$("#"+update).removeClass("wc_veruspay_red");
 							$('#wc_veruspay_cashout_text-'+ccoin+'-'+ctype).hide();
+							$("#"+update).text(response);
+							$("#"+update+"-button").attr("data-amount",response);
 						}
 						if ( response > 0 ) {
+							$("#"+update).removeClass("wc_veruspay_red");
 							$('#wc_veruspay_cashout_text-'+ccoin+'-'+ctype).fadeIn();
+							$("#"+update).text(response);
+							$("#"+update+"-button").attr("data-amount",response);
 						}
-						$("#"+update).text(numfixed);
-						$("#"+update+"-button").attr("data-amount",numfixed);
+						if ( response.indexOf( "Err:" ) >= 0 ) {
+							$("#"+update).addClass("wc_veruspay_red");
+							$('#wc_veruspay_cashout_text-'+ccoin+'-'+ctype).hide();
+							$("#"+update).text(response);
+							$("#"+update+"-button").attr("data-amount",response);
+						}
 					}
 				});
 			});
 		}
 		setInterval( function() {
-			checkBals();
+			refreshBalance();
 			var nowtime = $.now();
 		}, (15000));
 		// - //
@@ -145,7 +154,7 @@ jQuery( function( $ ) {
 			$('.wc_veruspay_modal_address').text('');
 			$('.wc_veruspay_cashout_processing-modalback').fadeIn();
 			$.ajax({
-				type: "GET",
+				type: "POST",
 				data: { "veruspayajax":"1", "veruspaycommand":"cashout", "coin":vcoin, "type":vtype }
 			}).done(function(data) {
 				$('.wc_veruspay_cashout_processing-modalback').hide();

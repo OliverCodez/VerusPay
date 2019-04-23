@@ -86,7 +86,7 @@ $wc_veruspay_phpextconfig = array(
     'kmd_info' => 'https://kmd.explorer.dexstats.info/insight-api-komodo/status?q=getinfo',
     'kmd_blocks' => 'blocks',
 	'kmd_difficulty' => 'difficulty',
-    'kmd_supply' => null,
+    'kmd_supply' => 'https://kmd.explorer.dexstats.info/api/supply',
     // ZEC Insight Explorer Support
     'zec_address' => 'https://zcash.blockexplorer.com/address/',
 	'zec_getaddress' => 'https://zcash.blockexplorer.com/api/addr/',

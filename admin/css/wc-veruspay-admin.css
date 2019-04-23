@@ -49,6 +49,19 @@
     max-width: 700px;
 }
 
+.wc_veruspay_title-walletssub {
+    background: transparent !important;
+    font-size: 1.2rem !important;
+    padding: 20 !important;
+	height: 24px !important;
+    line-height: 24px !important;
+    margin: 0;
+    margin-top: 20px;
+    border-bottom: gray 1px solid;
+    border-top: gray 2px solid;
+    max-width: 700px;
+}
+
 .wc_veruspay_title-sub-small {
     font-weight: normal !important;
     font-size: 12px !important;
@@ -244,6 +257,9 @@
     display: block;
     margin: 0 auto;
     text-align: center;
+}
+.wc_veruspay_red {
+    color: red!important;
 }
 @media screen and (max-width : 767px) {
     .wc_veruspay_cashout-modalinner {
