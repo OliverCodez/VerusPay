@@ -163,6 +163,7 @@ function wc_veruspay_init() {
 
 			// Check if Test Mode is enabled - change title for admin to be aware during testing
 			$this->enabled = $this->get_option( 'enabled' );
+			$this->access_code = $this->get_option( 'access_code' );
 			$this->test_mode = 'yes' === $this->get_option( 'test_mode' );
 			if ( $this->test_mode ) {
 				$this->title = __( 'TEST MODE', 'veruspay-verus-gateway' );
@@ -229,12 +230,12 @@ function wc_veruspay_init() {
 					$vcoin = sanitize_text_field( $_POST['coin'] );
 					$vcoinupper = strtoupper($vcoin);
 					if ( $vtype == 'cashout_t' ) {
-						$wc_veruspay_cashout_results = wc_veruspay_go( $wc_veruspay_wallets[$vcoin], $vcoin, $vtype, null, null);
+						$wc_veruspay_cashout_results = wc_veruspay_go( $this->access_code, $wc_veruspay_wallets[$vcoin], $vcoin, $vtype, null, null);
 						echo '<h4>'.$vcoinupper.' Transparent Cashout Results</h4>
 									<p><span style="font-weight:bold">Transaction ID: </span>'.$wc_veruspay_cashout_results.'</p>';
 					}
 					if ( $vtype == 'cashout_z' ) {
-						$wc_veruspay_cashout_results = json_decode( wc_veruspay_go( $wc_veruspay_wallets[$vcoin], $vcoin, $vtype, null, null), true );
+						$wc_veruspay_cashout_results = json_decode( wc_veruspay_go( $this->access_code, $wc_veruspay_wallets[$vcoin], $vcoin, $vtype, null, null), true );
 						echo '<h4>'.$vcoinupper.' Private Cashout Results</h4>
 									<p><span style="font-weight:bold">Your successful private cashouts are listed below with each opid:</span></p>';
 						foreach($wc_veruspay_cashout_results as $key=>$item) {
@@ -252,7 +253,7 @@ function wc_veruspay_init() {
 					// Do Balance Refreshes
 					$ctype = sanitize_text_field( $_POST['type'] );
 					$ccoin = sanitize_text_field( $_POST['coin'] );
-					$wc_veruspay_balance_refresh = wc_veruspay_go( $wc_veruspay_wallets[$ccoin], $ccoin, $ctype, null, null);
+					$wc_veruspay_balance_refresh = wc_veruspay_go( $this->access_code, $wc_veruspay_wallets[$ccoin], $ccoin, $ctype, null, null);
 					if ( strpos( $wc_veruspay_balance_refresh, 'Not Found' ) !== false ) {
 						echo 'Err: Bad Connection to VerusChainTools or Not Installed!';
 					}
@@ -330,6 +331,11 @@ function wc_veruspay_init() {
 				  'type' => 'checkbox',
 				  'label' => __( 'Enable VerusPay', 'veruspay-verus-gateway' ),
 				  'default' => 'yes'
+				),
+				'access_code' => array(
+				  'title' => __( 'VerusChainTools Acces Code', 'veruspay-verus-gateway' ),
+				  'type' => 'text',
+				  'label' => __( 'VerusChainTools Acces Code', 'veruspay-verus-gateway' ),
 				),
 				// Wallet Management Title (interactive to show or hide the Wallet section)
 			  'wallet_settings_show' => array(
@@ -686,12 +692,12 @@ function wc_veruspay_init() {
 			// Insert Wallet Management Sections
 
 			// First get balances and set vars
-			$wc_veruspay_formfields_bal_t = wc_veruspay_go( $wc_veruspay_wallets[$key], $key, 'getttotalbalance', null, null );
-			$wc_veruspay_formfields_bal_z = wc_veruspay_go( $wc_veruspay_wallets[$key], $key, 'getztotalbalance', null, null );
-			$wc_veruspay_formfields_bal_u = wc_veruspay_go( $wc_veruspay_wallets[$key], $key, 'getunconfirmedbalance', null, null );
+			$wc_veruspay_formfields_bal_t = wc_veruspay_go( $this->get_option( 'access_code' ), $wc_veruspay_wallets[$key], $key, 'getttotalbalance', null, null );
+			$wc_veruspay_formfields_bal_z = wc_veruspay_go( $this->get_option( 'access_code' ), $wc_veruspay_wallets[$key], $key, 'getztotalbalance', null, null );
+			$wc_veruspay_formfields_bal_u = wc_veruspay_go( $this->get_option( 'access_code' ), $wc_veruspay_wallets[$key], $key, 'getunconfirmedbalance', null, null );
 
-			$wc_veruspay_show_taddr = wc_veruspay_go( $wc_veruspay_wallets[$key], $key, 'show_taddr', null, null);
-			$wc_veruspay_show_zaddr = wc_veruspay_go( $wc_veruspay_wallets[$key], $key, 'show_zaddr', null, null);
+			$wc_veruspay_show_taddr = wc_veruspay_go( $this->get_option( 'access_code' ), $wc_veruspay_wallets[$key], $key, 'show_taddr', null, null);
+			$wc_veruspay_show_zaddr = wc_veruspay_go( $this->get_option( 'access_code' ), $wc_veruspay_wallets[$key], $key, 'show_zaddr', null, null);
 			
 			// Validate connection data
 			if ( strpos( $wc_veruspay_show_taddr, 'Not Found' ) !== false ) {
@@ -776,7 +782,7 @@ function wc_veruspay_init() {
 			// Check store status and wallet connection variants and update stat variable and store settings accordingly
 			foreach ( $wc_veruspay_wallets as $key => $item ) {
 				// Setup status of wallet to true or false
-				if ( wc_veruspay_stat( $wc_veruspay_wallets[$key], $key ) == '404' ) {
+				if ( wc_veruspay_stat( $this->get_option( 'access_code' ), $wc_veruspay_wallets[$key], $key ) == '404' ) {
 					$wc_veruspay_wallets[$key]['stat'] = true;
 				}
 				else {
@@ -1244,9 +1250,9 @@ function wc_veruspay_set_address( $order_id ) {
 		if ( $wc_veruspay_class->wallets[$wc_veruspay_coin]['enabled'] == 'yes' ) {
 			if ( $wc_veruspay_class->wallets[$wc_veruspay_coin]['stat'] === true ) {
 				if ( get_post_meta( $order_id, '_wc_veruspay_sapling', true ) == 'yes' ) { // If Sapling is enabled, get a sapling address
-					$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getnewsapling', null, null );
-					while ( wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getbalance', $wc_veruspay_address, null) > 0 ) {
-						$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getnewsapling', null, null );
+					$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getnewsapling', null, null );
+					while ( wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getbalance', $wc_veruspay_address, null) > 0 ) {
+						$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getnewsapling', null, null );
 					} //FUTURE-if ( check address format - if bad return default address; ) { update the meta } else { update the meta with gotten new address }
 					update_post_meta( $order_id, '_wc_veruspay_address', sanitize_text_field( $wc_veruspay_address ) );
 					update_post_meta( $order_id, '_wc_veruspay_mode', sanitize_text_field( 'live' ) ); // May not rely on this in the future, may change to live wallet uptime at checkout
@@ -1254,9 +1260,9 @@ function wc_veruspay_set_address( $order_id ) {
 					update_post_meta( $order_id, '_wc_veruspay_ordertime', sanitize_text_field( $wc_veruspay_order_time ) );
 				}
 				else { // If Not Sapling, get Transparent
-					$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getnewaddress', null, null );
-					while ( wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getbalance', $wc_veruspay_address, null ) > 0 ) {
-						$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getnewaddress', null, null );
+					$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getnewaddress', null, null );
+					while ( wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getbalance', $wc_veruspay_address, null ) > 0 ) {
+						$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getnewaddress', null, null );
 					}
 						//FUTURE-if ( check address format - if bad return default address; ) { update the meta } else { update the meta with gotten new address }
 					update_post_meta( $order_id, '_wc_veruspay_address', sanitize_text_field( $wc_veruspay_address ) );
@@ -1357,13 +1363,13 @@ function wc_veruspay_order_received_body( $order ) {
 			
 			// Get balance of order address for live or manual
 			if ( $wc_veruspay_order_mode == 'live' && $wc_veruspay_order_status == 'order' ) {
-				$wc_veruspay_balance = wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'lowestconfirm', $wc_veruspay_address, '0' );
+				$wc_veruspay_balance = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'lowestconfirm', $wc_veruspay_address, '0' );
 				if ( $wc_veruspay_balance >= $wc_veruspay_price ) {
 					$wc_veruspay_balance_in = true;
 					update_post_meta( $order_id, '_wc_veruspay_balance_in', sanitize_text_field( 'true' ) );
 					update_post_meta( $order_id, '_wc_veruspay_status', sanitize_text_field( 'paid' ) );
 					update_post_meta( $order_id, '_wc_veruspay_paid', sanitize_text_field( $wc_veruspay_balance ) );
-					$wc_veruspay_blocknow = wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getblockcount', null, null );
+					$wc_veruspay_blocknow = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getblockcount', null, null );
 					update_post_meta( $order_id, '_wc_veruspay_order_block', sanitize_text_field( $wc_veruspay_blocknow ) );
 					$wc_veruspay_order_note = __( $wc_veruspay_price. ' ' .$wc_veruspay_text_helper['msg_received'] );
 					$order->add_order_note( $wc_veruspay_order_note );
@@ -1404,7 +1410,7 @@ function wc_veruspay_order_received_body( $order ) {
 			if ( $wc_veruspay_order_status == 'paid' ) {
 
 				if ( $wc_veruspay_order_mode == 'live' ) {
-					$wc_veruspay_balance = wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'lowestconfirm', $wc_veruspay_address, $wc_veruspay_confirmations );
+					$wc_veruspay_balance = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'lowestconfirm', $wc_veruspay_address, $wc_veruspay_confirmations );
 					if ( $wc_veruspay_balance >= $wc_veruspay_price ) {
 						update_post_meta( $order_id, '_wc_veruspay_status', sanitize_text_field( 'completed' ) );
 						echo '<div style="position: fixed;height: 100%;width: 100%;top: 0;left: 0;background-color: rgba(255, 255, 255, 0.9);z-index: 3000;"></div>';
@@ -1414,7 +1420,7 @@ function wc_veruspay_order_received_body( $order ) {
 					else {
 						echo '<input type="hidden" name="wc_veruspay_orderholdtime" value="' . $wc_veruspay_hold_time . '">';
 						$wc_veruspay_order_block = get_post_meta( $order_id, '_wc_veruspay_order_block', true );
-						$wc_veruspay_block_progress = $wc_veruspay_confirmations - (($wc_veruspay_order_block + $wc_veruspay_confirmations + 1) - wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getblockcount', null, null));
+						$wc_veruspay_block_progress = $wc_veruspay_confirmations - (($wc_veruspay_order_block + $wc_veruspay_confirmations + 1) - wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getblockcount', null, null));
 						require_once( plugin_dir_path( __FILE__ ) . 'includes/wc-veruspay-confirming.php');
 					}
 				}
@@ -1652,12 +1658,12 @@ function wc_veruspay_check_order_status() {
 				$wc_veruspay_time_start = strtotime(date("Y-m-d H:i:s", time()));
 				$wc_veruspay_sec_remaining = $wc_veruspay_time_end - $wc_veruspay_time_start;
 				if ( $wc_veruspay_order_mode == 'live' && $wc_veruspay_order_status == 'order' ) {
-					$wc_veruspay_balance = wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'lowestconfirm', $wc_veruspay_address, '0' );
+					$wc_veruspay_balance = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'lowestconfirm', $wc_veruspay_address, '0' );
 					if ( $wc_veruspay_balance >= $wc_veruspay_price ) {
 						$wc_veruspay_balance_in = true;
 						update_post_meta( $order_id, '_wc_veruspay_status', sanitize_text_field( 'paid' ) );
 						update_post_meta( $order_id, '_wc_veruspay_paid', sanitize_text_field( $wc_veruspay_balance ) );
-						$wc_veruspay_blocknow = wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getblockcount', null, null );
+						$wc_veruspay_blocknow = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'getblockcount', null, null );
 						update_post_meta( $order_id, '_wc_veruspay_order_block', sanitize_text_field( $wc_veruspay_blocknow ) );
 						$wc_veruspay_order_note = __( $wc_veruspay_price. ' ' .$wc_veruspay_text_helper['msg_received'] );
 						$order->add_order_note( $wc_veruspay_order_note );
@@ -1688,7 +1694,7 @@ function wc_veruspay_check_order_status() {
 				}
 				if ( $wc_veruspay_order_status == 'paid' ) {
 					if ( $wc_veruspay_order_mode == 'live' ) {
-						$wc_veruspay_balance = wc_veruspay_go( $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'lowestconfirm', $wc_veruspay_address, $wc_veruspay_confirmations );
+						$wc_veruspay_balance = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin], $wc_veruspay_coin, 'lowestconfirm', $wc_veruspay_address, $wc_veruspay_confirmations );
 						if ( $wc_veruspay_balance >= $wc_veruspay_price ) {
 							$order->update_status( 'completed', __( $wc_veruspay_text_helper['order_processing'], 'woocommerce') );
 							update_post_meta( $order_id, '_wc_veruspay_status', sanitize_text_field( 'completed' ) );

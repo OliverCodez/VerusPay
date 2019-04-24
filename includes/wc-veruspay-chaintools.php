@@ -106,18 +106,19 @@ $wc_veruspay_phpextconfig = array(
 /**
  * Test wallet connection - Return status, 0 means not running, anything else is running even if errors occur.
  */
-function wc_veruspay_stat( $wc_veruspay_wallet, $coin ) {
+function wc_veruspay_stat( $wc_veruspay_accesscode, $wc_veruspay_wallet, $coin ) {
     // Create new wallet connection to compatible Daemon
     $url = $wc_veruspay_wallet[ 'ip' ];
     // Get response data
     $response = wp_remote_post( $url, array(
         'sslverify' => false,
-        'headers'     => array( 'Content-Type' => 'application/json; charset=utf-8' ),
+        'headers'     => array(),
         'body' => array(
+                    'access' => $wc_veruspay_accesscode,
                     'exec' => 'test',
                     'coin' => $coin
                 ),
-        'method' => 'GET',
+        'method' => 'POST',
 	    'timeout' => 120,
     ));
     // Handle response and any errors
@@ -139,9 +140,10 @@ function wc_veruspay_stat( $wc_veruspay_wallet, $coin ) {
     }
 }
 // Function to access blockchain using wordpress built-in wp_remote_post 
-function wc_veruspay_go( $wc_veruspay_wallet, $coin, $exec, $hash, $amt ){
+function wc_veruspay_go( $wc_veruspay_accesscode, $wc_veruspay_wallet, $coin, $exec, $hash, $amt ){
     $url = $wc_veruspay_wallet[ 'ip' ];
     $body = array(
+        'access' => $wc_veruspay_accesscode,
         'coin' => $coin,
         'exec' => $exec,
         'hash' => $hash,
@@ -150,9 +152,9 @@ function wc_veruspay_go( $wc_veruspay_wallet, $coin, $exec, $hash, $amt ){
     // Get blockchain data from method and params
     $response = wp_remote_post( $url, array(
         'sslverify' => false,
-        'headers' => array( 'Content-Type' => 'application/json; charset=utf-8' ),
+        'headers' => array(),
 	    'body' => $body,
-	    'method' => 'GET',
+	    'method' => 'POST',
 	    'timeout' => 120,
 	) );
     // Handle response and any errors
