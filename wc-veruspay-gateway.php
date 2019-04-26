@@ -64,7 +64,7 @@ $wc_veruspay_available_coins = array(
 	),
 	'kmd' => array(
 		'name' => 'Komodo',
-		'private' => true,
+		'private' => false,
 		'transparent' => true,
 	),
 );

@@ -2,19 +2,19 @@
 
 - Contributors: veruspay, joliverwestbrook
 - Donate link: https://veruspay.io/donate/
-- Tags: woocommerce, payment gateway, gateway, cryptocurrency, blockchain, verus, verus coin, vrsc
-- Requires at least: 3.8
+- Tags: woocommerce, payment gateway, gateway, cryptocurrency, blockchain, verus, verus coin, vrsc, pirate, arrr, komodo, kmd
+- Requires at least: 5.0.0
 - Tested up to: 5.1.1
 - Requires PHP: 7.0
 - Stable tag: 0.3.0
-- Requires WooCommerce at least: 2.1
-- Tested WooCommerce up to: 3.5.6
+- Requires WooCommerce at least: 3.5.6
+- Tested WooCommerce up to: 3.6.2
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
 
 ## Description
 
-### Requires: WooCommerce 2.1+
+### Requires: WooCommerce 3.5.6+
 
 This plugin extends WooCommerce and integrates with the Verus blockchain, adding the ability to accept cryptocurrency payments in Verus Coin (VRSC) using either an on-store wallet daemon (not recommended) or in conjunction with a remote wallet server (recommended).
 
@@ -47,6 +47,10 @@ Follow this guide to setup your crypto wallet daemon server and the Verus Chain 
 [Wallet Server & Verus Chain Tools Install Guide and Script](https://github.com/joliverwestbrook/VerusPayInstallScripts/blob/master/README.md)
 
 After the install finishes, it will display IMPORTANT information for you to write down in a secure location. BE SURE TO WRITE THIS INFORMATION DOWN. 
+
+### Upgrade Steps
+
+To upgrade from any version below v0.3.0 you MUST first upgrade your VerusChainTools and wallet daemon server settings, following the steps found [here](https://github.com/joliverwestbrook/VerusPayInstallScripts)
 
 ### Install & Configuration Steps
 
@@ -92,6 +96,10 @@ Yes, you can follow the published guide from GitHub and just follow the recommen
 
 **How do I withdraw funds from my store wallet(s)?
 
+*NEW* You can now withdraw funds from any of your wallet stores using the 1-Click Cashout feature added in v0.3.0.  Simply navigate to the VerusPay settings within WordPress and expand the Wallet Management section, from which you can withdraw funds to your preset Cashout Address for the wallet in question.
+
+Or, the "hard way" is described as follows:
+
 If you are withdrawing "transparent" funds (e.g. from sales made to Verus "R" addresses):
 
 Login with SSH to the server hosting the wallet daemon and issue the following command, replacing the appropriate address and amount variables:
@@ -128,12 +136,15 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 
 ## Changelog
 
-= 2019.03.22 - version 0.3.0 =
+= 2019.04.24 - version 0.3.0 =
 
 - Rewrite chaintools functions for multi explorer support
 - Add KMD and ZEC explorer data
 - Add KMD support for the plugin
 - Add wallet management support
+- Implement new Access Code security feature
+- 1-Click Cashout from VerusPay Wallet Management section
+- Future feature backend code implemented
 
 = 2019.03.12 - version 0.2.0 =
 
@@ -193,8 +204,8 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 
 ## Upgrade Notice
 
-= 0.3.0 =
-New coin support added for Komodo KMD
+= 0.3.0 = 
+Major Release - KMD Komodo Support and Wallet Management
 
 = 0.2.0 =
 Major Release - New Crypto Payment Method Pirate ARRR Implemented
