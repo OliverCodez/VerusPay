@@ -5,7 +5,7 @@
  * Language file for English US
  *
  * @package VerusPay Verus Gateway\Language
- * @version 0.3.0
+ * @version 0.3.1
  * @author    J Oliver Westbrook
  * @category  Cryptocurrency
  * @copyright Copyright (c) 2019, John Oliver Westbrook

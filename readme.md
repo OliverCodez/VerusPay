@@ -6,7 +6,7 @@
 - Requires at least: 5.0.0
 - Tested up to: 5.1.1
 - Requires PHP: 7.0
-- Stable tag: 0.3.0
+- Stable tag: 0.3.1
 - Requires WooCommerce at least: 3.5.6
 - Tested WooCommerce up to: 3.6.2
 - License: MIT
@@ -136,6 +136,10 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 
 ## Changelog
 
+= 2019.04.26 - version 0.3.1 =
+
+- Remove Sapling support from KMD Komodo
+
 = 2019.04.24 - version 0.3.0 =
 
 - Rewrite chaintools functions for multi explorer support
@@ -203,6 +207,9 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 - Test mode to allow enabling the plugin only for logged in Admins
 
 ## Upgrade Notice
+
+= 0.3.1 =
+Important - Sapling support removed from KMD Komodo 
 
 = 0.3.0 = 
 Major Release - KMD Komodo Support and Wallet Management

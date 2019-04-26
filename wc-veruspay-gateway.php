@@ -3,7 +3,7 @@
  * Plugin Name: VerusPay Verus Gateway
  * Plugin URI: https://wordpress.org/plugins/veruspay-verus-gateway/
  * Description: Accept Verus Coin (VRSC) and Pirate (ARRR) cryptocurrencies in your online WooCommerce store for physical or digital products.
- * Version: 0.3.0
+ * Version: 0.3.1
  * Author: J Oliver Westbrook
  * Author URI: https://profiles.wordpress.org/veruspay/
  * Copyright: (c) 2019 John Oliver Westbrook (johnwestbrook@pm.me)
@@ -127,7 +127,7 @@ function wc_veruspay_settings_menu(){
  *
  * @class 		WC_Gateway_VerusPay
  * @extends		WC_Payment_Gateway
- * @version		0.3.0
+ * @version		0.3.1
  * @package		WooCommerce/Classes/Payment
  * @author 		J Oliver Westbrook
  * @param global $wc_veruspay_text_helper
