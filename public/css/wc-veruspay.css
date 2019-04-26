@@ -50,6 +50,17 @@
     background-position: center;
     background-size: cover;
 }
+.wc_veruspay_logo_kmd {
+    display:block;
+    float:left;
+    width: 32px;
+    height: 32px;
+    margin: 0 10px 10px 5px;
+    background-image: url(../../public/img/wc-komodo-icon-128x128.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
 .wc_veruspay_icon-sml {
     margin: 0 5px;
 }

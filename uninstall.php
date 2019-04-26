@@ -5,7 +5,7 @@
  * Uninstalling VerusPay deletes schedules, tables, and options.
  *
  * @package VerusPay Verus Gateway\Uninstaller
- * @version 0.2.0
+ * @version 0.3.1
  * @author    J Oliver Westbrook
  * @category  Cryptocurrency
  * @copyright Copyright (c) 2019, John Oliver Westbrook
