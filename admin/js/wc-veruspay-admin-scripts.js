@@ -51,6 +51,11 @@ jQuery( function( $ ) {
 
 		// Conditional fields for wallet Settings
 	$(document).ready(function() {
+		if ( $( '#message' ).hasClass( 'updated' ) ) {
+			var savedURL = location.href + '&veruspay_settings_saved';
+			location.href = savedURL;
+			location.reload();
+		}
 		if ( $('.wc_veruspay_togglewallet').hasClass( 'wallet_updated' ) ) {
 			location.reload();
 		}
@@ -82,30 +87,32 @@ jQuery( function( $ ) {
 				var ccoin = $(this).attr("data-coin");
 				var ctype = $(this).attr("data-type");
 				var update = $(this).attr('id');
-				$.ajax({
-					type: "POST",
-					data: { "veruspayajax":"1", "veruspaycommand":"balance", "coin":ccoin, "type":ctype },
-					success: function(response){
-						if ( response == 0 ) {
-							$("#"+update).removeClass("wc_veruspay_red");
-							$('#wc_veruspay_cashout_text-'+ccoin+'-'+ctype).hide();
-							$("#"+update).text(response);
-							$("#"+update+"-button").attr("data-amount",response);
+				if ( $('#wc_veruspay_'+ccoin+'_nostat').length == 0 ) {
+					$.ajax({
+						type: "POST",
+						data: { "veruspayajax":"1", "veruspaycommand":"balance", "coin":ccoin, "type":ctype },
+						success: function(response){
+							if ( response == 0 ) {
+								$("#"+update).removeClass("wc_veruspay_red");
+								$('#wc_veruspay_cashout_text-'+ccoin+'-'+ctype).hide();
+								$("#"+update).text(response);
+								$("#"+update+"-button").attr("data-amount",response);
+							}
+							if ( response > 0 ) {
+								$("#"+update).removeClass("wc_veruspay_red");
+								$('#wc_veruspay_cashout_text-'+ccoin+'-'+ctype).fadeIn();
+								$("#"+update).text(response);
+								$("#"+update+"-button").attr("data-amount",response);
+							}
+							if ( response.indexOf( "Err:" ) >= 0 ) {
+								$("#"+update).addClass("wc_veruspay_red");
+								$('#wc_veruspay_cashout_text-'+ccoin+'-'+ctype).hide();
+								$("#"+update).text(response);
+								$("#"+update+"-button").attr("data-amount",response);
+							}
 						}
-						if ( response > 0 ) {
-							$("#"+update).removeClass("wc_veruspay_red");
-							$('#wc_veruspay_cashout_text-'+ccoin+'-'+ctype).fadeIn();
-							$("#"+update).text(response);
-							$("#"+update+"-button").attr("data-amount",response);
-						}
-						if ( response.indexOf( "Err:" ) >= 0 ) {
-							$("#"+update).addClass("wc_veruspay_red");
-							$('#wc_veruspay_cashout_text-'+ccoin+'-'+ctype).hide();
-							$("#"+update).text(response);
-							$("#"+update+"-button").attr("data-amount",response);
-						}
-					}
-				});
+					});
+				}
 			});
 		}
 		setInterval( function() {
@@ -161,7 +168,7 @@ jQuery( function( $ ) {
 				$('.wc_veruspay_cashout_complete-modalcontent').html(data);
 				$('.wc_veruspay_cashout_complete-modalback').fadeIn();
 			});
-			checkBals();
+			refreshBalance();
 		});
 		// - //
 		// Cashout Confirm Close Button
