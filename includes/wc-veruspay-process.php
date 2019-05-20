@@ -5,8 +5,8 @@
  * Processing a crypto payment.
  *
  * @package VerusPay Verus Gateway\Process
- * @version 0.3.1
- * @author    J Oliver Westbrook
+ * @version 0.3.4
+ * @author    Oliver Westbrook
  * @category  Cryptocurrency
  * @copyright Copyright (c) 2019, John Oliver Westbrook
  * 

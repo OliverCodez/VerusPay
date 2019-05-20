@@ -6,7 +6,7 @@
 - Requires at least: 5.0.0
 - Tested up to: 5.1.1
 - Requires PHP: 7.0
-- Stable tag: 0.3.1
+- Stable tag: 0.3.4
 - Requires WooCommerce at least: 3.5.6
 - Tested WooCommerce up to: 3.6.2
 - License: MIT
@@ -136,6 +136,17 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 
 ## Changelog
 
+= 2019.05.20 - version 0.3.4 =
+
+- Fix minor bugs
+- Add mining and staking capabilities with feedback
+- Prepare for PBaaS compatibility
+
+= 2019.05.17 - version 0.3.2 =
+
+- Fix errors with KMD compatibility, wallet management
+- Improve functionality of wallet management
+
 = 2019.04.26 - version 0.3.1 =
 
 - Remove Sapling support from KMD Komodo
@@ -207,6 +218,12 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 - Test mode to allow enabling the plugin only for logged in Admins
 
 ## Upgrade Notice
+
+= 0.3.4 =
+Feature Release - Mining and Staking from Store
+
+= 0.3.2 =
+Important - Bug Fixes
 
 = 0.3.1 =
 Important - Sapling support removed from KMD Komodo 

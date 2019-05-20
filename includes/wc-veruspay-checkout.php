@@ -5,8 +5,8 @@
  * Checkout page.
  *
  * @package VerusPay Verus Gateway\Checkout
- * @version 0.3.1
- * @author    J Oliver Westbrook
+ * @version 0.3.4
+ * @author    Oliver Westbrook
  * @category  Cryptocurrency
  * @copyright Copyright (c) 2019, John Oliver Westbrook
  * 
@@ -69,7 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     </div>
     <div class="wc_veruspay_small_note">
         <span class="wc_veruspay_checkout-vsml wc_veruspay_checkout_rate_detail">
-            <?php echo $wc_veruspay_text_helper['exchange_rate']; ?>: <?php echo $wc_veruspay_currency_symbol; ?><span class="vrsc-rate"><?php echo $wc_veruspay_rate; ?></span> / <?php echo strtoupper($wc_veruspay_coin); ?> - <?php echo $wc_veruspay_text_helper['msg_valid_for']; ?>: <span id="vrsc_last_updated_time" class="wc_veruspay_price_time" data-expiretime="<?php echo $wc_veruspay_time_end; ?>"><?php echo $wc_veruspay_time_remaining; ?> min</span>
+            <?php echo $wc_veruspay_text_helper['exchange_rate']; ?>: <?php echo get_woocommerce_currency_symbol(); ?><span class="vrsc-rate"><?php echo $wc_veruspay_rate; ?></span> / <?php echo strtoupper($wc_veruspay_coin); ?> - <?php echo $wc_veruspay_text_helper['msg_valid_for']; ?>: <span id="vrsc_last_updated_time" class="wc_veruspay_price_time" data-expiretime="<?php echo $wc_veruspay_time_end; ?>"><?php echo $wc_veruspay_time_remaining; ?> min</span>
         </span>
         <span class="wc_veruspay_checkout-vvsml wc_veruspay_poweredby">
             <i><a href="https://veruspay.io/api/" target="_BLANK"><?php echo $wc_veruspay_text_helper['price_powered_by']; ?></a></i>
