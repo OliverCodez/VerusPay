@@ -5,8 +5,8 @@
  * Checkout page.
  *
  * @package VerusPay Verus Gateway\Checkout
- * @version 0.3.2
- * @author    J Oliver Westbrook
+ * @version 0.3.4
+ * @author    Oliver Westbrook
  * @category  Cryptocurrency
  * @copyright Copyright (c) 2019, John Oliver Westbrook
  * 
