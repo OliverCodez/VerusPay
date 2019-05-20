@@ -1,56 +1,22 @@
-storecurrency = veruspay_admin_params.storecurrency;
-var coin = ''; 
-var lastPrice = function( coin ) {
-    var bkcolor = "transparent";
-    var newval = "";
-    var lastval = jQuery( '.wc_veruspay_fiat_rate_'+coin ).text();
-    jQuery.ajax({
-        type: 'post',
-        url: 'https://veruspay.io/api/',
-        data: {currency: storecurrency, ticker: coin},
-        success: function(response){
-            newval = response;
-            if ( lastval > newval ) {
-                bkcolor = "red";
-            }
-            if ( lastval < newval ) {
-                bkcolor = "green";
-            }
-            jQuery( '.wc_veruspay_fiat_rate_'+coin ).hide();
-            jQuery( '.wc_veruspay_fiat_rate_'+coin ).text(newval).css('background-color',bkcolor);
-            jQuery( '.wc_veruspay_fiat_rate_'+coin ).fadeIn(800).queue( function(next){ 
-                jQuery(this).css( 'background-color', 'transparent' ); 
-                next(); 
-              });
-        }
-    });
-    
-}
-setInterval( function() {
-	lastPrice( 'vrsc' );
-	lastPrice( 'arrr' );
-	var nowtime = jQuery.now();
-}, (60000));
-
+var storecurrency = veruspay_admin_params.storecurrency;
 jQuery( function( $ ) {
-	$( '.wc_veruspay_set_css' ).closest( 'div' ).addClass( 'wc_veruspay_wrapper' );
+	$(document).ready(function() {
+		$( '#verus_chain_tools_version' ).insertAfter('#woocommerce_veruspay_verus_gateway_access_code').css('display','inline-block');
+		$( '.wc_veruspay_set_css' ).closest( 'div' ).addClass( 'wc_veruspay_wrapper' );
 		// Conditional fields for discount/fee section
-	if ( $( '.wc_veruspay_setdiscount' ).is( ':checked' ) ) {
-		$( '.wc_veruspay_discount-toggle' ).closest('tr').show();
-	}
-	else { $( '.wc_veruspay_discount-toggle' ).closest('tr').hide();
-	}
-	$( '.wc_veruspay_setdiscount' ).change( function( event ) {
 		if ( $( '.wc_veruspay_setdiscount' ).is( ':checked' ) ) {
 			$( '.wc_veruspay_discount-toggle' ).closest('tr').show();
 		}
-		if ( ! $( '.wc_veruspay_setdiscount' ).is( ':checked' ) ) {
-			$( '.wc_veruspay_discount-toggle' ).closest('tr').hide();
+		else { $( '.wc_veruspay_discount-toggle' ).closest('tr').hide();
 		}
-	});
-
-		// Conditional fields for wallet Settings
-	$(document).ready(function() {
+		$( '.wc_veruspay_setdiscount' ).change( function( event ) {
+			if ( $( '.wc_veruspay_setdiscount' ).is( ':checked' ) ) {
+				$( '.wc_veruspay_discount-toggle' ).closest('tr').show();
+			}
+			if ( ! $( '.wc_veruspay_setdiscount' ).is( ':checked' ) ) {
+				$( '.wc_veruspay_discount-toggle' ).closest('tr').hide();
+			}
+		});
 		if ( $( '#message' ).hasClass( 'updated' ) ) {
 			var savedURL = location.href + '&veruspay_settings_saved';
 			location.href = savedURL;
@@ -81,6 +47,49 @@ jQuery( function( $ ) {
 			$( '.wc_veruspay_options-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
 		});
 
+		// Refresh prices
+		var lastPrice = function() {
+			$( '.wc_veruspay_fiat_rate' ).each(function(){
+				var bkcolor = 'transparent';
+				var newval = '';
+				var coin = $( this ).attr( 'data-coin' );
+				var lastval = $( this ).text();
+				$.ajax({
+					type: 'post',
+					url: 'https://veruspay.io/api/',
+					data: {currency: storecurrency, ticker: coin},
+					success: function(response){
+						$( this ).hide();
+						newval = response;
+						if ( lastval > newval ) {
+							var value = newval.toString();
+							$( this ).html(value).css('background-color','red');
+							$( this ).fadeIn(800).queue( function(next){
+								$( this ).css( 'background-color', 'transparent' ); 
+								next();
+							});
+						}
+						if ( lastval < newval ) {
+							var value = newval.toString();
+							$( this ).html(value).css('background-color','green');
+							$( this ).fadeIn(800).queue( function(next){
+								$( this ).css( 'background-color', 'transparent' ); 
+								next();
+							});					
+						}
+						else {
+							var value = newval.toString();
+							$( this ).html(value).css('background-color','green');
+							$( this ).fadeIn(800).queue( function(next){
+								$( this ).css( 'background-color', 'transparent' ); 
+								next();
+							});				
+						}						
+					}
+				});
+			});
+		}
+				
 		// Refresh balances
 		var refreshBalance = function() {
 			$( ".wc_veruspay_bal_admin" ).each(function() {
@@ -115,6 +124,13 @@ jQuery( function( $ ) {
 				}
 			});
 		}
+
+		// Run process intervals
+		setInterval( function() {
+			lastPrice();
+			var nowtime = $.now();
+		}, (60000));
+
 		setInterval( function() {
 			refreshBalance();
 			var nowtime = $.now();
@@ -177,6 +193,5 @@ jQuery( function( $ ) {
 			$('.wc_veruspay_cashout_complete-modalcontent').text('');
 		});
 		// - //
-
 	});
 });

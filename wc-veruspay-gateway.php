@@ -3,8 +3,8 @@
  * Plugin Name: VerusPay Verus Gateway
  * Plugin URI: https://wordpress.org/plugins/veruspay-verus-gateway/
  * Description: Accept Verus Coin (VRSC) and Pirate (ARRR) cryptocurrencies in your online WooCommerce store for physical or digital products.
- * Version: 0.3.2
- * Author: J Oliver Westbrook
+ * Version: 0.3.4
+ * Author: Oliver Westbrook
  * Author URI: https://profiles.wordpress.org/veruspay/
  * Copyright: (c) 2019 John Oliver Westbrook (johnwestbrook@pm.me)
  * License: MIT
@@ -13,7 +13,7 @@
  * Domain Path: /i18n/languages/
  *
  * @package   veruspay-verus-gateway
- * @author    J Oliver Westbrook
+ * @author    Oliver Westbrook
  * @category  Cryptocurrency
  * @copyright Copyright (c) 2019, John Oliver Westbrook
  * 
@@ -45,11 +45,9 @@
  * 
  */
 // TESTING //
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 // -- //
 // No Direct Access
 if ( ! defined( 'ABSPATH' ) ) {
@@ -62,16 +60,22 @@ $wc_veruspay_available_coins = array(
 		'name' => 'Verus',
 		'private' => 1,												// 1 for True; 2 for False
 		'transparent' => 1,										// 1 for True; 2 for False
+		'mining' => 1,										// 1 for True; 2 for False
+		'staking' => 1,										// 1 for True; 2 for False
 	),
 	'arrr' => array(
 		'name' => 'Pirate',
 		'private' => 1,												// 1 for True; 2 for False
 		'transparent' => 0,										// 1 for True; 2 for False
+		'mining' => 0,										// 1 for True; 2 for False
+		'staking' => 0,										// 1 for True; 2 for False
 	),
 	'kmd' => array(
 		'name' => 'Komodo',
 		'private' => 0,												// 1 for True; 2 for False
 		'transparent' => 1,										// 1 for True; 2 for False
+		'mining' => 0,										// 1 for True; 2 for False
+		'staking' => 0,										// 1 for True; 2 for False
 	),
 );
 // Include VerusPay ChainTools script for blockchain integration with Verus ChainTools
@@ -133,9 +137,9 @@ function wc_veruspay_settings_menu(){
  *
  * @class 		WC_Gateway_VerusPay
  * @extends		WC_Payment_Gateway
- * @version		0.3.2
+ * @version		0.3.4
  * @package		WooCommerce/Classes/Payment
- * @author 		J Oliver Westbrook
+ * @author 		Oliver Westbrook
  * @param global $wc_veruspay_text_helper
  */
 add_action( 'plugins_loaded', 'wc_veruspay_init', 11 );
@@ -565,7 +569,7 @@ function wc_veruspay_init() {
 			// Add to Wallet Settings array
 			$wc_veruspay_add_wallet_data = array();
 			$wc_veruspay_add_wallet_data[$key.'_wallet_title'] = array(
-					'title' => __( '<img style="margin: 0 10px 0 0;" src="' . plugins_url( '/public/img/wc-'.strtolower($item['name']).'-icon-16x.png', __FILE__ ) . '" />' . $item['name'] . ' Wallet - Fiat Price: ' . get_woocommerce_currency_symbol() . '<span class="wc_veruspay_fiat_rate_'.$key.'">' . wc_veruspay_price( $key,  get_woocommerce_currency() ) . '</span><span class="wc_veruspay_title-sub-small">Updates every 1 min</span>', 'veruspay-verus-gateway' ),
+					'title' => __( '<img style="margin: 0 10px 0 0;" src="' . plugins_url( '/public/img/wc-'.strtolower($item['name']).'-icon-16x.png', __FILE__ ) . '" />' . $item['name'] . ' Wallet - Fiat Price: ' . get_woocommerce_currency_symbol() . '<span class="wc_veruspay_fiat_rate" data-coin="'.$key.'">' . wc_veruspay_price( $key,  get_woocommerce_currency() ) . '</span><span class="wc_veruspay_title-sub-small">Updates every 1 min</span>', 'veruspay-verus-gateway' ),
 					'type' => 'title',
 					'description' => '',
 					'class' => 'wc_veruspay_title-walletssub wc_veruspay_walletsettings-toggle',
@@ -661,6 +665,38 @@ function wc_veruspay_init() {
 					'class' => 'wc-veruspay-disabled-input wc_veruspay_addresses-toggle'
 				);
 			}
+			if ( $item['staking'] === 1 || $item['mining'] === 1 ) {
+				if ( $item['staking'] === 1 ) {
+					$wc_veruspay_generate[$key.'_stake_enable'] = array(
+						'title' => __( 'Enable Staking', 'veruspay-verus-gateway' ),
+						'type' => 'checkbox',
+						'label' => 'Enable Staking',
+						'description' => '',
+						'default' => 'no',
+						'class' => 'wc_veruspay_enable_mining wc_veruspay_walletsettings-toggle',
+					);
+				}
+				if ( $item['mining'] === 1 ) {
+					$wc_veruspay_generate[$key.'_mine_enable'] = array(
+						'title' => __( 'Enable Mining', 'veruspay-verus-gateway' ),
+						'type' => 'checkbox',
+						'label' => 'Enable Mining',
+						'description' => '',
+						'default' => 'no',
+						'class' => 'wc_veruspay_enable_mining wc_veruspay_walletsettings-toggle',
+					);
+					$wc_veruspay_generate[$key.'_mine_value'] = array(
+						'title' => __( 'Mining Threads', 'veruspay-verus-gateway' ),
+						'type' => 'text',
+						'description' => __( 'Enter the number of threads to dedicate to mining this coin', 'veruspay-verus-gateway' ),
+						'default' => '0',
+						'desc_tip' => true,
+						'class' => 'wc_veruspay_enable_mining wc_veruspay_walletsettings-toggle',
+					);
+				}
+				$wc_veruspay_position_aft = array_search( 'vrsc_wallet_daemon_settings', array_keys( $wc_veruspay_add_wallet_data ) );
+				apply_filters( 'wc_veruspay_form_fields', array_splice_assoc( $wc_veruspay_add_wallet_data, $wc_veruspay_position_aft, 0, $wc_veruspay_generate ) );
+			}
 			$wc_veruspay_position = array_search( 'addr_show', array_keys( $this->form_fields ) );
 			$wc_veruspay_position_after = array_search( 'cust_show', array_keys( $this->form_fields ) );
 			apply_filters( 'wc_veruspay_form_fields', array_splice_assoc( $this->form_fields, $wc_veruspay_position_after, 0, $wc_veruspay_add_address_data ) );
@@ -698,10 +734,14 @@ function wc_veruspay_init() {
 				'addresses' => $wc_trnsaddr_setting,
 				'addrcount' => '',
 				'usedaddresses' => $wc_usedaddr_setting,
+				'mining' => $item['mining'],
+				'staking' => $item['staking'],
 			);
 			// Setup status of wallet to true or false
 			if ( wc_veruspay_stat( $wc_veruspay_access_code, $wc_veruspay_wallets[$key], $key ) == '404' ) {
 				$wc_veruspay_wallets[$key]['stat'] = 1;
+				$wc_veruspay_wallets['vct_version']['version'] = wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_wallets[$key], $key, 'ver', null, null );
+				echo '<span id="verus_chain_tools_version" style="display:none">VerusChainTools Version: '.$wc_veruspay_wallets['vct_version']['version'].'</span>';
 			}
 			else {
 				$wc_veruspay_wallets[$key]['stat'] = 0;
@@ -826,86 +866,125 @@ function wc_veruspay_init() {
 			// Check store status and wallet connection variants and update stat variable and store settings accordingly
 			foreach ( $wc_veruspay_wallets as $key => $item ) {
 				// If wallet supports transparent addresses, check for manually entered addrs and cleanup addresses, prep for next step
-				if ( $wc_veruspay_wallets[$key]['transparent'] === 1 ){
-					if ( (\strpos( $wc_veruspay_wallets[$key]['addresses'], 'e.g.') ) === false ) {
-						if ( strlen( $wc_veruspay_wallets[$key]['addresses'] ) < 10 ) {
-							$wc_veruspay_wallets[$key]['addrcount'] = 0;
+				if ( isset( $wc_veruspay_wallets[$key]['enabled'] ) ) {
+					if ( $wc_veruspay_wallets[$key]['transparent'] === 1 ){
+						if ( (\strpos( $wc_veruspay_wallets[$key]['addresses'], 'e.g.') ) === false ) {
+							if ( strlen( $wc_veruspay_wallets[$key]['addresses'] ) < 10 ) {
+								$wc_veruspay_wallets[$key]['addrcount'] = 0;
+							}
+							else {
+								$wc_veruspay_clean_addresses = rtrim(str_replace(' ', '', str_replace('"', "", $wc_veruspay_wallets[$key]['addresses'])), ',');
+								$this->update_option( $key . '_storeaddresses', $wc_veruspay_clean_addresses );
+								$wc_veruspay_wallets[$key]['addrcount'] = count( explode( ',', $wc_veruspay_clean_addresses ) );
+							}
+							$this->form_fields[ $key . '_storeaddresses' ][ 'title' ] = __( 'Store Addresses (' . $wc_veruspay_wallets[$key]['addrcount'] . ')', 'veruspay-verus-gateway' );
 						}
-						else {
-							$wc_veruspay_clean_addresses = rtrim(str_replace(' ', '', str_replace('"', "", $wc_veruspay_wallets[$key]['addresses'])), ',');
-							$this->update_option( $key . '_storeaddresses', $wc_veruspay_clean_addresses );
-							$wc_veruspay_wallets[$key]['addrcount'] = count( explode( ',', $wc_veruspay_clean_addresses ) );
-						}
-						$this->form_fields[ $key . '_storeaddresses' ][ 'title' ] = __( 'Store Addresses (' . $wc_veruspay_wallets[$key]['addrcount'] . ')', 'veruspay-verus-gateway' );
 					}
-				}
 				// Process each wallet based on status
 				// First check for manually entered addresses for that store and set store to disabled if not exist, message to update
-				if ( $wc_veruspay_wallets[$key]['enabled'] == 'yes' && $wc_veruspay_wallets[$key]['stat'] === 0 ) {
-					if ( $wc_veruspay_wallets[$key]['addresses'] !== null ) {
-						if ( strlen( $wc_veruspay_wallets[$key]['addresses'] ) < 10 ) {
-							$this->update_option( $key . '_enable', 'no' );
-							$wc_veruspay_is_enabled[] = 'no';
-							//$this->form_fields[ $key . '_sapling' ][ 'class' ] = 'wc_veruspay_hidden wc_veruspay_walletsettings-toggle';
-							if ( $item['private'] === 1 ) {
-								$this->update_option( $key . '_sapling', 'no' );
-								$this->form_fields[ $key . '_sapling' ][ 'label' ] = 'Sapling Privacy Unavailable in Manual Mode';
+					if ( $wc_veruspay_wallets[$key]['enabled'] == 'yes' && $wc_veruspay_wallets[$key]['stat'] === 0 ) {
+						if ( $wc_veruspay_wallets[$key]['addresses'] !== null ) {
+							if ( strlen( $wc_veruspay_wallets[$key]['addresses'] ) < 10 ) {
+								$this->update_option( $key . '_enable', 'no' );
+								$wc_veruspay_is_enabled[] = 'no';
+								//$this->form_fields[ $key . '_sapling' ][ 'class' ] = 'wc_veruspay_hidden wc_veruspay_walletsettings-toggle';
+								if ( $item['private'] === 1 ) {
+									$this->update_option( $key . '_sapling', 'no' );
+									$this->form_fields[ $key . '_sapling' ][ 'label' ] = 'Sapling Privacy Unavailable in Manual Mode';
+								}
+								$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_off_noaddr'];
 							}
-							$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_off_noaddr'];
+							else {
+								$this->update_option( $key . '_enable', 'yes' );
+								$wc_veruspay_is_enabled[] = 'yes';
+								//$this->form_fields[ $key . '_sapling' ][ 'class' ] = 'wc_veruspay_hidden wc_veruspay_walletsettings-toggle';
+								if ( $item['private'] === 1 ) {
+									$this->update_option( $key . '_sapling', 'no' );
+									$this->form_fields[ $key . '_sapling' ][ 'label' ] = 'Sapling Privacy Unavailable in Manual Mode';
+								}
+								$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_off_addr'];
+							}
 						}
 						else {
-							$this->update_option( $key . '_enable', 'yes' );
-							$wc_veruspay_is_enabled[] = 'yes';
-							//$this->form_fields[ $key . '_sapling' ][ 'class' ] = 'wc_veruspay_hidden wc_veruspay_walletsettings-toggle';
-							if ( $item['private'] === 1 ) {
-								$this->update_option( $key . '_sapling', 'no' );
-								$this->form_fields[ $key . '_sapling' ][ 'label' ] = 'Sapling Privacy Unavailable in Manual Mode';
-							}
-							$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_off_addr'];
+							$this->update_option( $key . '_enable', 'no' );
+							$wc_veruspay_is_enabled[] = 'no';
+							$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_off_addroff'];
 						}
 					}
-					else {
-						$this->update_option( $key . '_enable', 'no' );
-						$wc_veruspay_is_enabled[] = 'no';
-						$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_off_addroff'];
-					}
-				}
-				// If wallet in function stats true
-				else if ( $wc_veruspay_wallets[$key]['stat'] === 1 ) {
-					// If wallet with transparent addresses, do the following
-					if ( $wc_veruspay_wallets[$key]['addresses'] !== null && $wc_veruspay_wallets[$key]['enabled'] == 'yes' ) {
-						// If backup addresses are not present, warn
-						if ( strlen( $wc_veruspay_wallets[$key]['addresses'] ) < 10 ) {
-							$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_on_noaddr'];
+					// If wallet in function stats true
+					else if ( $wc_veruspay_wallets[$key]['stat'] === 1 ) {
+						// If wallet with transparent addresses, do the following
+						if ( $wc_veruspay_wallets[$key]['addresses'] !== null && $wc_veruspay_wallets[$key]['enabled'] == 'yes' ) {
+							// If backup addresses are not present, warn
+							if ( strlen( $wc_veruspay_wallets[$key]['addresses'] ) < 10 ) {
+								$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_on_noaddr'];
+							}
+							else {
+								$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_on'];
+							}
 						}
 						else {
 							$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_on'];
 						}
+						if ( $wc_veruspay_wallets[$key]['enabled'] == 'yes' ) {
+							$wc_veruspay_is_enabled[] = 'yes';
+							$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_online'];
+							if ( $wc_veruspay_wallets[$key]['mining'] === 1 ) {
+								$wc_veruspay_this_mine_stat = wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_wallets[$key], $key, 'generatestat', null, null);
+								// Staking Status: substr( $wc_veruspay_this_mine_stat, -5, 1 );
+								// Mining Status: substr( $wc_veruspay_this_mine_stat, -3, 1 );
+								// Thread Count: substr( $wc_veruspay_this_mine_stat, -1, 1 );
+								if ( substr( $wc_veruspay_this_mine_stat, -1, 1 ) > 0 ) {
+									$this->form_fields[ $key . '_mine_enable' ][ 'description' ] = '<span style="color:green">Mining with '.substr( $wc_veruspay_this_mine_stat, -1, 1 ).' threads!</span>';
+								}
+								if ( substr( $wc_veruspay_this_mine_stat, -5, 1 ) == 1 ) {
+									$this->form_fields[ $key . '_stake_enable' ][ 'description' ] = '<span style="color:green">Staking!</span>';
+								}
+								if ( $this->get_option( $key.'_mine_value' ) != substr( $wc_veruspay_this_mine_stat, -1, 1 ) ) {
+									if ( $this->get_option( $key.'_mine_value' ) > 0 ){
+										wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_wallets[$key], $key, 'generate', 'true', $this->get_option( $key.'_mine_value' ) );
+									}
+								}
+								if ( $this->get_option( $key.'_mine_enable' ) == 'yes' &&  substr( $wc_veruspay_this_mine_stat, -1, 1 ) == 0 ) { // if not mining, start on check
+									wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_wallets[$key], $key, 'generate', 'true', $this->get_option( $key.'_mine_value' ) );
+								}
+								if ( $this->get_option( $key.'_mine_enable' ) == 'no' && substr( $wc_veruspay_this_mine_stat, -3, 1 ) == 1 && substr( $wc_veruspay_this_mine_stat, -5, 1 ) == 1 ) {
+									wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_wallets[$key], $key, 'generate', 'false', '0' );
+									wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_wallets[$key], $key, 'generate', 'true', '0' );
+									$this->update_option( $key.'_mine_value', '0' );
+								}
+								if ( $this->get_option( $key.'_mine_enable' ) == 'no' && substr( $wc_veruspay_this_mine_stat, -3, 1 ) == 1 && substr( $wc_veruspay_this_mine_stat, -5, 1 ) == 0 ) {
+									wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_wallets[$key], $key, 'generate', 'false', '0' );
+									$this->update_option( $key.'_mine_value', '0' );
+								}
+							}
+							if ( $wc_veruspay_wallets[$key]['staking'] === 1 ) {
+								if ( $this->get_option( $key.'_stake_enable' ) == 'yes' &&  substr( $wc_veruspay_this_mine_stat, -5, 1 ) == 0 ) {
+									wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_wallets[$key], $key, 'generate', 'true', 0 );
+								}
+								if ( $this->get_option( $key.'_stake_enable' ) == 'no' &&  substr( $wc_veruspay_this_mine_stat, -5, 1 ) == 1 ) {
+									wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_wallets[$key], $key, 'generate', 'false', null );
+								}						
+							}
+						}
 					}
-					else {
-						$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_on'];
-					}
-					if ( $wc_veruspay_wallets[$key]['enabled'] == 'yes' ) {
-						$wc_veruspay_is_enabled[] = 'yes';
-						$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_online'];
-					}
-				}
-				else if ( $wc_veruspay_wallets[$key]['stat'] === 0 ) {
-					if ( $wc_veruspay_wallets[$key]['addresses'] !== null ) {
-						// If backup addresses are not present, warn
-						if ( strlen( $wc_veruspay_wallets[$key]['addresses'] ) < 10 ) {
-							$this->update_option( $key . '_enable', 'no' );
-							$wc_veruspay_is_enabled[] = 'no';
-							$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_off_noaddr'];
+					else if ( $wc_veruspay_wallets[$key]['stat'] === 0 ) {
+						if ( $wc_veruspay_wallets[$key]['addresses'] !== null ) {
+							// If backup addresses are not present, warn
+							if ( strlen( $wc_veruspay_wallets[$key]['addresses'] ) < 10 ) {
+								$this->update_option( $key . '_enable', 'no' );
+								$wc_veruspay_is_enabled[] = 'no';
+								$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_off_noaddr'];
+							}
+							else {
+								$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_off_addr'];
+							}
 						}
 						else {
-							$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_off_addr'];
+							$this->update_option( $key . '_enable', 'no' );
+							$wc_veruspay_is_enabled[] = 'no';
+							$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_off_addroff'];
 						}
-					}
-					else {
-						$this->update_option( $key . '_enable', 'no' );
-						$wc_veruspay_is_enabled[] = 'no';
-						$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_off_addroff'];
 					}
 				}
 			}

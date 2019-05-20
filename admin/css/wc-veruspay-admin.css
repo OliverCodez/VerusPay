@@ -261,6 +261,12 @@
 .wc_veruspay_red {
     color: red!important;
 }
+#verus_chain_tools_version {
+    line-height: 32px;
+    padding: 0 10px;
+    font-style: italic;
+    font-size: 12px;
+}
 @media screen and (max-width : 767px) {
     .wc_veruspay_cashout-modalinner {
         top: 5%;
