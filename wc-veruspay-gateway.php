@@ -738,19 +738,21 @@ function wc_veruspay_init() {
 				'staking' => $item['staking'],
 			);
 			// Setup status of wallet to true or false
-			if ( wc_veruspay_stat( $wc_veruspay_access_code, $wc_veruspay_wallets[$key], $key ) == '404' ) {
-				$wc_veruspay_wallets[$key]['stat'] = 1;
-				$wc_veruspay_wallets['vct_version']['version'] = wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_wallets[$key], $key, 'ver', null, null );
-				echo '<span id="verus_chain_tools_version" style="display:none">VerusChainTools Version: '.$wc_veruspay_wallets['vct_version']['version'].'</span>';
+			if ( is_admin() ) {
+				if ( wc_veruspay_stat( $wc_veruspay_access_code, $wc_veruspay_wallets[$key], $key ) == '404' ) {
+					$wc_veruspay_wallets[$key]['stat'] = 1;
+					$wc_veruspay_wallets['vct_version']['version'] = wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_wallets[$key], $key, 'ver', null, null );
+					echo '<span id="verus_chain_tools_version" style="display:none">VerusChainTools Version: '.$wc_veruspay_wallets['vct_version']['version'].'</span>';
+				}
+				else {
+					$wc_veruspay_wallets[$key]['stat'] = 0;
+				}
 			}
-			else {
-				$wc_veruspay_wallets[$key]['stat'] = 0;
-			}
-
+			
 			// Insert Wallet Management Sections
 
 			// First check for access code and stat of each coin, get balances and set vars
-			if ( isset( $wc_veruspay_access_code ) && !empty( $wc_veruspay_access_code ) ) {
+			if ( isset( $wc_veruspay_access_code ) && !empty( $wc_veruspay_access_code ) && is_admin() ) {
 				if ( $wc_veruspay_wallets[$key]['stat'] == 1 ) {
 					$wc_veruspay_formfields_bal_t = wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_wallets[$key], $key, 'getttotalbalance', null, null );
 					$wc_veruspay_formfields_bal_z = wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_wallets[$key], $key, 'getztotalbalance', null, null );
@@ -847,7 +849,7 @@ function wc_veruspay_init() {
 				$wc_veruspay_position_pre = array_search( $key.'_wallet_daemon_settings', array_keys( $this->form_fields ) );
 				apply_filters( 'wc_veruspay_form_fields', array_splice_assoc( $this->form_fields, $wc_veruspay_position_pre, 0, $wc_veruspay_wallet_management_data ) );
 			}
-			else {
+			else if ( is_admin() ) {
 				$wc_veruspay_wallet_management_data['access_code_instructions'] = array(
 					'title' => __( '<span style="color:red">VERUSPAY DISABLED:</span> Activation Instructions', 'veruspay-verus-gateways' ),
 					'type' => 'title',
@@ -882,7 +884,7 @@ function wc_veruspay_init() {
 					}
 				// Process each wallet based on status
 				// First check for manually entered addresses for that store and set store to disabled if not exist, message to update
-					if ( $wc_veruspay_wallets[$key]['enabled'] == 'yes' && $wc_veruspay_wallets[$key]['stat'] === 0 ) {
+					if ( $wc_veruspay_wallets[$key]['enabled'] == 'yes' && $wc_veruspay_wallets[$key]['stat'] === 0 && is_admin() ) {
 						if ( $wc_veruspay_wallets[$key]['addresses'] !== null ) {
 							if ( strlen( $wc_veruspay_wallets[$key]['addresses'] ) < 10 ) {
 								$this->update_option( $key . '_enable', 'no' );
@@ -912,7 +914,7 @@ function wc_veruspay_init() {
 						}
 					}
 					// If wallet in function stats true
-					else if ( $wc_veruspay_wallets[$key]['stat'] === 1 ) {
+					else if ( $wc_veruspay_wallets[$key]['stat'] === 1 && is_admin() ) {
 						// If wallet with transparent addresses, do the following
 						if ( $wc_veruspay_wallets[$key]['addresses'] !== null && $wc_veruspay_wallets[$key]['enabled'] == 'yes' ) {
 							// If backup addresses are not present, warn
@@ -926,7 +928,7 @@ function wc_veruspay_init() {
 						else {
 							$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_on'];
 						}
-						if ( $wc_veruspay_wallets[$key]['enabled'] == 'yes' ) {
+						if ( $wc_veruspay_wallets[$key]['enabled'] == 'yes' && is_admin() ) {
 							$wc_veruspay_is_enabled[] = 'yes';
 							$this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_text_helper['admin_wallet_online'];
 							if ( $wc_veruspay_wallets[$key]['mining'] === 1 ) {
@@ -968,7 +970,7 @@ function wc_veruspay_init() {
 							}
 						}
 					}
-					else if ( $wc_veruspay_wallets[$key]['stat'] === 0 ) {
+					else if ( $wc_veruspay_wallets[$key]['stat'] === 0 && is_admin() ) {
 						if ( $wc_veruspay_wallets[$key]['addresses'] !== null ) {
 							// If backup addresses are not present, warn
 							if ( strlen( $wc_veruspay_wallets[$key]['addresses'] ) < 10 ) {
