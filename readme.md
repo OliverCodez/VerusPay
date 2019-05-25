@@ -4,11 +4,11 @@
 - Donate link: https://veruspay.io/donate/
 - Tags: woocommerce, payment gateway, gateway, cryptocurrency, blockchain, verus, verus coin, vrsc, pirate, arrr, komodo, kmd
 - Requires at least: 5.0.0
-- Tested up to: 5.1.1
+- Tested up to: 5.2.1
 - Requires PHP: 7.0
 - Stable tag: 0.3.4
 - Requires WooCommerce at least: 3.5.6
-- Tested WooCommerce up to: 3.6.2
+- Tested WooCommerce up to: 3.6.3
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
 
@@ -136,6 +136,11 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 
 ## Changelog
 
+= 2019.05.25 - version 0.3.5 =
+
+- Bug fixes for WP 5.2.1 & WC 3.6.3 compatibility
+- Performance improvements
+
 = 2019.05.20 - version 0.3.4 =
 
 - Fix minor bugs
@@ -218,6 +223,10 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 - Test mode to allow enabling the plugin only for logged in Admins
 
 ## Upgrade Notice
+
+= 2019.05.25 - version 0.3.5 =
+
+Performance and Bug Fix Release
 
 = 0.3.4 =
 Feature Release - Mining and Staking from Store
