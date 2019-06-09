@@ -136,6 +136,10 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 
 ## Changelog
 
+= 2019.06.08 - version 0.3.6 =
+
+- Minor bug fixes
+
 = 2019.05.25 - version 0.3.5 =
 
 - Bug fixes for WP 5.2.1 & WC 3.6.3 compatibility
@@ -223,6 +227,10 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 - Test mode to allow enabling the plugin only for logged in Admins
 
 ## Upgrade Notice
+
+= 2019.06.08 - version 0.3.6 =
+
+Bug Fixes
 
 = 2019.05.25 - version 0.3.5 =
 

@@ -18,9 +18,12 @@ jQuery( function( $ ) {
 			}
 		});
 		if ( $( '#message' ).hasClass( 'updated' ) ) {
-			var savedURL = location.href + '&veruspay_settings_saved';
-			location.href = savedURL;
-			location.reload();
+			var msgVal = jQuery("#message").text();
+			if ( msgVal == 'Your settings have been saved.' ) {
+				var savedURL = location.href + '&veruspay_settings_saved';
+				location.href = savedURL;
+				location.reload();
+			}
 		}
 		if ( $('.wc_veruspay_togglewallet').hasClass( 'wallet_updated' ) ) {
 			location.reload();
