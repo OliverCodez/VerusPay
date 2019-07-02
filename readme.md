@@ -6,7 +6,7 @@
 - Requires at least: 5.0.0
 - Tested up to: 5.2.1
 - Requires PHP: 7.0
-- Stable tag: 0.3.4
+- Stable tag: 0.3.8
 - Requires WooCommerce at least: 3.5.6
 - Tested WooCommerce up to: 3.6.3
 - License: MIT
