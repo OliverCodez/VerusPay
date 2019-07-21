@@ -1,67 +1,53 @@
 <?php
 /**
- * Verus PHP Tools - Functions
- *
- * @category Cryptocurrency
- * @package  VerusPHPTools
- * @author   Oliver Westbrook <johnwestbrook@pm.me>
- * @copyright Copyright (c) 2019, John Oliver Westbrook
- * @link     https://github.com/joliverwestbrook/VerusPHPTools
+ * Blockchain Functions (Methods) Available to VerusPay
  * 
- * MODIFIED: This script has been modified, disallowing indirect or ajax access to protect wallet for use within VerusPay and utilizing wp_remote_post for cURL
- * ====================
+ * Following is a list of all whitelisted methods and custom methods 
+ * defined for VerusPay within VerusChainTools API (VCT) v0.4.0+. 
+ * The VCT API must be configured and running on the wallet server 
+ * you will use in conjuction with this installation of VerusPay.
+ * To learn more, visit: https://github.com/joliverwestbrook/VerusChainTools
  * 
- * The MIT License (MIT)
+ * ===================
+ * =   WHITELISTED   =
+ * ===================
+ *  getinfo
+ *  setgenerate
+ *  getgenerate
+ *  getnewaddress
+ *  z_getnewaddress
+ *  z_getbalance
+ *  getunconfirmedbalance
+ *  getaddressesbyaccount
+ *  z_listaddresses
+ *  getreceivedbyaddress
  * 
- * Copyright (c) 2019 John Oliver Westbrook
+ * +++++++++++++++++++
+ * ++ NEW For PBaaS ++
+ * +++++++++++++++++++
+ *  definechain
+ *  getchaindefinition
+ *  getdefinedchains
  * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * 
- * ====================
- * 
- *  Available Blockchain Functions - Requires "Verus Chain Tools" v0.2.0+ configured on wallet server:
- * 
- *      Get New Transparent Address:                    wc_veruspay_go( 'getnewaddress', null, null );
- *      Get New ZS Sapling Address:                     wc_veruspay_go( 'getnewsapling', null, null );
- *      Get Balance:                                    wc_veruspay_go( 'getbalance', 'wallet_address', null );
- *      Check Confs-to-Min-Count:                       wc_veruspay_go( 'lowestconfirm', 'wallet_address', 'min_confirm_number' );
- *      Get Current Block Height:                       wc_veruspay_go( 'getblockcount', null, null );
- *      Count Transparent Addresses in Wallet:          wc_veruspay_go( 'countaddresses', '""', null ); (if wallet is named, provide in place of "")
- *      Count ZS Sapling Addresses in Wallet:           wc_veruspay_go( 'countzaddresses', null, null );
- *      List Transparent Addresses in Wallet:           wc_veruspay_go( 'listaddresses', '""', null ); (if wallet is named, provide in place of "")
- *      List ZS Sapling Addresses in Wallet:            wc_veruspay_go( 'listzaddresses', null, null );
- *      Get Total Amount Received by Address:           wc_veruspay_go( 'totalreceivedby', 'wallet_address', null );
- *      Get Total Transparent Balance:                  wc_veruspay_go( 'getttotalbalance', null, null );
- *      Get Total Unconfirmed Balance:                  wc_veruspay_go( 'getunconfirmedbalance', null, null );
- *      Get Total ZS Sapling Balance:                   wc_veruspay_go( 'getztotalbalance', null, null );
- *      Get Total Wallet Balance:                       wc_veruspay_go( 'gettotalbalance', null, null );
- *      Show config set T-Cashout address:              wc_veruspay_go( 'show_taddr', null, null );
- *      Show config set Z-Cashout address:              wc_veruspay_go( 'show_zaddr', null, null );
- *      Cashout all T wallets to T-Cashout address:     wc_veruspay_go( 'cashout_t', null, null );
- *      Cashout all T wallets to Z-Cashout address:     wc_veruspay_go( 'cashout_z', null, null );
- * 
+ * ===================
+ * =     CUSTOM      =
+ * ===================
+ *  test        returns status of blockchain daemon
+ *  type        returns an integer representing the type of transactions capable by the blockchain (0 = transparent + private, 1 = transparent only, 2 = private only)
+ *  version     returns version # of blockchain daemon
+ *  lowest      returns the lowest confirm for the given address
+ *  t_count     returns the number of T addresses created
+ *  z_count     returns the number of Z addresses created
+ *  bal         returns the balance of each address created and totals for Transparent, Interest, Private and total wallet
+ *  show_taddr  returns the Cashout Transparent address set by the store owner
+ *  show_zaddr  returns the Cashout Private address set by the store owner
+ *  cashout_t   sends the total transparent balance, minus tx fee of 0.0001, to the Cashout Transparent address
+ *  cashout_z   sends the total private balance, minus tx fee of 0.0001 per address, to the Cashout Private address
  */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-global $wc_veruspay_phpextconfig;
 $wc_veruspay_phpextconfig = array(
     // VRSC Iquidus Explorer Support
 	'vrsc_address' => 'https://explorer.veruscoin.io/address/',
@@ -104,24 +90,25 @@ $wc_veruspay_phpextconfig = array(
 	'currency'  => 'USD',
 );
 /**
- * Test wallet connection - Return status, 0 means not running, anything else is running even if errors occur.
+ * Stat Connection to VCT API
+ * 
+ * Return status, 0 means not running, anything else is running even if errors occur.
  */
-function wc_veruspay_stat( $wc_veruspay_accesscode, $wc_veruspay_wallet, $coin ) {
-    // Create new wallet connection to compatible Daemon
-    $url = $wc_veruspay_wallet[ 'ip' ];
-    // Get response data
+function wc_veruspay_stat( $wc_veruspay_accesscode, $url, $chain ) {
+    // Pass test method to VCT API and get return
     $response = wp_remote_post( $url, array(
         'sslverify' => false,
-        'headers'     => array(),
+        'headers'     => array( 'Content-Type: application/json','Accept: application/json' ),
         'body' => array(
-                    'access' => $wc_veruspay_accesscode,
-                    'exec' => 'test',
-                    'coin' => $coin
+                    'a' => $wc_veruspay_accesscode,
+                    'c' => $chain,
+                    'm' => 'test'
                 ),
         'method' => 'POST',
 	    'timeout' => 120,
     ));
-    // Handle response and any errors
+    // TODO : Test errors and success outputs
+    // Handle return
     if ( is_wp_error( $response ) ) {
         $error_message = $response->get_error_message();
         if ( strpos( $error_message, 'Connection refused' ) !== false ) {
@@ -131,36 +118,39 @@ function wc_veruspay_stat( $wc_veruspay_accesscode, $wc_veruspay_wallet, $coin )
             return $error_message;
         }
     } else {
-        if ( json_decode($response['response']['code'], true) == '200' ){
-            return json_decode($response['body'], true);
+        if ( json_decode( $response['response']['code'], TRUE ) == '200' ){
+            return json_decode( $response['body'], TRUE );
         }
         else {
             return 0;
         }
     }
 }
-// Function to access blockchain using wordpress built-in wp_remote_post 
-function wc_veruspay_go( $wc_veruspay_accesscode, $wc_veruspay_wallet, $coin, $exec, $hash, $amt ){
-    $url = $wc_veruspay_wallet[ 'ip' ];
+/**
+ * Go VCT!
+ * 
+ * Function to access VCT API using wordpress built-in wp_remote_post
+ */
+function wc_veruspay_go( $wc_veruspay_accesscode, $url, $chain, $method, $params ){
     $body = array(
-        'access' => $wc_veruspay_accesscode,
-        'coin' => $coin,
-        'exec' => $exec,
-        'hash' => $hash,
-        'amt' => $amt,
+        'a' => $wc_veruspay_accesscode,
+        'c' => $chain,
+        'm' => $method,
+        'p' => $params, // Passed as json_encode string of correct array layout of parameters in question
     );
-    // Get blockchain data from method and params
+    // Pass method and params to VCT API and get return
     $response = wp_remote_post( $url, array(
-        'sslverify' => false,
-        'headers' => array(),
+        'sslverify' => FALSE,
+        'headers' => array( 'Content-Type: application/json','Accept: application/json' ),
 	    'body' => $body,
 	    'method' => 'POST',
 	    'timeout' => 120,
 	) );
-    // Handle response and any errors
+    // Handle return
+    // TODO : Test error and success outputs
     if ( is_wp_error( $response ) ) {
         $error_message = $response->get_error_message();
-        if ( strpos( $error_message, 'Connection refused' ) !== false ) {
+        if ( strpos( $error_message, 'Connection refused' ) !== FALSE ) {
             return 0;
         }
         else {
@@ -168,7 +158,7 @@ function wc_veruspay_go( $wc_veruspay_accesscode, $wc_veruspay_wallet, $coin, $e
         }
     }
     else {
-        $data = json_decode($response['body'], true);
+        $data = json_decode( $response['body'], TRUE );
         if ( $data['error'] !== null ) {
 	        return $data['error']['code'];
         }
@@ -178,41 +168,39 @@ function wc_veruspay_go( $wc_veruspay_accesscode, $wc_veruspay_wallet, $coin, $e
     }
 }
 /**
- * Primary data and exec function for external apis
+ * Primary data and method function for external apis
  */
-function wc_veruspay_get( $coin, $command, $hash, $amt ) {
+function wc_veruspay_get( $chain, $command, $params, $amt ) {
     global $wc_veruspay_phpextconfig;
-
-// Execute commands availabel for to interact with compatible Daemon
     switch ( $command ) {
         case 'getbalance':
-        if ( ! isset( $hash ) ) {
-            return "Error 2 - Hash Call";
+        if ( ! isset( $params ) ) {
+            return "Missing required parameters";
         }
         else {
-            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[ strtolower($coin).'_getaddress' ] . $hash ), true );
+            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[ strtolower($chain).'_getaddress' ] . $params ), true );
             $results = $results['balance'];
             return $results;
         }
         break;
         case 'lowestconfirm':
-        if ( ! isset( $hash ) ) {
-            return "Error 2 - Hash";
+        if ( ! isset( $params ) ) {
+            return "Missing required parameters";
         }
         else {
-            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[strtolower($coin).'_getaddress'] . $hash ), true );
-            $results = $results[ $wc_veruspay_phpextconfig[strtolower($coin).'_txname'] ];
+            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[strtolower($chain).'_getaddress'] . $params ), true );
+            $results = $results[ $wc_veruspay_phpextconfig[strtolower($chain).'_txname'] ];
             $wc_veruspay_confirmations = array();
             foreach ( $results as $item ) {
                 usleep(500);
-                if ( $wc_veruspay_phpextconfig[strtolower($coin).'_txlevel'] === null ) {
+                if ( $wc_veruspay_phpextconfig[strtolower($chain).'_txlevel'] === null ) {
                     $txhash = $item;
                 }
                 else {
-                    $txhash = $item[ $wc_veruspay_phpextconfig[strtolower($coin).'_txlevel'] ];
+                    $txhash = $item[ $wc_veruspay_phpextconfig[strtolower($chain).'_txlevel'] ];
                 }
-                $txresults = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[strtolower($coin).'_gettx'] . $txhash . $wc_veruspay_phpextconfig[strtolower($coin).'_txtrail'] ), true );
-                if ( $txresults[$wc_veruspay_phpextconfig[strtolower($coin).'_htname']] > 1 ) {
+                $txresults = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[strtolower($chain).'_gettx'] . $txhash . $wc_veruspay_phpextconfig[strtolower($chain).'_txtrail'] ), true );
+                if ( $txresults[$wc_veruspay_phpextconfig[strtolower($chain).'_htname']] > 1 ) {
                     $wc_veruspay_confirmations[$txhash] = $txresults['confirmations'];
                 }
             }
@@ -220,46 +208,45 @@ function wc_veruspay_get( $coin, $command, $hash, $amt ) {
         }
         break;
         case 'getrawtx':
-        if ( ! isset( $hash ) ) {
-            return "Error 2 - Hash Call";
+        if ( ! isset( $params ) ) {
+            return "Missing required parameters";
         }
         else {
-            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[strtolower($coin).'_gettx'] . $hash . $wc_veruspay_phpextconfig[strtolower($coin).'_txtrail'] ), true );
+            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[strtolower($chain).'_gettx'] . $params . $wc_veruspay_phpextconfig[strtolower($chain).'_txtrail'] ), true );
             return $results['confirmations'];
         }
         break;
         case 'getblockcount':
-            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[strtolower($coin).'_info'] ), true );
-            return $results['info'][$wc_veruspay_phpextconfig[strtolower($coin).'_blocks']];
-
+            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[strtolower($chain).'_info'] ), true );
+            return $results['info'][$wc_veruspay_phpextconfig[strtolower($chain).'_blocks']];
         break;
         case 'getdifficulty':
-            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[strtolower($coin).'_info'] ), true );
-            return $results['info'][$wc_veruspay_phpextconfig[strtolower($coin).'_difficulty']];
+            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[strtolower($chain).'_info'] ), true );
+            return $results['info'][$wc_veruspay_phpextconfig[strtolower($chain).'_difficulty']];
         break;
         case 'getsupply':
-            return wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[strtolower($coin).'_supply'] );
+            return wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[strtolower($chain).'_supply'] );
     }
 }
 
 /**
  * Real-time Price Data. Supported coins: VRSC, ARRR, KMD, ZEC
  */
-function wc_veruspay_price( $coin, $currency ) {
+function wc_veruspay_price( $chain, $currency ) {
     global $wc_veruspay_phpextconfig;
     $currency = strtoupper($currency);
-    $coin = strtoupper($coin);
-    if ( !isset( $coin ) ) {
-        $coin = 'VRSC';
+    $chain = strtoupper($chain);
+    if ( !isset( $chain ) ) {
+        $chain = 'VRSC';
     }
-    return wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig['fiat_api'] . '?currency=' . $currency . '&ticker=' . $coin );
+    return wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig['fiat_api'] . '?currency=' . $currency . '&ticker=' . $chain );
 }
 /**
  * Create QR Code using the explorer
  */
 function wc_veruspay_qr( $qraddress, $size ) {
     $alt_text = 'Send VRSC to ' . $qraddress;
-    return "\n" . '<img src="https://chart.googleapis.com/chart?chld=H|2&chs='.$size.'x'.$size.'&cht=qr&chl=' . $qraddress . '" alt="' . $alt_text . '" />' . "\n";
+    return "\n" . '<img src="https://veruspay.io/qr/?size=' . $size . '&address=' . $qraddress . '" alt="' . $alt_text . '" />' . "\n";
 }
 /**
  * Function for wp_remote_get CURL calls
