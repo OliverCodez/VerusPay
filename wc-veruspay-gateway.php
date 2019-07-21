@@ -3,7 +3,7 @@
  * Plugin Name: VerusPay Verus Gateway
  * Plugin URI: https://wordpress.org/plugins/veruspay-verus-gateway/
  * Description: Accept Verus Coin (VRSC), Pirate (ARRR), and Komodo (KMD) cryptocurrencies in your online WooCommerce store for physical or digital products.
- * Version: 0.3.5
+ * Version: 0.4.0-alpha
  * Author: Oliver Westbrook
  * Author URI: https://profiles.wordpress.org/veruspay/
  * Copyright: (c) 2019 John Oliver Westbrook (johnwestbrook@pm.me)

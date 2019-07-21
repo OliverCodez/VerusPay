@@ -1,61 +1,48 @@
 <?php
 /**
- * Verus PHP Tools - Functions
- *
- * @category Cryptocurrency
- * @package  VerusPHPTools
- * @author   Oliver Westbrook <johnwestbrook@pm.me>
- * @copyright Copyright (c) 2019, John Oliver Westbrook
- * @link     https://github.com/joliverwestbrook/VerusPHPTools
+ * Blockchain Functions (Methods) Available to VerusPay
  * 
- * MODIFIED: This script has been modified, disallowing indirect or ajax access to protect wallet for use within VerusPay and utilizing wp_remote_post for cURL
- * ====================
+ * Following is a list of all whitelisted methods and custom methods 
+ * defined for VerusPay within VerusChainTools API (VCT) v0.4.0+. 
+ * The VCT API must be configured and running on the wallet server 
+ * you will use in conjuction with this installation of VerusPay.
+ * To learn more, visit: https://github.com/joliverwestbrook/VerusChainTools
  * 
- * The MIT License (MIT)
+ * ===================
+ * =   WHITELISTED   =
+ * ===================
+ *  getinfo
+ *  setgenerate
+ *  getgenerate
+ *  getnewaddress
+ *  z_getnewaddress
+ *  z_getbalance
+ *  getunconfirmedbalance
+ *  getaddressesbyaccount
+ *  z_listaddresses
+ *  getreceivedbyaddress
  * 
- * Copyright (c) 2019 John Oliver Westbrook
+ * +++++++++++++++++++
+ * ++ NEW For PBaaS ++
+ * +++++++++++++++++++
+ *  definechain
+ *  getchaindefinition
+ *  getdefinedchains
  * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * 
- * ====================
- * 
- *  Available Blockchain Functions - Requires "Verus Chain Tools" v0.2.0+ configured on wallet server:
- * 
- *      Get New Transparent Address:                    wc_veruspay_go( 'getnewaddress', null, null );
- *      Get New ZS Sapling Address:                     wc_veruspay_go( 'getnewsapling', null, null );
- *      Get Balance:                                    wc_veruspay_go( 'getbalance', 'wallet_address', null );
- *      Check Confs-to-Min-Count:                       wc_veruspay_go( 'lowestconfirm', 'wallet_address', 'min_confirm_number' );
- *      Get Current Block Height:                       wc_veruspay_go( 'getblockcount', null, null );
- *      Count Transparent Addresses in Wallet:          wc_veruspay_go( 'countaddresses', '""', null ); (if wallet is named, provide in place of "")
- *      Count ZS Sapling Addresses in Wallet:           wc_veruspay_go( 'countzaddresses', null, null );
- *      List Transparent Addresses in Wallet:           wc_veruspay_go( 'listaddresses', '""', null ); (if wallet is named, provide in place of "")
- *      List ZS Sapling Addresses in Wallet:            wc_veruspay_go( 'listzaddresses', null, null );
- *      Get Total Amount Received by Address:           wc_veruspay_go( 'totalreceivedby', 'wallet_address', null );
- *      Get Total Transparent Balance:                  wc_veruspay_go( 'getttotalbalance', null, null );
- *      Get Total Unconfirmed Balance:                  wc_veruspay_go( 'getunconfirmedbalance', null, null );
- *      Get Total ZS Sapling Balance:                   wc_veruspay_go( 'getztotalbalance', null, null );
- *      Get Total Wallet Balance:                       wc_veruspay_go( 'gettotalbalance', null, null );
- *      Show config set T-Cashout address:              wc_veruspay_go( 'show_taddr', null, null );
- *      Show config set Z-Cashout address:              wc_veruspay_go( 'show_zaddr', null, null );
- *      Cashout all T wallets to T-Cashout address:     wc_veruspay_go( 'cashout_t', null, null );
- *      Cashout all T wallets to Z-Cashout address:     wc_veruspay_go( 'cashout_z', null, null );
- * 
+ * ===================
+ * =     CUSTOM      =
+ * ===================
+ *  test        returns status of blockchain daemon
+ *  type        returns an integer representing the type of transactions capable by the blockchain (0 = transparent + private, 1 = transparent only, 2 = private only)
+ *  version     returns version # of blockchain daemon
+ *  lowest      returns the lowest confirm for the given address
+ *  t_count     returns the number of T addresses created
+ *  z_count     returns the number of Z addresses created
+ *  bal         returns the balance of each address created and totals for Transparent, Interest, Private and total wallet
+ *  show_taddr  returns the Cashout Transparent address set by the store owner
+ *  show_zaddr  returns the Cashout Private address set by the store owner
+ *  cashout_t   sends the total transparent balance, minus tx fee of 0.0001, to the Cashout Transparent address
+ *  cashout_z   sends the total private balance, minus tx fee of 0.0001 per address, to the Cashout Private address
  */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

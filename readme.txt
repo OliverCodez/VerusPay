@@ -6,7 +6,7 @@ Tags: woocommerce, payment gateway, gateway, cryptocurrency, blockchain, verus, 
 Requires at least: 5.0.0
 Tested up to: 5.2.1
 Requires PHP: 7.0
-Stable tag: 0.3.5
+Stable tag: 0.4.0-alpha
 Requires WooCommerce at least: 3.5.6
 Tested WooCommerce up to: 3.6.3
 License: MIT
