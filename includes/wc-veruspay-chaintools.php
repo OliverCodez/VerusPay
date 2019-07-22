@@ -47,7 +47,6 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 $wc_veruspay_phpextconfig = array(
     // VRSC Iquidus Explorer Support
 	'vrsc_address' => 'https://explorer.veruscoin.io/address/',

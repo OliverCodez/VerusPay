@@ -19,8 +19,8 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+// TODO: Remove this array
 // Array for adding new coins - chaintools must also be updated to include transparent-addr related explorer data
-global $wc_veruspay_available_coins;
 $wc_veruspay_available_coins = array(
 	'vrsc' => array(
 		'name' => 'Verus',
@@ -528,6 +528,45 @@ function wc_veruspay_init() {
 
 		// Setup wallets array
 		$wc_veruspay_wallets = array();
+		// TODO: Change entire structure, allow for multiple daemons
+		// TODO: Wallets section is dynamic based on config read via VCT API
+/*
+		++
+Change in VerusPay (new layout): 
+
+ -----------------
+|Daemon Management|
+ -----------------
+Primary Daemon Server: _______________________________
+SSL? 
+
+Each Coin
+----------
+if coin is t/z 
+	Privacy Only?
+if coin can mine/stake
+	Enable Staking?
+	Enable Mining?
+	Threads: ______
+if coin is t & t active
+	Store addresses:
+	Used Addresses:
+
+ -----------------
+|Wallet Management|
+ -----------------
+Each Coin
+---------
+	Total Balance:
+	Unconfirmed:
+	if T, Tbal (cashout): 
+	if Z, Zbal (cashout):
+	
+New under Store Options: 
+	Default Privacy ON for Capable Coins? Y/N
+
+++
+*/
 		// Splice wallet settings and address settings using foreach
 		foreach( $wc_veruspay_available_coins as $key => $item ) {
 			// Add to Wallet Settings array
