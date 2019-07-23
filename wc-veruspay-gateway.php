@@ -19,8 +19,8 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+// TODO: Remove this array
 // Array for adding new coins - chaintools must also be updated to include transparent-addr related explorer data
-global $wc_veruspay_available_coins;
 $wc_veruspay_available_coins = array(
 	'vrsc' => array(
 		'name' => 'Verus',
@@ -314,12 +314,37 @@ function wc_veruspay_init() {
 				  'type' => 'text',
 				  'label' => __( 'VerusChainTools Access Code', 'veruspay-verus-gateway' ),
 				),
+				// Daemon Server Title (interactive to show/hide Daemon section)
+				'daemon_settings_show' => array(
+					'title' => __( 'Daemon Management', 'veruspay-verus-gateway' ),
+					'type' => 'title',
+					'description' => '',
+					'class' => 'wc_veruspay_admin_section wc_veruspay_toggledaemon wc_veruspay_pointer',
+				),
+				// Deamon Path
+				'primary_daemon_ip' => array(
+					'title' => __( 'Primary Daemon IP/Path', 'veruspay-verus-gateway' ),
+					'type' => 'text',
+					'description' => __( 'Enter the IP address of your primary daemon server. If on this server, enter the folder (must be a folder located at your root web folder)', 'veruspay-verus-gateway' ),
+					'default' => 'IP or local folder name (e.g. enter just verustools if at /var/www/html/verustools)',
+					'desc_tip' => true,
+					'class' => 'wc_veruspay_setdaemonip-toggle wc_veruspay_daemonsettings-toggle',
+				),
+				// SSL Setting
+				'primary_daemon_ssl' => array(
+					'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
+					'type' => 'checkbox',
+					'label' => __( 'Enable SSL connection', 'veruspay-verus-gateway' ),
+					'description' => '',
+					'default' => 'yes',
+					'class' => 'wc_veruspay_daemonsettings-toggle',
+				),
 				// Wallet Management Title (interactive to show or hide the Wallet section)
-			  'wallet_settings_show' => array(
-				  'title' => __( 'Wallet Management', 'veruspay-verus-gateway' ),
-				  'type' => 'title',
-				  'description' => '',
-				  'class' => 'wc_veruspay_admin_section wc_veruspay_togglewallet wc_veruspay_pointer',
+			  	'wallet_settings_show' => array(
+				  	'title' => __( 'Wallet Management', 'veruspay-verus-gateway' ),
+				  	'type' => 'title',
+				  	'description' => '',
+				  	'class' => 'wc_veruspay_admin_section wc_veruspay_togglewallet wc_veruspay_pointer',
 				),
 				// Wallet Management Spliced in
 				// Addresses Title
@@ -355,20 +380,20 @@ function wc_veruspay_init() {
 					'class' => 'wc_veruspay_customization-toggle',
 				),
 				'msg_after_sale' => array(
-			  	'title' => __( 'Payment Complete Message', 'veruspay-verus-gateway' ),
-			  	'type' => 'textarea',
-			  	'description' => __( 'VerusPay-specific message that will be added to the payment completed page and email, the final Thank You page', 'veruspay-verus-gateway' ),
-			  	'default' => 'Some additional Thank You message to your customer after payment completes!',
-			  	'desc_tip' => true,
-			  	'class' => 'wc_veruspay_customization-toggle',
+			  		'title' => __( 'Payment Complete Message', 'veruspay-verus-gateway' ),
+			  		'type' => 'textarea',
+			  		'description' => __( 'VerusPay-specific message that will be added to the payment completed page and email, the final Thank You page', 'veruspay-verus-gateway' ),
+			  		'default' => 'Some additional Thank You message to your customer after payment completes!',
+			  		'desc_tip' => true,
+			  		'class' => 'wc_veruspay_customization-toggle',
 				),
 				'msg_cancel' => array(
-			  	'title' => __( 'Order Timeout Cancel Message', 'veruspay-verus-gateway' ),
-			  	'type' => 'textarea',
-			  	'description'	=> __( 'Text to display to an online shopper who waits too long to send crypto during the purchase', 'veruspay-verus-gateway' ),
-			  	'default' => 'It looks like your purchase timed-out waiting for payment in the correct amount.  Sorry for any inconvenience this may have caused and please use the order details below to review your order and place a new one.',
-			  	'desc_tip' => true,
-			  	'class' => 'wc_veruspay_customization-toggle',
+			  		'title' => __( 'Order Timeout Cancel Message', 'veruspay-verus-gateway' ),
+			  		'type' => 'textarea',
+			  		'description'	=> __( 'Text to display to an online shopper who waits too long to send crypto during the purchase', 'veruspay-verus-gateway' ),
+			  		'default' => 'It looks like your purchase timed-out waiting for payment in the correct amount.  Sorry for any inconvenience this may have caused and please use the order details below to review your order and place a new one.',
+			  		'desc_tip' => true,
+			  		'class' => 'wc_veruspay_customization-toggle',
 				),
 				'email_order' => array(
 					'title' => __( 'Custom Email Message When Order is Placed', 'veruspay-verus-gateway' ),
@@ -403,12 +428,12 @@ function wc_veruspay_init() {
 				),
 				// Store options
 				'decimals' => array(
-				  'title' => __( 'Crypto Decimals', 'veruspay-verus-gateway' ),
-				  'type' => 'select',
-				  'description'	=> __( 'Choose the max decimals to use for crypto prices (up to 8).', 'veruspay-verus-gateway' ),
-				  'default' => '4',
-				  'desc_tip' => true,
-				  'options' => array(
+				  	'title' => __( 'Crypto Decimals', 'veruspay-verus-gateway' ),
+				  	'type' => 'select',
+				  	'description'	=> __( 'Choose the max decimals to use for crypto prices (up to 8).', 'veruspay-verus-gateway' ),
+				  	'default' => '4',
+				  	'desc_tip' => true,
+				  	'options' => array(
 						'1'	=> __( '1', 'veruspay-verus-gateway' ),
 						'2'	=> __( '2', 'veruspay-verus-gateway' ),
 						'3'	=> __( '3', 'veruspay-verus-gateway' ),
@@ -418,32 +443,32 @@ function wc_veruspay_init() {
 						'7'	=> __( '7', 'veruspay-verus-gateway' ),
 						'8'	=> __( '8', 'veruspay-verus-gateway' ),
 					),
-				  'class' => 'wc_veruspay_options-toggle wc-enhanced-select',
+				  	'class' => 'wc_veruspay_options-toggle wc-enhanced-select',
 				),
 				'pricetime' => array(
-				  'title' => __( 'Price timeout', 'veruspay-verus-gateway' ),
-				  'type' => 'text',
-				  'description' => __( 'Set the time (in minutes) before realtime crypto calculated price expires at checkout.', 'veruspay-verus-gateway' ),
-				  'default'	=> '5',
-				  'desc_tip' => true,
-				  'class' => 'wc_veruspay_options-toggle',
-			  ),
+				  	'title' => __( 'Price timeout', 'veruspay-verus-gateway' ),
+					'type' => 'text',
+				  	'description' => __( 'Set the time (in minutes) before realtime crypto calculated price expires at checkout.', 'veruspay-verus-gateway' ),
+				  	'default'	=> '5',
+				  	'desc_tip' => true,
+				  	'class' => 'wc_veruspay_options-toggle',
+			  	),
 				'orderholdtime'	=> array(
-				  'title' => __( 'Order Wait Time', 'veruspay-verus-gateway' ),
-				  'type' => 'select',
-				  'description'	=> __( 'Set the time (in minutes) to wait for the customer to make payment before cancelling the order. Does not impact already placed/pending orders.', 'veruspay-verus-gateway' ),
-				  'default' => '20',
-				  'desc_tip' => true,
-				  'options' => array(
+				  	'title' => __( 'Order Wait Time', 'veruspay-verus-gateway' ),
+				  	'type' => 'select',
+				  	'description'	=> __( 'Set the time (in minutes) to wait for the customer to make payment before cancelling the order. Does not impact already placed/pending orders.', 'veruspay-verus-gateway' ),
+				  	'default' => '20',
+				  	'desc_tip' => true,
+				  	'options' => array(
 						'20' => __( '20', 'veruspay-verus-gateway' ),
 						'25' => __( '25', 'veruspay-verus-gateway' ),
 						'30' => __( '30', 'veruspay-verus-gateway' ),
 						'45' => __( '45', 'veruspay-verus-gateway' ),
 						'60' => __( '60', 'veruspay-verus-gateway' ),
 					),
-				  'class' => 'wc_veruspay_options-toggle wc-enhanced-select',
+				  	'class' => 'wc_veruspay_options-toggle wc-enhanced-select',
 				),
-			  'confirms' => array(
+			  	'confirms' => array(
 					'title' => __( 'Confirmations Required', 'veruspay-verus-gateway' ),
 					'type' => 'text',
 					'description' => __( 'Set the number of block confirmations required before an order is considered complete.', 'veruspay-verus-gateway' ),
@@ -474,7 +499,7 @@ function wc_veruspay_init() {
 					'default' => 'https://veruscoin.io/img/VRSClogo.svg',
 					'desc_tip' => true,
 					'class' => 'wc_veruspay_options-toggle',
-		  	),
+		  		),
 				// Discount or Fee Options
 				'discount_fee' => array(
 				  'title' => __( 'Set Discount/Fee?', 'veruspay-verus-gateway' ),
@@ -528,6 +553,45 @@ function wc_veruspay_init() {
 
 		// Setup wallets array
 		$wc_veruspay_wallets = array();
+		// TODO: Change entire structure, allow for multiple daemons
+		// TODO: Wallets section is dynamic based on config read via VCT API
+/*
+		++
+Change in VerusPay (new layout): 
+
+ -----------------
+|Daemon Management|
+ -----------------
+Primary Daemon Server: _______________________________
+SSL? 
+
+Each Coin
+----------
+if coin is t/z 
+	Privacy Only?
+if coin can mine/stake
+	Enable Staking?
+	Enable Mining?
+	Threads: ______
+if coin is t & t active
+	Store addresses:
+	Used Addresses:
+
+ -----------------
+|Wallet Management|
+ -----------------
+Each Coin
+---------
+	Total Balance:
+	Unconfirmed:
+	if T, Tbal (cashout): 
+	if Z, Zbal (cashout):
+	
+New under Store Options: 
+	Default Privacy ON for Capable Coins? Y/N
+
+++
+*/
 		// Splice wallet settings and address settings using foreach
 		foreach( $wc_veruspay_available_coins as $key => $item ) {
 			// Add to Wallet Settings array
