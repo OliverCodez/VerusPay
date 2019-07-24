@@ -44,21 +44,55 @@ $wc_veruspay_available_coins = array(
 		'staking' => 0,										// 1 for True; 2 for False
 	),
 );
-// Include VerusPay ChainTools script for blockchain integration with Verus ChainTools
-require_once ( plugin_dir_path( __FILE__ ) . 'includes/wc-veruspay-chaintools.php' );
-// Get store language
+/**
+ * Includes & Requires
+ * 
+ * Setup initial includes/requires, arrays, vars, etc
+ */
+// Options and file paths
 $wc_veruspay_store_language = get_locale();
-$wc_veruspay_language_file = ( plugin_dir_path( __FILE__ ) . 'languages/' . $wc_veruspay_store_language . '_helper_text.php' );
-// If non-en_US, get file otherwise use en_US for language
-if(file_exists($wc_veruspay_language_file)) {
-	require_once ( $wc_veruspay_language_file );
+$wc_veruspay_paths_vct = plugin_dir_path( __FILE__ ) . 'includes/wc-veruspay-chaintools.php';
+$wc_veruspay_paths_eng = plugin_dir_path( __FILE__ ) . 'languages/en_US_helper_text.php';
+$wc_veruspay_paths_lang = plugin_dir_path( __FILE__ ) . 'languages/' . $wc_veruspay_store_language . '_helper_text.php';
+require_once( $wc_veruspay_paths_vct );
+if ( file_exists( $wc_veruspay_paths_lang ) ) {
+	require_once( $wc_veruspay_paths_lang );
 }
-else { require_once ( plugin_dir_path( __FILE__ ) . 'languages/en_US_helper_text.php' ); }
-
-// Make sure WooCommerce is active
+else {
+	require_once( $wc_veruspay_paths_eng );
+}
+/**
+ * Is Woo Active?
+ * 
+ * Check if woocommerce is active before loading plugin
+ */
 if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters('active_plugins', get_option( 'active_plugins' ) ) ) ) {
 	return;
 }
+/**
+ * Filters & Actions
+ * 
+ * If WooCommerce is active, add filters and actions
+ */
+add_filter( 'woocommerce_payment_gateways', 'wc_veruspay_add_to_gateways' );
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wc_veruspay_plugin_links' );
+add_action('admin_menu', 'wc_veruspay_settings_menu');
+add_action( 'plugins_loaded', 'wc_veruspay_init', 11 );
+add_action( 'woocommerce_cart_calculate_fees', 'wc_veruspay_order_total_update', 1, 1 );
+add_filter( 'woocommerce_available_payment_gateways', 'wc_veruspay_button_text' );
+add_action( 'woocommerce_checkout_update_order_meta', 'wc_veruspay_save_custom_meta' );
+add_action( 'woocommerce_admin_order_data_after_billing_address', 'wc_veruspay_display_crypto_address_in_admin', 10, 1 );
+add_filter( 'manage_edit-shop_order_columns', 'wc_veruspay_add_order_column_header', 20 );
+add_action( 'manage_shop_order_posts_custom_column', 'wc_veruspay_add_order_column_content' );
+add_action( 'admin_print_styles', 'wc_veruspay_address_column_style' );
+add_action( 'woocommerce_order_status_on-hold', 'wc_veruspay_set_address' ); //Could also use a similar hook to check for status of payment
+add_action( 'woocommerce_order_details_before_order_table', 'wc_veruspay_order_received_body' );
+add_filter( 'the_title', 'wc_veruspay_title_order_received', 99, 2 );
+add_filter( 'woocommerce_get_order_item_totals', 'wc_veruspay_add_total', 30, 3 );
+add_action("woocommerce_order_status_changed", "wc_veruspay_notify_order_status");
+add_filter('cron_schedules','wc_veruspay_cron_schedules');
+add_action( 'woocommerce_cancel_unpaid_submitted', 'wc_veruspay_check_order_status' );
+
 /**
  * Add the VerusPay gateway to WC Available Gateways
  * 
@@ -66,7 +100,6 @@ if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters('active_plugins', 
  * @param array $gateways
  * @return array $gateways
  */
-add_filter( 'woocommerce_payment_gateways', 'wc_veruspay_add_to_gateways' );
 function wc_veruspay_add_to_gateways( $gateways ) {
 	$gateways[] = 'WC_Gateway_VerusPay';
 	return $gateways;
@@ -78,7 +111,6 @@ function wc_veruspay_add_to_gateways( $gateways ) {
  * @param array $links
  * @return array $links
  */
-add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wc_veruspay_plugin_links' );
 function wc_veruspay_plugin_links( $links ) {
 	$plugin_links = array(
 		'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=veruspay_verus_gateway' ) . '">' . __( 'Configure', 'veruspay-verus-gateway' ) . '</a>'
@@ -91,11 +123,9 @@ function wc_veruspay_plugin_links( $links ) {
  * @since 0.1.1-a
  * 
  */
-add_action('admin_menu', 'wc_veruspay_settings_menu');
 function wc_veruspay_settings_menu(){
 	add_menu_page( 'WooCommerce Settings', 'VerusPay', 'administrator', 'wc-settings&tab=checkout&section=veruspay_verus_gateway', 'wc_veruspay_init', plugins_url( '/public/img/wc-verus-icon-16x.png', __FILE__ ) );
 }
-add_action( 'plugins_loaded', 'wc_veruspay_init', 11 );
 function wc_veruspay_init() {
 	global $wc_veruspay_text_helper;
 	/**
@@ -453,7 +483,7 @@ function wc_veruspay_init() {
 /**
  * Add discount or fee for VerusPay payment use - if option enabled in store
  */
-add_action( 'woocommerce_cart_calculate_fees', 'wc_veruspay_order_total_update', 1, 1 );
+
 function wc_veruspay_order_total_update() {
 	$wc_veruspay_class = new WC_Gateway_VerusPay();
 	$wc_veruspay_payment_method = WC()->session->get('chosen_payment_method');
@@ -472,7 +502,7 @@ function wc_veruspay_order_total_update() {
  * @param global $wc_veruspay_text_helper
  * @return string[] $available_gateways
  */
-add_filter( 'woocommerce_available_payment_gateways', 'wc_veruspay_button_text' );
+
 function wc_veruspay_button_text( $available_gateways ) {
 	global $wc_veruspay_text_helper;
 	$wc_veruspay_class = new WC_Gateway_VerusPay();
@@ -498,7 +528,7 @@ function wc_veruspay_button_text( $available_gateways ) {
  * 
  * @param string[] $order_id
  */
-add_action( 'woocommerce_checkout_update_order_meta', 'wc_veruspay_save_custom_meta' );
+
 function wc_veruspay_save_custom_meta( $order_id ) {
 	$wc_veruspay_class = new WC_Gateway_VerusPay();
 	$wc_veruspay_payment_method = WC()->session->get('chosen_payment_method');
@@ -549,7 +579,7 @@ function wc_veruspay_save_custom_meta( $order_id ) {
  * 
  * @param string[] $order
  */
-add_action( 'woocommerce_admin_order_data_after_billing_address', 'wc_veruspay_display_crypto_address_in_admin', 10, 1 );
+
 function wc_veruspay_display_crypto_address_in_admin( $order ) {
 	global $wc_veruspay_phpextconfig;
 	$order_id = method_exists( $order, 'get_id' ) ? $order->get_id() : $order->id;
@@ -581,7 +611,7 @@ function wc_veruspay_display_crypto_address_in_admin( $order ) {
  * @param string[] $columns
  * @return string[] $wc_veruspay_new_columns
  */
-add_filter( 'manage_edit-shop_order_columns', 'wc_veruspay_add_order_column_header', 20 );
+
 function wc_veruspay_add_order_column_header( $columns ) {
     $wc_veruspay_new_columns = array();
     foreach ( $columns as $column_name => $column_info ) {
@@ -600,7 +630,7 @@ function wc_veruspay_add_order_column_header( $columns ) {
  * 
  * @param string[] $column
  */
-add_action( 'manage_shop_order_posts_custom_column', 'wc_veruspay_add_order_column_content' );
+
 function wc_veruspay_add_order_column_content( $column ) {
 		global $post;
 		global $wc_veruspay_phpextconfig;
@@ -635,7 +665,7 @@ function wc_veruspay_add_order_column_content( $column ) {
 /**update_post_meta( $order_id, '_wc_veruspay_paid', sanitize_text_field( $wc_veruspay_balance ) );
  * Adjust the style for the Crypto Address column
  */
-add_action( 'admin_print_styles', 'wc_veruspay_address_column_style' );
+
 function wc_veruspay_address_column_style() {
 
 	$wc_veruspay_css = '.column-order_status{width:6ch!important;}
@@ -650,7 +680,7 @@ function wc_veruspay_address_column_style() {
  * @param string[] $order_id
  * @param global $wc_veruspay_text_helper
  */
-add_action( 'woocommerce_order_status_on-hold', 'wc_veruspay_set_address' ); //Could also use a similar hook to check for status of payment
+
 function wc_veruspay_set_address( $order_id ) {
 	global $wc_veruspay_text_helper;
 	$wc_veruspay_class = new WC_Gateway_VerusPay();
@@ -733,7 +763,7 @@ function wc_veruspay_set_address( $order_id ) {
  * @param string[] $order
  * @param global $wc_veruspay_text_helper
  */
-add_action( 'woocommerce_order_details_before_order_table', 'wc_veruspay_order_received_body' );
+
 function wc_veruspay_order_received_body( $order ) {
 	global $wc_veruspay_text_helper;
 	global $wc_veruspay_phpextconfig;
@@ -911,7 +941,7 @@ function wc_veruspay_order_received_body( $order ) {
  * @param global $wc_veruspay_text_helper
  * @return string[] $title
  */
-add_filter( 'the_title', 'wc_veruspay_title_order_received', 99, 2 );
+
 function wc_veruspay_title_order_received( $title, $id ) {
 	global $wc_veruspay_text_helper;
 	if ( function_exists( 'is_order_received_page' ) && is_order_received_page() && get_the_ID() === $id ) {
@@ -940,7 +970,7 @@ function wc_veruspay_title_order_received( $title, $id ) {
  * @param global $wc_veruspay_text_helper
  * @return string[] $total_rows
  */
-add_filter( 'woocommerce_get_order_item_totals', 'wc_veruspay_add_total', 30, 3 );
+
 function wc_veruspay_add_total( $total_rows, $order, $tax_display ) {
 	global $wc_veruspay_text_helper;
 	if ( $order->get_payment_method() == 'veruspay_verus_gateway' ) {
@@ -959,7 +989,7 @@ function wc_veruspay_add_total( $total_rows, $order, $tax_display ) {
  * Send email based on order status change
  * @param $order_id, $checkout
  */
-add_action("woocommerce_order_status_changed", "wc_veruspay_notify_order_status");
+
 function wc_veruspay_notify_order_status($order_id, $checkout=null) {
    global $woocommerce;
    $order = new WC_Order( $order_id );
@@ -989,7 +1019,7 @@ function wc_veruspay_notify_order_status($order_id, $checkout=null) {
  * @param string[] $schedules
  * @return string[] $schedules
  */
-add_filter('cron_schedules','wc_veruspay_cron_schedules');
+
 function wc_veruspay_cron_schedules($schedules){
     if(!isset($schedules["1min"])){
         $schedules["1min"] = array(
@@ -1053,7 +1083,7 @@ function wc_veruspay_get_unpaid_submitted() {
  * Cancel or Complete orders based on status criteria of payment received, timeliness, etc
  * @param global $wc_veruspay_text_helper
  */
-add_action( 'woocommerce_cancel_unpaid_submitted', 'wc_veruspay_check_order_status' );
+
 function wc_veruspay_check_order_status() {
 	global $wc_veruspay_text_helper;
 	$wc_veruspay_class = new WC_Gateway_VerusPay();
