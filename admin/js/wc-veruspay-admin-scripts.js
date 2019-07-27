@@ -25,6 +25,8 @@ jQuery( function( $ ) {
 		if ( $('.wc_veruspay_togglewallet').hasClass( 'wallet_updated' ) ) {
 			location.reload();
 		}
+		$( '.wc_veruspay_daemonsettings-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
+		$( '.wc_veruspay_daemonsettings-toggle' ).toggleClass('wc_veruspay_set_css');
 		$( '.wc_veruspay_walletsettings-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
 		$( '.wc_veruspay_walletsettings-toggle' ).toggleClass('wc_veruspay_set_css');
 		$( '.wc_veruspay_addresses-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
@@ -35,6 +37,10 @@ jQuery( function( $ ) {
 		$( '.wc_veruspay_toggleaddr' ).click(function(e) {
 			$( '.wc_veruspay_addresses-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
 			$( '.wc_veruspay_addresses-toggle' ).toggleClass('wc_veruspay_set_css');
+		});
+		$('.wc_veruspay_toggledaemon').click(function(e) {
+			$( '.wc_veruspay_daemonsettings-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
+			$( '.wc_veruspay_daemonsettings-toggle' ).toggleClass('wc_veruspay_set_css');
 		});
 		$('.wc_veruspay_togglewallet').click(function(e) {
 			$( '.wc_veruspay_walletsettings-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');

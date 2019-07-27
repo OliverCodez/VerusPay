@@ -49,7 +49,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 // Get latest external/explorer support data from VerusPay Extended API
 $veruspayio = 'https://veruspay.io/ext/';
-$wc_veruspay_phpextconfig = json_decode( wc_veruspay_wp_get_curl( $veruspayio . 'exp_details' ), TRUE );
+$wc_veruspay_phpextconfig = array(
+    'l' => json_decode( wc_veruspay_wp_get_curl( $veruspayio . 'exp_list' ), TRUE ),
+    'd' => json_decode( wc_veruspay_wp_get_curl( $veruspayio . 'exp_details' ), TRUE ),
+);
 
 /**
  * Go VCT!
@@ -106,16 +109,19 @@ function wc_veruspay_go( $wc_veruspay_accesscode, $url, $chain, $method, $params
 /**
  * Primary data and method function for external apis
  */
-function wc_veruspay_get( $chain, $method, $params = NULL ) { // TODO: removed $amt update all references
+function wc_veruspay_get( $chain, $method, $params = NULL ) {
     global $wc_veruspay_phpextconfig;
-    $cl = strtolower($chain);
+    $cl = strtolower( $chain );
+    if( !array_key_exists( $cl, $wc_veruspay_phpextconfig['l'] ) ) {
+        return strtoupper( $chain ) . ' chain not yet supported in "manual mode"';
+    }
     switch ( $method ) {
         case 'getbalance':
         if ( ! isset( $params ) ) {
             return "Missing required parameters";
         }
         else {
-            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[$cl]['getaddress'] . $params ), true );
+            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig['d'][$cl]['getaddress'] . $params ), true );
             $results = $results['balance'];
             return $results;
         }
@@ -125,19 +131,19 @@ function wc_veruspay_get( $chain, $method, $params = NULL ) { // TODO: removed $
             return "Missing required parameters";
         }
         else {
-            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[$cl]['getaddress'] . $params ), true );
-            $results = $results[ $wc_veruspay_phpextconfig[$cl]['txname'] ];
+            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig['d'][$cl]['getaddress'] . $params ), true );
+            $results = $results[ $wc_veruspay_phpextconfig['d'][$cl]['txname'] ];
             $wc_veruspay_confirmations = array();
             foreach ( $results as $item ) {
                 usleep(500);
-                if ( $wc_veruspay_phpextconfig[$cl]['txlevel'] === null ) {
+                if ( $wc_veruspay_phpextconfig['d'][$cl]['txlevel'] === null ) {
                     $txhash = $item;
                 }
                 else {
-                    $txhash = $item[ $wc_veruspay_phpextconfig[$cl]['txlevel'] ];
+                    $txhash = $item[ $wc_veruspay_phpextconfig['d'][$cl]['txlevel'] ];
                 }
-                $txresults = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[$cl]['gettx'] . $txhash . $wc_veruspay_phpextconfig[$cl]['txtrail'] ), true );
-                if ( $txresults[$wc_veruspay_phpextconfig[$cl]['htname']] > 1 ) {
+                $txresults = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig['d'][$cl]['gettx'] . $txhash . $wc_veruspay_phpextconfig['d'][$cl]['txtrail'] ), true );
+                if ( $txresults[$wc_veruspay_phpextconfig['d'][$cl]['htname']] > 1 ) {
                     $wc_veruspay_confirmations[$txhash] = $txresults['confirmations'];
                 }
             }
@@ -149,20 +155,20 @@ function wc_veruspay_get( $chain, $method, $params = NULL ) { // TODO: removed $
             return "Missing required parameters";
         }
         else {
-            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[$cl]['gettx'] . $params . $wc_veruspay_phpextconfig[$cl]['txtrail'] ), true );
+            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig['d'][$cl]['gettx'] . $params . $wc_veruspay_phpextconfig['d'][$cl]['txtrail'] ), true );
             return $results['confirmations'];
         }
         break;
         case 'getblockcount':
-            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[$cl]['info'] ), true );
-            return $results['info'][$wc_veruspay_phpextconfig[$cl]['blocks']];
+            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig['d'][$cl]['info'] ), true );
+            return $results['info'][$wc_veruspay_phpextconfig['d'][$cl]['blocks']];
         break;
         case 'getdifficulty':
-            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[$cl]['info'] ), true );
-            return $results['info'][$wc_veruspay_phpextconfig[$cl]['difficulty']];
+            $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig['d'][$cl]['info'] ), true );
+            return $results['info'][$wc_veruspay_phpextconfig['d'][$cl]['difficulty']];
         break;
         case 'getsupply':
-            return wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig[$cl]['supply'] );
+            return wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig['d'][$cl]['supply'] );
     }
 }
 
@@ -176,14 +182,14 @@ function wc_veruspay_price( $chain, $currency ) {
     if ( !isset( $chain ) ) {
         $chain = 'VRSC';
     }
-    return wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig['fiat']['api'] . '?currency=' . $currency . '&ticker=' . $chain );
+    return wc_veruspay_wp_get_curl( $wc_veruspay_phpextconfig['d']['fiat']['api'] . '?currency=' . $currency . '&ticker=' . $chain );
 }
 /**
  * Create QR Code using the explorer
  */
 function wc_veruspay_qr( $qraddress, $size ) {
     $alt_text = 'Send VRSC to ' . $qraddress;
-    return "\n" . '<img src="https://veruspay.io/qr/?size=' . $size . '&address=' . $qraddress . '" alt="' . $alt_text . '" />' . "\n";
+    return "\n" . '<img src="https://veruspay.io/qr/?size=12&address=' . $qraddress . '" alt="' . $alt_text . '" />' . "\n";
 }
 /**
  * Function for wp_remote_get CURL calls
