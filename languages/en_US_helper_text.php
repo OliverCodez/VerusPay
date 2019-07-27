@@ -1,4 +1,5 @@
 <?php 
+// No Direct Access
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -38,6 +39,8 @@ $wc_veruspay_text_help = array(
 		'msg_sapling_label' => 'Enable Privacy',
 		'msg_waiting_payment' => 'Waiting for payment, please send within ',
 		'msg_confirming_payment' => 'Waiting for full block confirmations. Progress: ',
+		'admin_0' => 'Bad Connection to VerusChainTools or Not Installed!',
+		'admin_1' => 'Wallet Unreachable',
 		'admin_wallet_off_addroff' => '<strong>Wallet Status: </strong><span style="color:gray">Disabled</span><br /><span style="color:red"><strong>Enter a valid IP/Path in the Wallet IP field to enable this Wallet.</strong></span>',
 		'admin_wallet_off_noaddr' => '<strong>Wallet Status: </strong><span style="color:gray">Disabled</span><br /><span style="color:red"><strong>Enter either a valid IP/path in the Wallet IP field or valid transparent addresses in the Store Addresses field to enable this Wallet.</strong></span>',
 		'admin_wallet_off_addr' =>'<strong>Wallet Status: </strong><span style="color:gray">Manual Mode</span><br /><strong>Wallet Status: </strong><span style="color:red">Unreachable</span><span> - Did You Configure Wallet & IP/Path Correctly?</span>',
