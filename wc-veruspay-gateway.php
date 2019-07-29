@@ -26,6 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 // Get variable and conditional paths
 $wc_veruspay_io = 'https://veruspay.io/ext/';
+$wc_veruspay_root = plugin_dir_path( __FILE__ );
 if ( file_exists( plugin_dir_path( __FILE__ ) . 'languages/' . get_locale() . '_helper_text.php' ) ) {
 	$wc_veruspay_locale = get_locale();
 }
@@ -37,23 +38,24 @@ else { // Default language/locale
 global $wc_veruspay_global;
 $wc_veruspay_global = array(
 	'locale' => get_locale(),
-	'class_path' => plugin_dir_path( __FILE__ ) . 'includes/wc-veruspay-class.php',
-	'init_path' => plugin_dir_path( __FILE__ ) . 'includes/wc-veruspay-initform.php',
-	'chkt_path' => plugin_dir_path( __FILE__ ) . 'includes/wc-veruspay-checkout.php',
-	'conf_path' => plugin_dir_path( __FILE__ ) . 'includes/wc-veruspay-confirming.php',
-	'proc_path' => plugin_dir_path( __FILE__ ) . 'includes/wc-veruspay-process.php',
-	'admin_modal-0' => plugin_dir_path( __FILE__ ) . 'includes/wc-veruspay-admin_modal-0.php',
-	'admin_modal-1' => plugin_dir_path( __FILE__ ) . 'includes/wc-veruspay-admin_modal-1.php',
-	'admin_modal-2' => plugin_dir_path( __FILE__ ) . 'includes/wc-veruspay-admin_modal-2.php',
-	'admin_modal-3' => plugin_dir_path( __FILE__ ) . 'includes/wc-veruspay-admin_modal-3.php',
+	'root' => $wc_veruspay_root,
+	'class_path' => $wc_veruspay_root . 'includes/wc-veruspay-class.php',
+	'init_path' => $wc_veruspay_root . 'includes/wc-veruspay-initform.php',
+	'chkt_path' => $wc_veruspay_root . 'includes/wc-veruspay-checkout.php',
+	'conf_path' => $wc_veruspay_root . 'includes/wc-veruspay-confirming.php',
+	'proc_path' => $wc_veruspay_root . 'includes/wc-veruspay-process.php',
+	'admin_modal-0' => $wc_veruspay_root . 'includes/wc-veruspay-admin_modal-0.php',
+	'admin_modal-1' => $wc_veruspay_root . 'includes/wc-veruspay-admin_modal-1.php',
+	'admin_modal-2' => $wc_veruspay_root . 'includes/wc-veruspay-admin_modal-2.php',
+	'admin_modal-3' => $wc_veruspay_root . 'includes/wc-veruspay-admin_modal-3.php',
 	'chain_list' => json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_io . 'exp_list' ), TRUE ),
 	'chain_dtls' => json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_io . 'exp_details' ), TRUE ),
 	'chains' => array(),
 	'text_help' => array(),
 );
-require_once( plugin_dir_path( __FILE__ ) . 'languages/' . $wc_veruspay_locale . '_helper_text.php' );
+require_once( $wc_veruspay_root . 'languages/' . $wc_veruspay_locale . '_helper_text.php' );
 $wc_veruspay_global['text_help'] = $wc_veruspay_text_help[$wc_veruspay_locale];
-require_once( plugin_dir_path( __FILE__ ) . 'includes/wc-veruspay-chaintools.php' );
+require_once( $wc_veruspay_root . 'includes/wc-veruspay-chaintools.php' );
 
 /**
  * WooCommerce Active
@@ -466,8 +468,7 @@ function wc_veruspay_order_received_body( $order ) {
 			
 			// Get balance of order address for live or manual
 			if ( $wc_veruspay_order_mode == 'live' && $wc_veruspay_order_status == 'order' ) {
-				// TODO : Fix param format
-				$wc_veruspay_balance = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin]['ip'], $wc_veruspay_coin, 'lowest', $wc_veruspay_address, '0' );
+				$wc_veruspay_balance = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin]['ip'], $wc_veruspay_coin, 'lowest', json_encode( array( $wc_veruspay_address, 0 ), TRUE ) );
 				if ( $wc_veruspay_balance >= $wc_veruspay_price ) {
 					$wc_veruspay_balance_in = TRUE;
 					update_post_meta( $order_id, '_wc_veruspay_balance_in', sanitize_text_field( 'true' ) );
@@ -514,8 +515,7 @@ function wc_veruspay_order_received_body( $order ) {
 			if ( $wc_veruspay_order_status == 'paid' ) {
 
 				if ( $wc_veruspay_order_mode == 'live' ) {
-					// TODO : Fix params and functionalize repetitive actions
-					$wc_veruspay_balance = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin]['ip'], $wc_veruspay_coin, 'lowest', $wc_veruspay_address, $wc_veruspay_confirmations );
+					$wc_veruspay_balance = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin]['ip'], $wc_veruspay_coin, 'lowest', json_encode( array( $wc_veruspay_address, $wc_veruspay_confirmations ), TRUE ) );
 					if ( $wc_veruspay_balance >= $wc_veruspay_price ) {
 						update_post_meta( $order_id, '_wc_veruspay_status', sanitize_text_field( 'completed' ) );
 						echo '<div style="position: fixed;height: 100%;width: 100%;top: 0;left: 0;background-color: rgba(255, 255, 255, 0.9);z-index: 3000;"></div>';
@@ -763,8 +763,7 @@ function wc_veruspay_check_order_status() {
 				$wc_veruspay_time_start = strtotime(date("Y-m-d H:i:s", time()));
 				$wc_veruspay_sec_remaining = $wc_veruspay_time_end - $wc_veruspay_time_start;
 				if ( $wc_veruspay_order_mode == 'live' && $wc_veruspay_order_status == 'order' ) {
-					// TODO : Fix params and functionalize similar actions
-					$wc_veruspay_balance = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin]['ip'], $wc_veruspay_coin, 'lowest', $wc_veruspay_address, '0' );
+					$wc_veruspay_balance = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin]['ip'], $wc_veruspay_coin, 'lowest', json_encode( array( $wc_veruspay_address, 0 ), TRUE ) );
 					if ( $wc_veruspay_balance >= $wc_veruspay_price ) {
 						$wc_veruspay_balance_in = TRUE;
 						update_post_meta( $order_id, '_wc_veruspay_status', sanitize_text_field( 'paid' ) );
@@ -800,8 +799,7 @@ function wc_veruspay_check_order_status() {
 				}
 				if ( $wc_veruspay_order_status == 'paid' ) {
 					if ( $wc_veruspay_order_mode == 'live' ) {
-						// TODO : Fix params
-						$wc_veruspay_balance = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin]['ip'], $wc_veruspay_coin, 'lowest', $wc_veruspay_address, $wc_veruspay_confirmations );
+						$wc_veruspay_balance = wc_veruspay_go( $wc_veruspay_class->access_code, $wc_veruspay_class->wallets[$wc_veruspay_coin]['ip'], $wc_veruspay_coin, 'lowest', json_encode( array( $wc_veruspay_address, $wc_veruspay_confirmations ), TRUE ) );
 						if ( $wc_veruspay_balance >= $wc_veruspay_price ) {
 							$order->update_status( 'completed', __( $wc_veruspay_global['text_help']['order_processing'], 'woocommerce') );
 							update_post_meta( $order_id, '_wc_veruspay_status', sanitize_text_field( 'completed' ) );
