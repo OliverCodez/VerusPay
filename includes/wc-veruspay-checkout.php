@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             <span class="wc_veruspay_logo_<?php echo $wc_veruspay_coin; ?>"></span>
             <select name="wc_veruspay_coin" id="wc_veruspay_coin" class="" aria-hidden="true" onchange="this.form.submit()">
             <?php
-                foreach ( $this->wallets as $key => $item ) {
+                foreach ( $this->chains as $key => $item ) {
                     if ( $item['enabled'] == 'yes' ) {
                         if ( $key == $wc_veruspay_coin ) {
                             echo '<option value="' . $key . '" selected="selected">' . $item['name'] . '</option>';

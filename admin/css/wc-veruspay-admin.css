@@ -48,7 +48,27 @@
     border-bottom: gray 1px solid;
     max-width: 700px;
 }
-
+.wc_veruspay_After::after {
+    position: absolute;
+    left: 0;
+    content: "";
+    width: 100%;
+    border-bottom: 1px #000 solid;
+    display: block;
+    float: none;
+    margin-top: -80px;
+}
+.wc_veruspay_daemon_add-button {
+    border: solid 1px #000;
+    border-radius: 10px;
+    max-width: 250px;
+    padding: 10px;
+    font-size: 1.1rem !important;
+    cursor: pointer;
+    line-height: 1.1rem;
+    height: 1.1rem;
+    background-color: #fffcb5;
+}
 .wc_veruspay_title-walletssub {
     background: transparent !important;
     font-size: 1.2rem !important;
