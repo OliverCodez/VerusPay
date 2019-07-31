@@ -54,8 +54,8 @@ $wc_veruspay_global = array(
 	'admin_modal-3' => $wc_veruspay_root . 'includes/wc-veruspay-admin_modal-3.php',
 	'chain_list' => json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_io . 'exp_list' ), TRUE ),
 	'chain_dtls' => json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_io . 'exp_details' ), TRUE ),
-	'chains' => array(),
 	'text_help' => $wc_veruspay_text_help[$wc_veruspay_locale],
+	'chain_ref' => array(),
 );
 
 /**
