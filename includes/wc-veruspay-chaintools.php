@@ -53,6 +53,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Function to access VCT API using wordpress built-in wp_remote_post
  */
 function wc_veruspay_go( $wc_veruspay_accesscode, $url, $chain, $method, $params = NULL ) {
+    global $wc_veruspay_global;
     $body = array(
         'a' => $wc_veruspay_accesscode,
         'c' => $chain,
@@ -185,7 +186,7 @@ function wc_veruspay_price( $chain, $currency ) {
  */
 function wc_veruspay_qr( $qraddress, $size ) {
     $alt_text = 'Send VRSC to ' . $qraddress;
-    return "\n" . '<img src="https://veruspay.io/qr/?size=12&address=' . $qraddress . '" alt="' . $alt_text . '" />' . "\n";
+    return "\n" . '<img src="https://veruspay.io/qr/?size=' . $size . '&address=' . $qraddress . '" alt="' . $alt_text . '" />' . "\n";
 }
 /**
  * cURL Get
