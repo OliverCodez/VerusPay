@@ -26,7 +26,6 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
             // Possible future use: $this->init_settings();
         }
         $this->enabled = $this->get_option( 'enabled' );
-        $this->access_code = $this->get_option( 'access_code' );
         $this->test_mode = 'yes' === $this->get_option( 'test_mode' );
         if ( $this->test_mode ) {
             $this->title = __( 'TEST MODE', 'veruspay-verus-gateway' );
@@ -46,7 +45,7 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         $this->email_cancelled = $this->get_option( 'email_cancelled' );
         $this->email_completed = $this->get_option( 'email_completed' );
         // Clean and count store addresses for backup / manual use
-        $wc_veruspay_chains_temp = $this->get_option('wc_veruspay_chains');
+        $wc_veruspay_chains_temp = $this->get_option('wc_veruspay_chains'); // TODO: Clean up wallets v chains arrays and class vars
         foreach ( $wc_veruspay_chains_temp as $key => $item ) {
             $wc_veruspay_store_data = $this->get_option( $key . '_storeaddresses' );
             $wc_veruspay_chains_temp[$key]['addresses'] = preg_replace( '/\s+/', '', $wc_veruspay_store_data );

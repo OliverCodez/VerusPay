@@ -11,43 +11,82 @@ if ( is_admin() ) {
     wp_enqueue_script( 'wc_veruspay_admin_scripts' );
 }
 // Check for access code and connectivity
-$wc_veruspay_access_code = $this->get_option( 'access_code' );
-$wc_veruspay_primary_ip = $this->get_option( 'primary_daemon_ip' );
-$wc_veruspay_primary_ssl = $this->get_option( 'primary_daemon_ssl' );
-if ( empty( $wc_veruspay_access_code ) || empty( $wc_veruspay_primary_ip ) ) {
+$wc_veruspay_daemon_code_1 = $this->get_option( 'daemon_code_1' );
+$wc_veruspay_daemon_ip_1 = $this->get_option( 'daemon_ip_1' );
+if ( empty( $wc_veruspay_daemon_code_1 ) || empty( $wc_veruspay_daemon_ip_1 ) ) {
     $this->form_fields = apply_filters( 'wc_veruspay_form_fields', wc_veruspay_setup() );
     $this->update_option( 'enabled', 'no' );
 }
 else {
-    $_proto = 'http://';
-    if ( $wc_veruspay_primary_ssl == 'yes' ) {
-        $_proto = 'https://';
+    // Setup vars and arrays
+    $_statsArray = array('1' => '','2' => '', '3' => '', '4' => '', '5' => '', '6' => '', '7' => '',);
+    $_classArray = array('','','','','','',);
+    $_daemonsArray = array(
+        '2' => $this->get_option( 'daemon_ip_2' ),
+        '3' => $this->get_option( 'daemon_ip_3' ),
+        '4' => $this->get_option( 'daemon_ip_4' ),
+        '5' => $this->get_option( 'daemon_ip_5' ),
+        '6' => $this->get_option( 'daemon_ip_6' ),
+        '7' => $this->get_option( 'daemon_ip_7' ),
+    );
+    $_proto1 = 'http://';
+    if ( $this->get_option( 'daemon_ssl_1' ) == 'yes' ) {
+        $_proto1 = 'https://';
     }
-    $wc_veruspay_primary_ip = $_proto . $wc_veruspay_primary_ip;
-    $wc_veruspay_global['chains'] = wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_primary_ip, '_stat_', 'chainlist' );
+    $wc_veruspay_daemon_ip_1 = $_proto1 . $wc_veruspay_daemon_ip_1;
+    $wc_veruspay_global['chains'] = wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_daemon_ip_1, '_stat_', 'chainlist' );
+    // Begin checking
     if ( empty( $wc_veruspay_global['chains'] ) ) {
-        $this->form_fields = apply_filters( 'wc_veruspay_form_fields', wc_veruspay_setup( FALSE ) );
-        $this->update_option( 'enabled', 'no' );
+        $_statsArray['1'] = '<span style="color:red;font-size:16px;font-style:italic">Unable to Access Daemon Server! Check access code and IP.</span>';
+        if ( ! array_filter( $_daemonsArray ) ) {
+            $this->update_option( 'enabled', 'no' );
+        }
     }
 	else if ( $wc_veruspay_global['chains'] === '_no_chains_found_' ) {
-		echo 'NO CHAINS CONFIGURED';
+        $_statsArray['1'] = '<span style="color:orange;font-size:16px;font-style:italic">No Running Daemons Detected at Daemon Server!</span>';
+        if ( ! array_filter( $_daemonsArray ) ) {
+            $this->update_option( 'enabled', 'no' );
+        }
 	}
     else {
-        $_classArray = array('','','','','','',);
-        $_setClasses = array(
-            $this->get_option( '_1_daemon_ip' ),
-            $this->get_option( '_2_daemon_ip' ),
-            $this->get_option( '_3_daemon_ip' ),
-            $this->get_option( '_4_daemon_ip' ),
-            $this->get_option( '_5_daemon_ip' ),
-            $this->get_option( '_6_daemon_ip' ),
-        );
-        foreach ( $_setClasses as $key => $item ) {
+        // Add primary daemon chains to global array
+        foreach ( $wc_veruspay_global['chains'] as $key => $item ) {
+            $wc_veruspay_global['chains'][$key]['S'] = $this->get_option( 'daemon_fn_1' );
+            $wc_veruspay_global['chains'][$key]['IP'] = $wc_veruspay_daemon_ip_1;
+        }
+        // Iterate through any other live daemons and add to global array and set classes        
+        foreach ( $_daemonsArray as $key => $item ) {
             if ( empty( $item ) ) {
                 $_classArray[$key] = 'wc_veruspay_daemon_add';
             }
+            else {
+                $_code = $this->get_option( 'daemon_code_' . $key );
+                $_proto = 'http://';
+                if ( $this->get_option( 'daemon_ssl_1' ) == 'yes' ) {
+                    $_proto = 'https://';
+                }
+                $_ip = $_proto . $item;
+                if ( empty( $_code ) ) {
+                    $_statsArray[$key] = '<span style="color:red">Access Code Required</span>';
+                }
+                else {
+                    $_list = wc_veruspay_go( $_code, $_ip, '_stat_', 'chainlist' );
+                    if ( empty( $_list ) ) {
+                        $_statsArray[$key] = '<span style="color:red;font-size:16px;font-style:italic">Unable to Access Daemon Server! Check access code and IP.</span>';
+                    }
+                    else if ( $_list === '_no_chains_found_' ) {
+                        $_statsArray[$key] = '<span style="color:orange;font-size:16px;font-style:italic">No Running Daemons Detected at Daemon Server!</span>';
+                    }
+                    else {
+                        foreach ( $_list as $_key => $_item ) {
+                            $_list[$_key]['S'] = $this->get_option( 'daemon_fn_' . $key );
+                            $_list[$_key]['IP'] = $_ip;
+                        }
+                        $wc_veruspay_global['chains'] = array_merge( $wc_veruspay_global['chains'], $_list );
+                    }
+                }
+            }
         }
-        // Build array of form field data
         /**
          * Each element is assigned id with "woocommerce_veruspay_verus_gateway_" prepended to item name below
          */
@@ -70,11 +109,6 @@ else {
                 'label' => __( 'Enable VerusPay', 'veruspay-verus-gateway' ),
                 'default' => 'yes'
             ),
-            'access_code' => array(
-                'title' => __( 'VerusChainTools Access Code', 'veruspay-verus-gateway' ),
-                'type' => 'text',
-                'label' => __( 'VerusChainTools Access Code', 'veruspay-verus-gateway' ),
-            ),
             // Daemon Server Title (interactive to show/hide Daemon section)
             'daemon_settings_show' => array(
                 'title' => __( 'Daemon Management', 'veruspay-verus-gateway' ),
@@ -85,13 +119,19 @@ else {
             // Deamon Paths
             // Primary Daemon Server
             // css id: woocommerce_veruspay_verus_gateway_primary_daemon_heading
-            'primary_daemon_heading' => array(
+            'daemon_heading_1' => array(
                 'title' => __( 'Primary Daemon Server Settings', 'veruspay-verus-gateway' ),
                 'type' => 'title',
                 'description' => '',
-                'class' => 'wc_veruspay_daemon-1 wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle',
+                'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle',
             ),
-            'primary_daemon_fn' => array(
+            'daemon_stat_1' => array(
+                'title' => __( 'Status: ' . $_statsArray['1'], 'veruspay-verus-gateway' ),
+                'type' => 'title',
+                'description' => '',
+                'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle',
+            ),
+            'daemon_fn_1' => array(
                 'title' => __( 'Custom Name', 'veruspay-verus-gateway' ),
                 'type' => 'text',
                 'description' => __( 'Give this daemon server a custom name, e.g. "VRSC and ARRR Server"', 'veruspay-verus-gateway' ),
@@ -99,7 +139,7 @@ else {
                 'desc_tip' => TRUE,
                 'class' => 'wc_veruspay_daemonsettings-toggle',
             ),
-            'primary_daemon_ip' => array(
+            'daemon_ip_1' => array(
                 'title' => __( 'Server IP/Path', 'veruspay-verus-gateway' ),
                 'type' => 'text',
                 'description' => __( 'Enter the IP address of your primary daemon server. If on this server, enter the folder (must be a folder located at your root web folder)', 'veruspay-verus-gateway' ),
@@ -107,7 +147,7 @@ else {
                 'desc_tip' => TRUE,
                 'class' => 'wc_veruspay_daemonsettings-toggle',
             ),
-            'primary_daemon_ssl' => array(
+            'daemon_ssl_1' => array(
                 'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
                 'type' => 'checkbox',
                 'label' => __( 'Enable SSL connection', 'veruspay-verus-gateway' ),
@@ -115,192 +155,271 @@ else {
                 'default' => 'yes',
                 'class' => 'wc_veruspay_daemonsettings-toggle',
             ),
-            // Additional Daemon 1
-            '_1_daemon_heading' => array(
+            'daemon_code_1' => array(
+                'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
+                'type' => 'text',
+                'label' => __( 'Access Code', 'veruspay-verus-gateway' ),
+                'class' => 'wc_veruspay_daemonsettings-toggle',
+            ),
+            // Daemon 2
+            'daemon_heading_2' => array(
                 'title' => __( 'Daemon Server 2 Settings', 'veruspay-verus-gateway' ),
                 'type' => 'title',
                 'description' => '',
-                'class' => 'wc_veruspay_daemon-2 wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray[0] . '-title',
+                'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray['2'] . '-title',
             ),
-            '_1_daemon_fn' => array(
+            'daemon_stat_2' => array(
+                'title' => __( 'Status: ' . $_statsArray['2'], 'veruspay-verus-gateway' ),
+                'type' => 'title',
+                'description' => '',
+                'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle',
+            ),
+            'daemon_fn_2' => array(
                 'title' => __( 'Custom Name', 'veruspay-verus-gateway' ),
                 'type' => 'text',
                 'description' => __( 'Give this daemon server a custom name, e.g. "VRSC and ARRR Server"', 'veruspay-verus-gateway' ),
-                'default' => '',
+                'default' => 'Daemon Server 2',
                 'desc_tip' => TRUE,
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[0] . '-fn',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['2'] . '-fn',
             ),
-            '_1_daemon_ip' => array(
+            'daemon_ip_2' => array(
                 'title' => __( 'Server IP/Path', 'veruspay-verus-gateway' ),
                 'type' => 'text',
                 'description' => __( 'Enter the IP address of your primary daemon server. If on this server, enter the folder (must be a folder located at your root web folder)', 'veruspay-verus-gateway' ),
                 'default' => 'IP or local folder name (e.g. enter just verustools if at /var/www/html/verustools)',
                 'desc_tip' => TRUE,
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[0] . '-ip',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['2'] . '-ip',
             ),
-            '_1_daemon_ssl' => array(
+            'daemon_ssl_2' => array(
                 'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
                 'type' => 'checkbox',
                 'label' => __( 'Enable SSL connection', 'veruspay-verus-gateway' ),
                 'description' => '',
                 'default' => 'yes',
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[0] . '-ssl',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['2'] . '-ssl',
             ),
-            // Additional Daemon 2
-            '_2_daemon_heading' => array(
+            'daemon_code_2' => array(
+                'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
+                'type' => 'text',
+                'label' => __( 'Access Code', 'veruspay-verus-gateway' ),
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['2'] . '-code',
+            ),
+            // Daemon 3
+            'daemon_heading_3' => array(
                 'title' => __( 'Daemon Server 3 Settings', 'veruspay-verus-gateway' ),
                 'type' => 'title',
                 'description' => '',
-                'class' => 'wc_veruspay_daemon-3 wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray[1] . '-title',
+                'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray['3'] . '-title',
             ),
-            '_2_daemon_fn' => array(
+            'daemon_stat_3' => array(
+                'title' => __( 'Status: ' . $_statsArray['3'], 'veruspay-verus-gateway' ),
+                'type' => 'title',
+                'description' => '',
+                'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle',
+            ),
+            'daemon_fn_3' => array(
                 'title' => __( 'Custom Name', 'veruspay-verus-gateway' ),
                 'type' => 'text',
                 'description' => __( 'Give this daemon server a custom name, e.g. "VRSC and ARRR Server"', 'veruspay-verus-gateway' ),
-                'default' => '',
+                'default' => 'Daemon Server 3',
                 'desc_tip' => TRUE,
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[1] . '-fn',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['3'] . '-fn',
             ),
-            '_2_daemon_ip' => array(
+            'daemon_ip_3' => array(
                 'title' => __( 'Server IP/Path', 'veruspay-verus-gateway' ),
                 'type' => 'text',
                 'description' => __( 'Enter the IP address of your primary daemon server. If on this server, enter the folder (must be a folder located at your root web folder)', 'veruspay-verus-gateway' ),
                 'default' => 'IP or local folder name (e.g. enter just verustools if at /var/www/html/verustools)',
                 'desc_tip' => TRUE,
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[1] . '-ip',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['3'] . '-ip',
             ),
-            '_2_daemon_ssl' => array(
+            'daemon_ssl_3' => array(
                 'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
                 'type' => 'checkbox',
                 'label' => __( 'Enable SSL connection', 'veruspay-verus-gateway' ),
                 'description' => '',
                 'default' => 'yes',
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[1] . '-ssl',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['3'] . '-ssl',
             ),
-            // Additional Daemon 3
-            '_3_daemon_heading' => array(
+            'daemon_code_3' => array(
+                'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
+                'type' => 'text',
+                'label' => __( 'Access Code', 'veruspay-verus-gateway' ),
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['3'] . '-code',
+            ),
+            // Daemon 4
+            'daemon_heading_4' => array(
                 'title' => __( 'Daemon Server 4 Settings', 'veruspay-verus-gateway' ),
                 'type' => 'title',
                 'description' => '',
-                'class' => 'wc_veruspay_daemon-4 wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray[2] . '-title',
+                'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray['4'] . '-title',
             ),
-            '_3_daemon_fn' => array(
+            'daemon_stat_4' => array(
+                'title' => __( 'Status: ' . $_statsArray['4'], 'veruspay-verus-gateway' ),
+                'type' => 'title',
+                'description' => '',
+                'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle',
+            ),
+            'daemon_fn_4' => array(
                 'title' => __( 'Custom Name', 'veruspay-verus-gateway' ),
                 'type' => 'text',
                 'description' => __( 'Give this daemon server a custom name, e.g. "VRSC and ARRR Server"', 'veruspay-verus-gateway' ),
-                'default' => '',
+                'default' => 'Daemon Server 4',
                 'desc_tip' => TRUE,
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[2] . '-fn',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['4'] . '-fn',
             ),
-            '_3_daemon_ip' => array(
+            'daemon_ip_4' => array(
                 'title' => __( 'Server IP/Path', 'veruspay-verus-gateway' ),
                 'type' => 'text',
                 'description' => __( 'Enter the IP address of your primary daemon server. If on this server, enter the folder (must be a folder located at your root web folder)', 'veruspay-verus-gateway' ),
                 'default' => 'IP or local folder name (e.g. enter just verustools if at /var/www/html/verustools)',
                 'desc_tip' => TRUE,
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[2] . '-ip',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['4'] . '-ip',
             ),
-            '_3_daemon_ssl' => array(
+            'daemon_ssl_4' => array(
                 'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
                 'type' => 'checkbox',
                 'label' => __( 'Enable SSL connection', 'veruspay-verus-gateway' ),
                 'description' => '',
                 'default' => 'yes',
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[2] . '-ssl',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['4'] . '-ssl',
             ),
-            // Additional Daemon 4
-            '_4_daemon_heading' => array(
+            'daemon_code_4' => array(
+                'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
+                'type' => 'text',
+                'label' => __( 'Access Code', 'veruspay-verus-gateway' ),
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['4'] . '-code',
+            ),
+            // Daemon 5
+            'daemon_heading_5' => array(
                 'title' => __( 'Daemon Server 5 Settings', 'veruspay-verus-gateway' ),
                 'type' => 'title',
                 'description' => '',
-                'class' => 'wc_veruspay_daemon-5 wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray[3] . '-title',
+                'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray['5'] . '-title',
             ),
-            '_4_daemon_fn' => array(
+            'daemon_stat_5' => array(
+                'title' => __( 'Status: ' . $_statsArray['5'], 'veruspay-verus-gateway' ),
+                'type' => 'title',
+                'description' => '',
+                'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle',
+            ),
+            'daemon_fn_5' => array(
                 'title' => __( 'Custom Name', 'veruspay-verus-gateway' ),
                 'type' => 'text',
                 'description' => __( 'Give this daemon server a custom name, e.g. "VRSC and ARRR Server"', 'veruspay-verus-gateway' ),
-                'default' => '',
+                'default' => 'Daemon Server 5',
                 'desc_tip' => TRUE,
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[3] . '-fn',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['5'] . '-fn',
             ),
-            '_4_daemon_ip' => array(
+            'daemon_ip_5' => array(
                 'title' => __( 'Server IP/Path', 'veruspay-verus-gateway' ),
                 'type' => 'text',
                 'description' => __( 'Enter the IP address of your primary daemon server. If on this server, enter the folder (must be a folder located at your root web folder)', 'veruspay-verus-gateway' ),
                 'default' => 'IP or local folder name (e.g. enter just verustools if at /var/www/html/verustools)',
                 'desc_tip' => TRUE,
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[3] . '-ip',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['5'] . '-ip',
             ),
-            '_4_daemon_ssl' => array(
+            'daemon_ssl_5' => array(
                 'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
                 'type' => 'checkbox',
                 'label' => __( 'Enable SSL connection', 'veruspay-verus-gateway' ),
                 'description' => '',
                 'default' => 'yes',
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[3] . '-ssl',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['5'] . '-ssl',
             ),
-            // Additional Daemon 5
-            '_5_daemon_heading' => array(
+            'daemon_code_5' => array(
+                'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
+                'type' => 'text',
+                'label' => __( 'Access Code', 'veruspay-verus-gateway' ),
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['5'] . '-code',
+            ),
+            // Daemon 6
+            'daemon_heading_6' => array(
                 'title' => __( 'Daemon Server 6 Settings', 'veruspay-verus-gateway' ),
                 'type' => 'title',
                 'description' => '',
-                'class' => 'wc_veruspay_daemon-6 wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray[4] . '-title',
+                'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray['6'] . '-title',
             ),
-            '_5_daemon_fn' => array(
+            'daemon_stat_6' => array(
+                'title' => __( 'Status: ' . $_statsArray['6'], 'veruspay-verus-gateway' ),
+                'type' => 'title',
+                'description' => '',
+                'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle',
+            ),
+            'daemon_fn_6' => array(
                 'title' => __( 'Custom Name', 'veruspay-verus-gateway' ),
                 'type' => 'text',
                 'description' => __( 'Give this daemon server a custom name, e.g. "VRSC and ARRR Server"', 'veruspay-verus-gateway' ),
-                'default' => '',
+                'default' => 'Daemon Server 6',
                 'desc_tip' => TRUE,
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[4] . '-fn',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['6'] . '-fn',
             ),
-            '_5_daemon_ip' => array(
+            'daemon_ip_6' => array(
                 'title' => __( 'Server IP/Path', 'veruspay-verus-gateway' ),
                 'type' => 'text',
                 'description' => __( 'Enter the IP address of your primary daemon server. If on this server, enter the folder (must be a folder located at your root web folder)', 'veruspay-verus-gateway' ),
                 'default' => 'IP or local folder name (e.g. enter just verustools if at /var/www/html/verustools)',
                 'desc_tip' => TRUE,
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[4] . '-ip',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['6'] . '-ip',
             ),
-            '_5_daemon_ssl' => array(
+            'daemon_ssl_6' => array(
                 'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
                 'type' => 'checkbox',
                 'label' => __( 'Enable SSL connection', 'veruspay-verus-gateway' ),
                 'description' => '',
                 'default' => 'yes',
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[4] . '-ssl',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['6'] . '-ssl',
             ),
-            // Additional Daemon 6
-            '_6_daemon_heading' => array(
+            'daemon_code_6' => array(
+                'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
+                'type' => 'text',
+                'label' => __( 'Access Code', 'veruspay-verus-gateway' ),
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['6'] . '-code',
+            ),
+            // Daemon 7
+            'daemon_heading_7' => array(
                 'title' => __( 'Daemon Server 7 Settings', 'veruspay-verus-gateway' ),
                 'type' => 'title',
                 'description' => '',
-                'class' => 'wc_veruspay_daemon-7 wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray[5] . '-title',
+                'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray['7'] . '-title',
             ),
-            '_6_daemon_fn' => array(
+            'daemon_stat_7' => array(
+                'title' => __( 'Status: ' . $_statsArray['7'], 'veruspay-verus-gateway' ),
+                'type' => 'title',
+                'description' => '',
+                'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle',
+            ),
+            'daemon_fn_7' => array(
                 'title' => __( 'Custom Name', 'veruspay-verus-gateway' ),
                 'type' => 'text',
                 'description' => __( 'Give this daemon server a custom name, e.g. "VRSC and ARRR Server"', 'veruspay-verus-gateway' ),
-                'default' => '',
+                'default' => 'Daemon Server 7',
                 'desc_tip' => TRUE,
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[5] . '-fn',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['7'] . '-fn',
             ),
-            '_6_daemon_ip' => array(
+            'daemon_ip_7' => array(
                 'title' => __( 'Server IP/Path', 'veruspay-verus-gateway' ),
                 'type' => 'text',
                 'description' => __( 'Enter the IP address of your primary daemon server. If on this server, enter the folder (must be a folder located at your root web folder)', 'veruspay-verus-gateway' ),
                 'default' => 'IP or local folder name (e.g. enter just verustools if at /var/www/html/verustools)',
                 'desc_tip' => TRUE,
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[5] . '-ip',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['7'] . '-ip',
             ),
-            '_6_daemon_ssl' => array(
+            'daemon_ssl_7' => array(
                 'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
                 'type' => 'checkbox',
                 'label' => __( 'Enable SSL connection', 'veruspay-verus-gateway' ),
                 'description' => '',
                 'default' => 'yes',
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray[5] . '-ssl',
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['7'] . '-ssl',
             ),
+            'daemon_code_7' => array(
+                'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
+                'type' => 'text',
+                'label' => __( 'Access Code', 'veruspay-verus-gateway' ),
+                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['7'] . '-code',
+            ),
+            // Add Daemon Button
             'add_daemon' => array(
                 'title' => __( '+ Add Daemon Server (7 max)', 'veruspay-verus-gateway' ),
                 'type' => 'title',
@@ -520,12 +639,10 @@ else {
                 'class' => 'wc_veruspay_options-toggle',
             ),
         ));
-        // Setup available daemon and wallets array
-        $wc_veruspay_chains = array();
         // TODO: Change entire structure, allow for multiple daemons
         // TODO: Wallets section is dynamic based on config read via VCT API
         // Splice wallet settings and address settings using foreach
-        foreach( $wc_veruspay_global['chains'] as $key => $item ) {
+        foreach( $wc_veruspay_chains as $key => $item ) {
             $key = strtolower( $key );
             $wc_veruspay_set_t = 0;
             $wc_veruspay_set_z = 0;
@@ -701,11 +818,11 @@ else {
                 'private' => $wc_veruspay_set_z,
                 'transparent' => $wc_veruspay_set_t,
                 'name' => $item['FN'].' Coin ('.$key.')',
-                'ip' => $wc_veruspay_primary_ip,
+                'ip' => $wc_veruspay_daemon_ip_1,
                 'vct_version' => 'ERR',
                 'version' => 'ERR',
                 'explorer' => $wc_veruspay_set_e,
-                'stat' => json_decode( wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_primary_ip, $key, 'test' ), TRUE )['stat'],
+                'stat' => json_decode( wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_daemon_ip_1, $key, 'test' ), TRUE )['stat'],
                 'sapling' => $this->get_option( $key.'_sapling' ),
                 'addresses' => $wc_trnsaddr_setting,
                 'addrcount' => '',
@@ -715,15 +832,15 @@ else {
             );
             // Setup status of wallet to true or false
             if ( $wc_veruspay_chains[$key]['stat'] == 1 ) {
-                $wc_veruspay_chains[$key]['vct_version'] = wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_chains[$key]['ip'], $key, 'vct_version' );
-                $wc_veruspay_chains[$key]['version'] = wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_chains[$key]['ip'], $key, 'version' );
+                $wc_veruspay_chains[$key]['vct_version'] = wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_chains[$key]['ip'], $key, 'vct_version' );
+                $wc_veruspay_chains[$key]['version'] = wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_chains[$key]['ip'], $key, 'version' );
                 echo '<span id="verus_chain_tools_version" style="display:none">VerusChainTools Version: ' . $wc_veruspay_chains['vct_version'] . '</span>';
             }
             // Insert Wallet Management Sections
             if ( $wc_veruspay_chains[$key]['stat'] == 1 ) {
-                $wc_veruspay_formfields_bal_t = json_decode( wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_chains[$key]['ip'], $key, 'bal' ), TRUE )['transparent'];
-                $wc_veruspay_formfields_bal_z = json_decode( wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_chains[$key]['ip'], $key, 'bal' ), TRUE )['private'];
-                $wc_veruspay_formfields_bal_u = json_decode( wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_chains[$key]['ip'], $key, 'bal' ), TRUE )['unconfirmed'];
+                $wc_veruspay_formfields_bal_t = json_decode( wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_chains[$key]['ip'], $key, 'bal' ), TRUE )['transparent'];
+                $wc_veruspay_formfields_bal_z = json_decode( wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_chains[$key]['ip'], $key, 'bal' ), TRUE )['private'];
+                $wc_veruspay_formfields_bal_u = json_decode( wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_chains[$key]['ip'], $key, 'bal' ), TRUE )['unconfirmed'];
             
                 // Validate connection data
                 if ( strpos( $item['T'], 'Not Found' ) !== FALSE ) {
@@ -882,7 +999,7 @@ else {
                         $wc_veruspay_is_enabled[] = 'yes';
                         $this->form_fields[ $key . '_enable' ][ 'description' ] = $wc_veruspay_global['text_help']['admin_wallet_online'];
                         if ( $wc_veruspay_chains[$key]['mining'] === 1 ) {
-                            $wc_veruspay_this_mine_stat = json_decode( wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_chains[$key]['ip'], $key, 'getgenerate' ), TRUE );
+                            $wc_veruspay_this_mine_stat = json_decode( wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_chains[$key]['ip'], $key, 'getgenerate' ), TRUE );
                             if ( $wc_veruspay_this_mine_stat['numthreads'] >= 1 ) {
                                 $this->form_fields[ $key . '_mine_enable' ][ 'description' ] = '<span style="color:green">Mining with ' . $wc_veruspay_this_mine_stat['numthreads'] . ' threads!</span>';
                             }
@@ -891,27 +1008,27 @@ else {
                             }
                             if ( $this->get_option( $key.'_mine_value' ) != $wc_veruspay_this_mine_stat['numthreads'] ) {
                                 if ( $this->get_option( $key.'_mine_value' ) > 0 ){
-                                    wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_chains[$key]['ip'], $key, 'setgenerate', json_encode( array( TRUE, $this->get_option( $key.'_mine_value' ) ), TRUE ) );
+                                    wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_chains[$key]['ip'], $key, 'setgenerate', json_encode( array( TRUE, $this->get_option( $key.'_mine_value' ) ), TRUE ) );
                                 }
                             }
                             if ( $this->get_option( $key.'_mine_enable' ) == 'yes' &&  $wc_veruspay_this_mine_stat['numthreads'] == 0 ) { // if not mining, start on check
-                                wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_chains[$key]['ip'], $key, 'setgenerate', json_encode( array( TRUE, $this->get_option( $key.'_mine_value' ) ), TRUE ) );
+                                wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_chains[$key]['ip'], $key, 'setgenerate', json_encode( array( TRUE, $this->get_option( $key.'_mine_value' ) ), TRUE ) );
                             }
                             if ( $this->get_option( $key.'_mine_enable' ) == 'no' && $wc_veruspay_this_mine_stat['numthreads'] >= 1 && $wc_veruspay_this_mine_stat['staking'] == TRUE ) {
-                                wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_chains[$key]['ip'], $key, 'setgenerate', json_encode( array( TRUE, 0 ), TRUE ) );
+                                wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_chains[$key]['ip'], $key, 'setgenerate', json_encode( array( TRUE, 0 ), TRUE ) );
                                 $this->update_option( $key.'_mine_value', '0' );
                             }
                             if ( $this->get_option( $key.'_mine_enable' ) == 'no' && $wc_veruspay_this_mine_stat['numthreads'] >= 1 && $wc_veruspay_this_mine_stat['staking'] == FALSE ) {
-                                wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_chains[$key]['ip'], $key, 'setgenerate', json_encode( array( FALSE ), TRUE ) );
+                                wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_chains[$key]['ip'], $key, 'setgenerate', json_encode( array( FALSE ), TRUE ) );
                                 $this->update_option( $key.'_mine_value', '0' );
                             }
                         }
                         if ( $wc_veruspay_chains[$key]['staking'] === 1 ) {
                             if ( $this->get_option( $key.'_stake_enable' ) == 'yes' && $wc_veruspay_this_mine_stat['staking'] == FALSE ) {
-                                wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_chains[$key]['ip'], $key, 'setgenerate', json_encode( array( TRUE, 0 ), TRUE ) );
+                                wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_chains[$key]['ip'], $key, 'setgenerate', json_encode( array( TRUE, 0 ), TRUE ) );
                             }
                             if ( $this->get_option( $key.'_stake_enable' ) == 'no' &&  $wc_veruspay_this_mine_stat['staking'] == TRUE ) {
-                                wc_veruspay_go( $wc_veruspay_access_code, $wc_veruspay_chains[$key]['ip'], $key, 'setgenerate', json_encode( array( FALSE ), TRUE ) );
+                                wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_chains[$key]['ip'], $key, 'setgenerate', json_encode( array( FALSE ), TRUE ) );
                             }						
                         }
                     }
@@ -952,11 +1069,7 @@ else {
         $this->update_option('wc_veruspay_chains', $wc_veruspay_chains);
     }    
 }
-function wc_veruspay_setup( $_stat = TRUE ) {
-    $_msg = 'Setup';
-    if ( $_stat === FALSE ) {
-        $_msg = 'Setup - <span style="color:red;font-size:16px;font-style:italic">Wrong IP or Access Code</span>';
-    }
+function wc_veruspay_setup() {
     $r = array(
         'hidden_set_css' => array(
             'title'	=> '',
@@ -964,7 +1077,7 @@ function wc_veruspay_setup( $_stat = TRUE ) {
             'class' => 'wc_veruspay_set_css',
             ),
         'stat' => array(
-            'title' => $_msg,
+            'title' => 'Setup',
             'type' => 'title',
             'description' => '',
         ),
@@ -976,7 +1089,19 @@ function wc_veruspay_setup( $_stat = TRUE ) {
             'default' => 'yes'
             ),
         // Deamon Path
-        'primary_daemon_ip' => array(
+        'daemon_stat_1' => array(
+            'title' => __( 'Status: Not Setup', 'veruspay-verus-gateway' ),
+            'type' => 'title',
+            'description' => '',
+        ),
+        'daemon_fn_1' => array(
+            'title' => __( 'Custom Name', 'veruspay-verus-gateway' ),
+            'type' => 'text',
+            'description' => __( 'Give this daemon server a custom name, e.g. "VRSC and ARRR Server"', 'veruspay-verus-gateway' ),
+            'default' => 'My Primary Daemon Server',
+            'desc_tip' => TRUE,
+        ),
+        'daemon_ip_1' => array(
             'title' => __( 'Primary Daemon IP/Path', 'veruspay-verus-gateway' ),
             'type' => 'text',
             'description' => __( 'Enter the IP address of your primary daemon server. If on this server, enter the folder (must be a folder located at your root web folder)', 'veruspay-verus-gateway' ),
@@ -984,18 +1109,19 @@ function wc_veruspay_setup( $_stat = TRUE ) {
             'desc_tip' => TRUE,
         ),
         // SSL Setting
-        'primary_daemon_ssl' => array(
+        'daemon_ssl_1' => array(
             'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
             'type' => 'checkbox',
             'label' => __( 'Enable SSL connection', 'veruspay-verus-gateway' ),
             'description' => '',
             'default' => 'yes',
         ),
-        'access_code' => array(
-            'title' => __( 'VerusChainTools Access Code', 'veruspay-verus-gateway' ),
+        'daemon_code_1' => array(
+            'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
             'type' => 'text',
-            'label' => __( 'VerusChainTools Access Code', 'veruspay-verus-gateway' ),
-            ),
+            'label' => __( 'Access Code', 'veruspay-verus-gateway' ),
+            'class' => 'wc_veruspay_daemonsettings-toggle',
+        ),
         'access_code_instructions' => array(
             'title' => __( '<span style="color:red">VERUSPAY DISABLED:</span> Activation Instructions', 'veruspay-verus-gateways' ),
             'type' => 'title',
