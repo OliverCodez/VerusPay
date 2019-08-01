@@ -49,11 +49,14 @@ else {
         }
 	}
     else {
+        $_statsArray['1'] = '<span style="color:green;font-size:16px;font-style:italic">ONLINE: </span><span>';
         // Add primary daemon chains to global array
         foreach ( $wc_veruspay_global['chains'] as $key => $item ) {
             $wc_veruspay_global['chains'][$key]['S'] = $this->get_option( 'daemon_fn_1' );
             $wc_veruspay_global['chains'][$key]['IP'] = $wc_veruspay_daemon_ip_1;
+            $_statsArray['1'] = $_statsArray['1'] . strtoupper( $key ) . ' ';
         }
+        $_statsArray['1'] = $_statsArray['1'] . '</span>';
         // Iterate through any other live daemons and add to global array and set classes        
         foreach ( $_daemonsArray as $key => $item ) {
             if ( empty( $item ) ) {
@@ -78,10 +81,13 @@ else {
                         $_statsArray[$key] = '<span style="color:orange;font-size:16px;font-style:italic">No Running Daemons Detected at Daemon Server!</span>';
                     }
                     else {
+                        $_statsArray[$key] = '<span style="color:green;font-size:16px;font-style:italic">ONLINE: </span><span>';
                         foreach ( $_list as $_key => $_item ) {
                             $_list[$_key]['S'] = $this->get_option( 'daemon_fn_' . $key );
                             $_list[$_key]['IP'] = $_ip;
+                            $_statsArray[$key] = $_statsArray[$key] . strtoupper( $_key ) . ' ';
                         }
+                        $_statsArray[$key] = $_statsArray[$key] . '</span>';
                         $wc_veruspay_global['chains'] = array_merge( $wc_veruspay_global['chains'], $_list );
                     }
                 }
@@ -652,7 +658,7 @@ else {
             // Add to Wallet Settings array
             $wc_veruspay_add_wallet_data = array();
             $wc_veruspay_add_wallet_data[$key.'_wallet_title'] = array(
-                'title' => __( '<img style="margin: 0 10px 0 0;" src="' . plugins_url( 'public/img/wc-' . strtolower( $key ) . '-icon-16x.png', dirname( __FILE__ ) ) .'" />' . $item['FN'] . ' Wallet - Fiat Price: ' . get_woocommerce_currency_symbol() . '<span class="wc_veruspay_fiat_rate" data-coin="'.$key.'">' . wc_veruspay_price( $key,  get_woocommerce_currency() ) . '</span><span class="wc_veruspay_title-sub-small">Updates every 1 min</span>', 'veruspay-verus-gateway' ),
+                'title' => __( '<img style="margin: 0 10px 0 0;" src="' . $wc_veruspay_global['coinimg'] . strtoupper( $key ) .'.png" />' . $item['FN'] . ' Wallet - Fiat Price: ' . get_woocommerce_currency_symbol() . '<span class="wc_veruspay_fiat_rate" data-coin="'.$key.'">' . wc_veruspay_price( $key,  get_woocommerce_currency() ) . '</span><span class="wc_veruspay_title-sub-small">Updates every 1 min</span>', 'veruspay-verus-gateway' ),
                 'type' => 'title',
                 'description' => '',
                 'class' => 'wc_veruspay_title-walletssub wc_veruspay_walletsettings-toggle',
@@ -729,7 +735,7 @@ else {
             $wc_veruspay_add_address_data = array();
             if ( $item['TX'] == 0 || $item['TX'] == 1 ) {
                 $wc_veruspay_add_address_data[$key.'_addresses_title'] = array(
-                    'title' => __( '<img style="margin: 0 10px 0 0;" src="' . plugins_url( 'public/img/wc-' . strtolower( $key ) . '-icon-16x.png', dirname( __FILE__ ) ) . '" />' . $item['FN'] . ' ' . $key . ' Transparent Backup Addresses', 'veruspay-verus-gateway' ),
+                    'title' => __( '<img style="margin: 0 10px 0 0;" src="' . $wc_veruspay_global['coinimg'] . strtoupper( $key ) .'.png" />' . $item['FN'] . ' ' . $key . ' Transparent Backup Addresses', 'veruspay-verus-gateway' ),
                     'type' => 'title',
                     'description' => '',
                     'class' => 'wc_veruspay_addresses-toggle wc_veruspay_title-sub',
