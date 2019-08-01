@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div id="wc-<?php echo esc_attr( $this->id ); ?>-cc-form" class="wc-payment-form" style="background:transparent;">
     <div class="woocommerce-Price-amount" style="height:100px;">
         <div class="wc_veruspay_coin_select">
-            <span class="wc_veruspay_logo_<?php echo $wc_veruspay_coin; ?>"></span>
+            <span class="wc_veruspay_logo" style="background-image: url(<?php echo $wc_veruspay_global['coinimg'] . strtoupper( $wc_veruspay_coin ) . '.png'; ?>);"></span>
             <select name="wc_veruspay_coin" id="wc_veruspay_coin" class="" aria-hidden="true" onchange="this.form.submit()">
             <?php
                 foreach ( $this->chains as $key => $item ) {
