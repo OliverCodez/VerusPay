@@ -6,7 +6,7 @@ error_reporting(E_ALL);
  * Plugin Name: VerusPay Verus Gateway
  * Plugin URI: https://wordpress.org/plugins/veruspay-verus-gateway/
  * Description: Accept Verus Coin (VRSC), Pirate (ARRR), and Komodo (KMD) cryptocurrencies in your online WooCommerce store for physical or digital products.
- * Version: 0.4.0-alpha
+ * Version: 0.4.0-beta
  * Author: Oliver Westbrook
  * Author URI: https://profiles.wordpress.org/veruspay/
  * Copyright: (c) 2019 John Oliver Westbrook (johnwestbrook@pm.me)
@@ -258,7 +258,7 @@ function wc_veruspay_display_crypto_address_in_admin( $order ) {
 		echo '<style>.wc-order-totals-items{height:3rem!important}.wc-order-totals-items:after{content: "' . $wc_veruspay_coin . ' ' . $wc_veruspay_payment_status . ': ' . $wc_veruspay_price . '"!important;position:relative;font-size:1rem;font-weight:bold;color:#007bff!important;top:0;float:right;width:200px;height:30px;}</style>';
 		echo '<p><strong>'.__($wc_veruspay_coin . ' Price', 'woocommerce').':</strong>' . $wc_veruspay_price . ' with exchange rate of ' . get_post_meta( $order_id, '_wc_veruspay_rate', TRUE ) . '</p>';
 		if ( substr($wc_veruspay_address, 0, 2) !== 'zs' ) {
-			echo '<p><strong>'.__($wc_veruspay_coin . ' Address', 'woocommerce').':</strong> <a target="_BLANK" href="' . $wc_veruspay_global['chain_dtls'][$wc_veruspay_coin]['address'] . $wc_veruspay_address . '">' . $wc_veruspay_address . '</a></p>';
+			echo '<p><strong>'.__($wc_veruspay_coin . ' Address', 'woocommerce').':</strong> <a target="_BLANK" href="' . $wc_veruspay_global['chain_dtls'][strtolower( $wc_veruspay_coin )]['address'] . $wc_veruspay_address . '">' . $wc_veruspay_address . '</a></p>';
 		}
 		else {
 			echo '<p><strong>'.__($wc_veruspay_coin . ' Address', 'woocommerce').':</strong> '.$wc_veruspay_address.'</p';
@@ -301,7 +301,7 @@ function wc_veruspay_add_order_column_content( $column ) {
 				$wc_veruspay_coin = get_post_meta( $order_id, '_wc_veruspay_coin', TRUE );
 				$wc_veruspay_address = get_post_meta( $order_id, '_wc_veruspay_address', TRUE );
 				if ( substr( $wc_veruspay_address, 0, 2 ) !== 'zs' ) {
-					echo '<span style="color:#007bff !important;"><a target="_BLANK" href="' . $wc_veruspay_global['chain_dtls'][$wc_veruspay_coin]['address'] . $wc_veruspay_address . '">' . $wc_veruspay_address . '</a></span>'; 
+					echo '<span style="color:#007bff !important;"><a target="_BLANK" href="' . $wc_veruspay_global['chain_dtls'][strtolower( $wc_veruspay_coin )]['address'] . $wc_veruspay_address . '">' . $wc_veruspay_address . '</a></span>'; 
 				} 
 				else {
 					echo '<span style="color:#007bff !important;">' . $wc_veruspay_address . '</span>';

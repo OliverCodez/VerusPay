@@ -776,7 +776,7 @@ else {
             $wc_veruspay_position_after = array_search( 'cust_show', array_keys( $this->form_fields ) );
             apply_filters( 'wc_veruspay_form_fields', array_splice_assoc( $this->form_fields, $wc_veruspay_position_after, 0, $wc_veruspay_add_address_data ) );
             apply_filters( 'wc_veruspay_form_fields', array_splice_assoc( $this->form_fields, $wc_veruspay_position, 0, $wc_veruspay_add_wallet_data ) );
-            if ( isset( $wc_veruspay_global['chain_dtls'][$key] ) ) {
+            if ( isset( $wc_veruspay_global['chain_dtls'][strtolower( $key )] ) ) {
                 $wc_veruspay_global['chains'][$key]['EX'] = $wc_veruspay_global['chain_dtls'][strtolower( $key )];
             }
             else {

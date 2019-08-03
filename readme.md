@@ -6,7 +6,7 @@
 - Requires at least: 5.0.0
 - Tested up to: 5.2.1
 - Requires PHP: 7.0
-- Stable tag: 0.4.0-alpha
+- Stable tag: 0.4.0-beta
 - Requires WooCommerce at least: 3.5.6
 - Tested WooCommerce up to: 3.6.3
 - License: MIT
@@ -135,6 +135,9 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 9. After payment is detected on the blockchain, the purchase waits for the store-set minimum confirmations and delivers the digital product or completes the sale when it's reached.
 
 ## Changelog
+
+= 2019.08.03 - version 0.4.0-beta =
+*** Beta Testing ONLY release for upcoming version 0.4.0 ***
 
 = 2019.05.25 - version 0.3.5 =
 
