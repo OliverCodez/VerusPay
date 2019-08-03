@@ -10,12 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
             <select name="wc_veruspay_coin" id="wc_veruspay_coin" class="" aria-hidden="true" onchange="this.form.submit()">
             <?php
                 foreach ( $this->chains as $key => $item ) {
-                    if ( $item['enabled'] == 'yes' ) {
+                    if ( $item['EN'] == 'yes' ) {
                         if ( $key == $wc_veruspay_coin ) {
-                            echo '<option value="' . $key . '" selected="selected">' . $item['name'] . '</option>';
+                            echo '<option value="' . $key . '" selected="selected">' . $item['FN'] . '</option>';
                         }
                         else {
-                            echo '<option value="' . $key . '">' . $item['name'] . '</option>';
+                            echo '<option value="' . $key . '">' . $item['FN'] . '</option>';
                         }
                     }
                 }
