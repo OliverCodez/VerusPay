@@ -41,12 +41,18 @@
 	background: transparent !important;
     font-size: 1.2rem !important;
     padding: 0 !important;
-	height: 24px !important;
-    line-height: 24px !important;
+	height: 34px !important;
+    line-height: 30px !important;
     margin: 0;
     margin-top: 20px;
     border-bottom: gray 1px solid;
     max-width: 700px;
+}
+.wc_veruspay_title-sub img {
+    margin: -5px 10px 0 0;
+    max-height: 30px;
+    display: inline-block;
+    float: left;
 }
 .wc_veruspay_After::after {
     position: absolute;
@@ -72,16 +78,21 @@
 .wc_veruspay_title-walletssub {
     background: transparent !important;
     font-size: 1.2rem !important;
-    padding: 20 !important;
-	height: 24px !important;
-    line-height: 24px !important;
+    padding: 20px !important;
+    height: 30px !important;
+    line-height: 30px !important;
     margin: 0;
     margin-top: 20px;
     border-bottom: gray 1px solid;
     border-top: gray 2px solid;
     max-width: 700px;
 }
-
+.wc_veruspay_title-walletssub img {
+    margin: -5px 10px 0 0;
+    max-height: 30px;
+    display: inline-block;
+    float: left;
+}
 .wc_veruspay_title-sub-small {
     font-weight: normal !important;
     font-size: 12px !important;
@@ -89,10 +100,25 @@
     padding: 0 10px !important;
 }
 .wc_veruspay_title-sub-toggle-heading {
-    border: none;
+    border: solid 1px #cfcfcf;
+    border-radius: 10px 10px 0 0;
     background-color: #cfcfcf !important;
     padding: 5px !important;
     padding-left: 30px !important;
+}
+.wc_veruspay_title-sub-toggle-under {
+    padding: 5px !important;
+    padding-left: 30px !important;
+    margin-top: 0;
+    background-color: transparent !important;
+    border-left: solid 1px;
+    border-left-color: currentcolor;
+    border-right: solid 1px;
+    border-right-color: currentcolor;
+    border-bottom: solid 1px;
+    border-bottom-color: currentcolor;
+    border-color: #cfcfcf;
+    border-radius: 0 0 10px 10px;
 }
 .wc_veruspay_title-sub_normal {
     background: none !important;

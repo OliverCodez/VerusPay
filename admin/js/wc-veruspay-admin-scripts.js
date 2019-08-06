@@ -5,6 +5,7 @@ jQuery( function( $ ) {
 		$( '.wc_veruspay_set_css' ).closest( 'div' ).addClass( 'wc_veruspay_wrapper' );
 		$( '.wc_veruspay_daemon_add-button').closest('td').prev().hide();
 		$( '.wc_veruspay_daemon_add-title' ).hide();
+		$( '.wc_veruspay_daemon_add-status').hide();
 		$( '.wc_veruspay_daemon_add-fn,.wc_veruspay_daemon_add-ip,.wc_veruspay_daemon_add-ssl,.wc_veruspay_daemon_add-code' ).closest('tr').hide();
 		// Conditional fields for discount/fee section
 		if ( $( '.wc_veruspay_setdiscount' ).is( ':checked' ) ) {
@@ -148,6 +149,7 @@ jQuery( function( $ ) {
 
 		$('.wc_veruspay_daemon_add-button').click(function() {
 			$('.wc_veruspay_daemon_add-title:first').removeClass('wc_veruspay_daemon_add-title').show();
+			$('.wc_veruspay_daemon_add-status:first').removeClass('wc_veruspay_daemon_add-status').show();
 			$('.wc_veruspay_daemon_add-fn:first').removeClass('wc_veruspay_daemon_add-fn').closest('tr').show();
 			$('.wc_veruspay_daemon_add-ip:first').removeClass('wc_veruspay_daemon_add-ip').closest('tr').show();
 			$('.wc_veruspay_daemon_add-ssl:first').removeClass('wc_veruspay_daemon_add-ssl').closest('tr').show();

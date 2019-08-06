@@ -46,17 +46,19 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         $this->email_completed = $this->get_option( 'email_completed' );
         // Clean and count store addresses for backup / manual use
         $wc_veruspay_chains_temp = $this->get_option('wc_veruspay_chains');
-        foreach ( $wc_veruspay_chains_temp as $key => $item ) {
-            $wc_veruspay_store_data = $this->get_option( $key . '_storeaddresses' );
-            $wc_veruspay_chains_temp[$key]['AD'] = preg_replace( '/\s+/', '', $wc_veruspay_store_data );
-            if ( strlen( $wc_veruspay_store_data ) < 10 ) {
-                $wc_veruspay_chains_temp[$key]['AC'] = 0;
+        if ( ! empty( $wc_veruspay_chains_temp ) ) {
+            foreach ( $wc_veruspay_chains_temp as $key => $item ) {
+                $wc_veruspay_store_data = $this->get_option( $key . '_storeaddresses' );
+                $wc_veruspay_chains_temp[$key]['AD'] = preg_replace( '/\s+/', '', $wc_veruspay_store_data );
+                if ( strlen( $wc_veruspay_store_data ) < 10 ) {
+                    $wc_veruspay_chains_temp[$key]['AC'] = 0;
+                }
+                else if ( strlen( $wc_veruspay_store_data ) > 10 ) {
+                    $wc_veruspay_chains_temp[$key]['AD'] = explode( ',', $wc_veruspay_chains_temp[$key]['AD'] );
+                    $wc_veruspay_chains_temp[$key]['AC'] = count( $wc_veruspay_chains_temp[$key]['AD'] );
+                }
+                $wc_veruspay_chains_temp[$key]['UD'] = explode( ',', $this->get_option( $key . '_usedaddresses' ));
             }
-            else if ( strlen( $wc_veruspay_store_data ) > 10 ) {
-                $wc_veruspay_chains_temp[$key]['AD'] = explode( ',', $wc_veruspay_chains_temp[$key]['AD'] );
-                $wc_veruspay_chains_temp[$key]['AC'] = count( $wc_veruspay_chains_temp[$key]['AD'] );
-            }
-            $wc_veruspay_chains_temp[$key]['UD'] = explode( ',', $this->get_option( $key . '_usedaddresses' ));
         }
         $this->chains = $wc_veruspay_chains_temp;
         $this->decimals = $this->get_option( 'decimals' ); 
