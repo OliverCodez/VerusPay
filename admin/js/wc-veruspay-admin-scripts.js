@@ -2,11 +2,15 @@ var storecurrency = veruspay_admin_params.storecurrency;
 jQuery( function( $ ) {
 	$(document).ready(function() {
 		$( '#verus_chain_tools_version' ).insertAfter('#woocommerce_veruspay_verus_gateway_access_code').css('display','inline-block');
+		$( '.wc_veruspay_section_heading' ).next().find( 'tbody' ).addClass( 'wc_veruspay_section_body' );
+		$( '.wc_veruspay_addresses-toggle' ).next().find( 'td' ).css( 'width','75%' );
+		$( '.wc_veruspay_noinput' ).closest( 'tr' ).addClass( 'wc_veruspay_titleonly_row' );
+		$( '.wc_veruspay_title-sub_normal' ).closest( 'tr' ).addClass ( 'wc_veruspay_title-sub_normal' );
 		$( '.wc_veruspay_set_css' ).closest( 'div' ).addClass( 'wc_veruspay_wrapper' );
 		$( '.wc_veruspay_daemon_add-button').closest('td').prev().hide();
 		$( '.wc_veruspay_daemon_add-title' ).hide();
 		$( '.wc_veruspay_daemon_add-status').hide();
-		$( '.wc_veruspay_daemon_add-fn,.wc_veruspay_daemon_add-ip,.wc_veruspay_daemon_add-ssl,.wc_veruspay_daemon_add-code' ).closest('tr').hide();
+		$( '.wc_veruspay_daemon_add-fn,.wc_veruspay_daemon_add-ip,.wc_veruspay_daemon_add-ssl,.wc_veruspay_daemon_add-code' ).closest('tbody').hide();
 		// Conditional fields for discount/fee section
 		if ( $( '.wc_veruspay_setdiscount' ).is( ':checked' ) ) {
 			$( '.wc_veruspay_discount-toggle' ).closest('tr').show();
@@ -29,25 +33,25 @@ jQuery( function( $ ) {
 		if ( $('.wc_veruspay_togglewallet').hasClass( 'wallet_updated' ) ) {
 			location.reload();
 		}
-		$( '.wc_veruspay_daemonsettings-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
+		$( '.wc_veruspay_daemonsettings-toggle' ).closest('tbody').toggleClass('wc_veruspay_set_css');
 		$( '.wc_veruspay_daemonsettings-toggle' ).toggleClass('wc_veruspay_set_css');
-		$( '.wc_veruspay_walletsettings-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
+		$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').toggleClass('wc_veruspay_set_css');
 		$( '.wc_veruspay_walletsettings-toggle' ).toggleClass('wc_veruspay_set_css');
-		$( '.wc_veruspay_addresses-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
+		$( '.wc_veruspay_addresses-toggle' ).closest('tbody').toggleClass('wc_veruspay_set_css');
 		$( '.wc_veruspay_addresses-toggle' ).toggleClass('wc_veruspay_set_css');
 		$( '.wc_veruspay_customization-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
 		$( '.wc_veruspay_options-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
 		
 		$( '.wc_veruspay_toggleaddr' ).click(function(e) {
-			$( '.wc_veruspay_addresses-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
+			$( '.wc_veruspay_addresses-toggle' ).closest('tbody').toggleClass('wc_veruspay_set_css');
 			$( '.wc_veruspay_addresses-toggle' ).toggleClass('wc_veruspay_set_css');
 		});
 		$('.wc_veruspay_toggledaemon').click(function(e) {
-			$( '.wc_veruspay_daemonsettings-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
+			$( '.wc_veruspay_daemonsettings-toggle' ).closest('tbody').toggleClass('wc_veruspay_set_css');
 			$( '.wc_veruspay_daemonsettings-toggle' ).toggleClass('wc_veruspay_set_css');
 		});
 		$('.wc_veruspay_togglewallet').click(function(e) {
-			$( '.wc_veruspay_walletsettings-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
+			$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').toggleClass('wc_veruspay_set_css');
 			$( '.wc_veruspay_walletsettings-toggle' ).toggleClass('wc_veruspay_set_css');
 		});
 		$('.wc_veruspay_togglecust').click(function(e) {
@@ -150,10 +154,10 @@ jQuery( function( $ ) {
 		$('.wc_veruspay_daemon_add-button').click(function() {
 			$('.wc_veruspay_daemon_add-title:first').removeClass('wc_veruspay_daemon_add-title').show();
 			$('.wc_veruspay_daemon_add-status:first').removeClass('wc_veruspay_daemon_add-status').show();
-			$('.wc_veruspay_daemon_add-fn:first').removeClass('wc_veruspay_daemon_add-fn').closest('tr').show();
-			$('.wc_veruspay_daemon_add-ip:first').removeClass('wc_veruspay_daemon_add-ip').closest('tr').show();
-			$('.wc_veruspay_daemon_add-ssl:first').removeClass('wc_veruspay_daemon_add-ssl').closest('tr').show();
-			$('.wc_veruspay_daemon_add-code:first').removeClass('wc_veruspay_daemon_add-code').closest('tr').show();
+			$('.wc_veruspay_daemon_add-fn:first').removeClass('wc_veruspay_daemon_add-fn').closest('tbody').show();
+			$('.wc_veruspay_daemon_add-ip:first').removeClass('wc_veruspay_daemon_add-ip').closest('tbody').show();
+			$('.wc_veruspay_daemon_add-ssl:first').removeClass('wc_veruspay_daemon_add-ssl').closest('tbody').show();
+			$('.wc_veruspay_daemon_add-code:first').removeClass('wc_veruspay_daemon_add-code').closest('tbody').show();
 		});
 		// 1-Click Cashout Initiated
 		$('.wc_veruspay_cashout').click(function() {
