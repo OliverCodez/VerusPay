@@ -111,6 +111,10 @@
     background-position: center;
     position: relative;
     top: 4px;
+    margin: 0 2px;
+    border: 2px solid;
+    border-radius: 15px;
+    border-color: #cfcfcf;
 }
 .wc_veruspay_section_body {
     padding: 15px 5px 20px 30px;
