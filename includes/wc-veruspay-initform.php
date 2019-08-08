@@ -20,6 +20,7 @@ if ( empty( $wc_veruspay_daemon_code_1 ) || empty( $wc_veruspay_daemon_ip_1 ) ) 
 else {
     // Setup vars and arrays
     $_statsArray = array('1' => array('','',),'2' => array('','',), '3' => array('','',), '4' => array('','',), '5' => array('','',), '6' => array('','',), '7' => array('','',),);
+    $_hostedArray = array('','',);
     $_classArray = array('','','','','','',);
     $_daemonsArray = array(
         '2' => $this->get_option( 'daemon_ip_2' ),
@@ -29,6 +30,9 @@ else {
         '6' => $this->get_option( 'daemon_ip_6' ),
         '7' => $this->get_option( 'daemon_ip_7' ),
     );
+    if ( $this->get_option( 'hosted_enable' ) == 'yes' ) {
+
+    }
     $_proto1 = 'http://';
     if ( $this->get_option( 'daemon_ssl_1' ) == 'yes' ) {
         $_proto1 = 'https://';
@@ -137,13 +141,77 @@ else {
                 'label' => __( 'Enable VerusPay', 'veruspay-verus-gateway' ),
                 'default' => 'yes'
             ),
+            // Show/Hide Tabs Headings
             // Daemon Server Title (interactive to show/hide Daemon section)
             'daemon_settings_show' => array(
-                'title' => __( 'Daemon Management', 'veruspay-verus-gateway' ),
+                'title' => __( '<span class="wc_veruspay_tab-title">Daemon Management</span>', 'veruspay-verus-gateway' ),
                 'type' => 'title',
                 'description' => '',
-                'class' => 'wc_veruspay_admin_section wc_veruspay_toggledaemon wc_veruspay_pointer',
+                'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_toggledaemon wc_veruspay_pointer',
             ),
+            // Wallet Management Title (interactive to show or hide the Wallet section)
+            'wallet_settings_show' => array(
+                'title' => __( '<span class="wc_veruspay_tab-title">Wallet Management</span>', 'veruspay-verus-gateway' ),
+                'type' => 'title',
+                'description' => '',
+                'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_togglewallet wc_veruspay_pointer',
+            ),
+            // Addresses Title
+            'addr_show' => array(
+                'title' => __( '<span class="wc_veruspay_tab-title">Store Addresses</span>', 'veruspay-verus-gateway' ),
+                'type' => 'title',
+                'description' => '',
+                'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_toggleaddr wc_veruspay_pointer',
+            ),
+            // Content title, interactive (show or hide content customization fields)
+            'cust_show' => array(
+                'title' => __( '<span class="wc_veruspay_tab-title">Message and Content Customizations</span>', 'veruspay-verus-gateway' ),
+                'type' => 'title',
+                'description' => '',
+                'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_togglecust wc_veruspay_pointer',
+            ),
+            // Store Option title, interactive (show or hide options)
+            'options_show' => array(
+                'title' => __( '<span class="wc_veruspay_tab-title">Store Options</span>', 'veruspay-verus-gateway' ),
+                'type' => 'title',
+                'description' => '',
+                'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_toggleoptions wc_veruspay_pointer',
+            ),
+            // Hosted title
+            'hosted_settings_show' => array(
+                'title' => __( '<span class="wc_veruspay_tab-title">VerusPay Hosted Management</span>', 'veruspay-verus-gateway' ),
+                'type' => 'title',
+                'description' => '',
+                'class' => 'wc_veruspay_title-deactive wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_togglehosted wc_veruspay_pointer',
+            ),
+            // Hosted VerusPay Service
+            'hosted_heading' => array(
+                'title' => __( 'VerusPay Hosted - Status: coming soon' . $_hostedArray[0], 'veruspay-verus-gateway' ),
+                'type' => 'title',
+                'description' => '',
+                'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_hostedsettings-toggle',
+            ),
+            'hosted_stat' => array(
+                'title' => __( 'Configured Coins: ' . $_hostedArray[1], 'veruspay-verus-gateway' ),
+                'type' => 'title',
+                'description' => '',
+                'class' => 'wc_veruspay_section_heading wc_veruspay_title-sub wc_veruspay_title-sub-toggle-under wc_veruspay_hostedsettings-toggle',
+            ),
+            'hosted_enable' => array(
+                'title' => __( 'Enable', 'veruspay-verus-gateway' ),
+                'type' => 'checkbox',
+                'label' => __( 'Enable VerusPay Hosted Daemon', 'veruspay-verus-gateway' ),
+                'description' => '',
+                'default' => 'yes',
+                'class' => 'wc_veruspay_hostedsettings-toggle',
+            ),
+            'hosted_access' => array(
+                'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
+                'type' => 'text',
+                'label' => __( 'Access Code', 'veruspay-verus-gateway' ),
+                'class' => 'wc_veruspay_hostedsettings-toggle',
+            ),
+            
             // Deamon Paths
             // Primary Daemon Server
             // css id: woocommerce_veruspay_verus_gateway_primary_daemon_heading
@@ -453,28 +521,23 @@ else {
                 'type' => 'title',
                 'class' => 'wc_veruspay_daemonsettings-toggle wc_veruspay_daemon_add-button',
             ),
-            // Wallet Management Title (interactive to show or hide the Wallet section)
-            'wallet_settings_show' => array(
-                'title' => __( 'Wallet Management', 'veruspay-verus-gateway' ),
-                'type' => 'title',
-                'description' => '',
-                'class' => 'wc_veruspay_admin_section wc_veruspay_togglewallet wc_veruspay_pointer',
-            ),
+            // ***************************
             // Wallet Management Spliced in
-            // Addresses Title
-            'addr_show' => array(
-                'title' => __( 'Store Addresses', 'veruspay-verus-gateway' ),
+            // ***************************
+            'wallet_insert' => array(
+                'title' => __( '', 'veruspay-verus-gateway' ),
                 'type' => 'title',
                 'description' => '',
-                'class' => 'wc_veruspay_admin_section wc_veruspay_toggleaddr wc_veruspay_pointer',
+                'class' => 'wc_veruspay_noshow',
             ),
+            // ***************************
             // Address Settings Spliced in
-            // Content title, interactive (show or hide content customization fields)
-            'cust_show' => array(
-                'title' => __( 'Message and Content Customizations', 'veruspay-verus-gateway' ),
+            // ***************************
+            'addr_insert' => array(
+                'title' => __( '', 'veruspay-verus-gateway' ),
                 'type' => 'title',
                 'description' => '',
-                'class' => 'wc_veruspay_admin_section wc_veruspay_togglecust wc_veruspay_pointer',
+                'class' => 'wc_veruspay_noshow',
             ),
             // Content Customizations
             'description' => array(
@@ -532,13 +595,6 @@ else {
                 'default' => 'Text to send to the customer after all blocks are confirmed and order is complete.',
                 'desc_tip' => TRUE,
                 'class' => 'wc_veruspay_customization-toggle',
-            ),
-            // Store Option title, interactive (show or hide options)
-            'options_show' => array(
-                'title' => __( 'Store Options', 'veruspay-verus-gateway' ),
-                'type' => 'title',
-                'description' => '',
-                'class' => 'wc_veruspay_admin_section wc_veruspay_toggleoptions wc_veruspay_pointer',
             ),
             // Store options
             'decimals' => array(
@@ -685,7 +741,7 @@ else {
                     'title' => __( '<img style="margin: 0 10px 0 0;" src="' . $wc_veruspay_global['coinimg'] . $chain_up .'.png" />' . $chain_up . ' ' . $item['FN'] . ' Wallet - Fiat Price: ' . get_woocommerce_currency_symbol() . '<span class="wc_veruspay_fiat_rate" data-coin="'.$chain_up.'">' . wc_veruspay_price( $chain_up,  get_woocommerce_currency() ) . '</span>', 'veruspay-verus-gateway' ),
                     'type' => 'title',
                     'description' => '',
-                    'class' => 'wc_veruspay_section_heading wc-settings-sub-title wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_walletsettings-toggle',
+                    'class' => 'wc_veruspay_section_heading wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_walletsettings-toggle',
                 ),
                 $chain_lo.'_status' => array(
                     'title' => __( 'Wallet Status: ' . $wc_veruspay_wallet_stat, 'veruspay-verus-gateway' ),
@@ -787,7 +843,7 @@ else {
                     'title' => __( '<img style="margin: 0 10px 0 0;" src="' . $wc_veruspay_global['coinimg'] . $chain_up .'.png" />' . $item['FN'] . ' ' . $chain_up . ' Transparent Backup Addresses', 'veruspay-verus-gateway' ),
                     'type' => 'title',
                     'description' => '',
-                    'class' => 'wc_veruspay_section_heading wc-settings-sub-title wc-settings-sub-title wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_addresses-toggle',
+                    'class' => 'wc_veruspay_section_heading wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_addresses-toggle',
                 );
                 // Store address fields, unused and used
                 $wc_veruspay_add_address_data[$chain_lo.'_storeaddresses'] = array(
@@ -926,8 +982,8 @@ else {
                 'description' => '',
                 'class' => 'wc_veruspay_noinput wc_veruspay_walletsettings-toggle',
             );
-            $wc_veruspay_position = array_search( 'addr_show', array_keys( $this->form_fields ) );
-            $wc_veruspay_position_after = array_search( 'cust_show', array_keys( $this->form_fields ) );
+            $wc_veruspay_position = array_search( 'wallet_insert', array_keys( $this->form_fields ) );
+            $wc_veruspay_position_after = array_search( 'addr_insert', array_keys( $this->form_fields ) );
             $wc_veruspay_add_wallet_data = array_merge( $wc_veruspay_add_wallet_data, $wc_veruspay_wallet_management_data );
             apply_filters( 'wc_veruspay_form_fields', array_splice_assoc( $this->form_fields, $wc_veruspay_position_after, 0, $wc_veruspay_add_address_data ) );
             apply_filters( 'wc_veruspay_form_fields', array_splice_assoc( $this->form_fields, $wc_veruspay_position, 0, $wc_veruspay_add_wallet_data ) );
