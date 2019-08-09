@@ -28,6 +28,16 @@
 .woo-nav-tab-wrapper+.screen-reader-text+.updated+h2+p {
     font-size: 1rem!important;
 }
+#wc_veruspay_admin_menu {
+    display: block;
+    position: relative;
+    margin: 0 auto;
+    min-width: 1200px;
+    height: 95px;
+    border-bottom: 1px solid #264893;
+    padding: 0 2px 0 2px;
+    max-width: 1400px;
+}
 .wc_veruspay_tab-container {
     height: 80px;
     position: relative;
@@ -75,14 +85,14 @@
     margin: 0;
     margin-top: 20px;
     border-bottom: gray 1px solid;
-    max-width: 700px;
+    max-width: 900px;
     color: #000;
+    margin:0 auto;
 }
 .wc_veruspay_title-sub img {
     margin: -5px 10px 0 0;
     max-height: 30px;
     display: inline-block;
-    float: left;
 }
 .wc_veruspay_noshow {
     display:none;
@@ -107,6 +117,7 @@
     line-height: 1.1rem;
     height: 1.1rem;
     background-color: #fffcb5;
+    margin:0 auto;
 }
 .wc_veruspay_title-sub-small {
     font-weight: normal !important;
@@ -156,10 +167,14 @@
     border-top-color: rgb(207, 207, 207);
     border-top-style: solid;
     border-top-width: 1px;
-    max-width: 700px;
+    max-width: 900px;
     border-top: none;
     top: -10px;
     position: relative;
+    margin:0 auto;
+}
+.wc_veruspay_section_body td {
+    width: 75%;
 }
 .wc_veruspay_section_body > .wc_veruspay_titleonly_row {
     width: 100%;
@@ -194,34 +209,93 @@
 .wc_veruspay_fiat_rate {
     position:relative;
 }
-/*
-.wc_veruspay_fiat_rate:after {
-    content: "Price updated every 1 min";
-    position: absolute;
-    top: 20px;
-    width: 200px;
-    left: -100px;
-    font-size: .8rem;
-    font-style: italic;
-    color: #757474;
-}
-*/
 .wc_veruspay_hidden{
     display:none;
 }
 .wc_veruspay_pointer:hover {
     cursor: pointer;
 }
+.wc_veruspay_hostedsettings-toggle {
+    margin-top: 14px;
+}
+.wc_veruspay_wrapper .woocommerce-save-button {
+    width: 200px;
+    height: 60px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    border-radius: 10px;
+    border: 1px solid #264893;
+    background: #264893;
+    box-shadow: none;
+    margin: 0 auto;
+    margin-top: 60px;
+    display: block;
+    text-shadow: none;
+}
+/* Slider Checkboxes */
+/*
+    <label class="wc_veruspay_control wc_veruspay_control--checkbox">First checkbox
+      <input type="checkbox" checked="checked"/>
+      <div class="wc_veruspay_control__indicator"></div>
+    </label>
+*/
+.wc_veruspay_control {
+    display: block;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  .wc_veruspay_control input {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+  }
+  .wc_veruspay_control__indicator {
+    position: absolute;
+    top: -13px;
+    left: 0;
+    height: 26px;
+    width: 44px;
+    background: #fff;
+    border: 2px solid #cfcfcf;
+    border-radius: 16px;
+  }
+  .wc_veruspay_control input:checked ~ .wc_veruspay_control__indicator {
+    background-color: #28f24c;
+    border: 2px solid #28f24c;
+  }
+  .wc_veruspay_control--checkbox .wc_veruspay_control__indicator:after {
+    content: '';
+    position:absolute;
+    display: block;
+    left:0;
+    top:0;
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 2px #ddd;
+    transition: all 0.2s ease;
+  }
+  .wc_veruspay_control input:checked ~ .wc_veruspay_control__indicator:after{
+    left: 18px;
+    top: 0px;
+    transition: all 0.3s ease;
+  }
+  /* END */
 .wc_veruspay_cashout {
     display: inline-block;
     width: 120px;
     height: 24px;
     text-align: center;
-    border: #008de6 solid 1px;
+    border: #264893 solid 1px;
     cursor: pointer;
     font-weight: bold;
     color: #fff;
-    background-color: #008de6;
+    background-color: #264893;
     border-radius: 10px;
     margin: 0 10px;
     line-height: 24px;

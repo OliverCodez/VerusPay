@@ -2,9 +2,12 @@ var storecurrency = veruspay_admin_params.storecurrency;
 jQuery( function( $ ) {
 	$(document).ready(function() {
 		$( '#verus_chain_tools_version' ).insertAfter('#woocommerce_veruspay_verus_gateway_access_code').css('display','inline-block');
+		$( '.wc_veruspay_top_options' ).closest( 'label' ).addClass( 'wc_veruspay_control wc_veruspay_control--checkbox' );
+		$( '<div class="wc_veruspay_control__indicator"></div>' ).insertAfter( '.wc_veruspay_top_options' );
 		$( '.wc_veruspay_section_heading' ).next().find( 'tbody' ).addClass( 'wc_veruspay_section_body' );
-		$( '.wc_veruspay_addresses-toggle' ).next().find( 'td' ).css( 'width','75%' );
 		$( '.wc_veruspay_tab-container' ).next( 'table' ).remove();
+		$( '#wc_veruspay_admin_menu' ).insertBefore( '.wc_veruspay_toggledaemon' );
+		$( '.wc_veruspay_tab-container' ).appendTo( '#wc_veruspay_admin_menu' );
 		$( '.wc_veruspay_noinput' ).closest( 'tr' ).addClass( 'wc_veruspay_titleonly_row' );
 		$( '.wc_veruspay_title-sub_normal' ).closest( 'tr' ).addClass ( 'wc_veruspay_title-sub_normal' );
 		$( '.wc_veruspay_set_css' ).closest( 'div' ).addClass( 'wc_veruspay_wrapper' );
@@ -34,54 +37,137 @@ jQuery( function( $ ) {
 		if ( $('.wc_veruspay_togglewallet').hasClass( 'wallet_updated' ) ) {
 			location.reload();
 		}
-		$( '.wc_veruspay_hostedsettings-toggle' ).closest('tbody').toggleClass('wc_veruspay_set_css');
-		$( '.wc_veruspay_hostedsettings-toggle' ).toggleClass('wc_veruspay_set_css');
-		$( '.wc_veruspay_toggledaemon' ).toggleClass( 'wc_veruspay_active_tab' );
-		$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').toggleClass('wc_veruspay_set_css');
-		$( '.wc_veruspay_walletsettings-toggle' ).toggleClass('wc_veruspay_set_css');
-		$( '.wc_veruspay_addresses-toggle' ).closest('tbody').toggleClass('wc_veruspay_set_css');
-		$( '.wc_veruspay_addresses-toggle' ).toggleClass('wc_veruspay_set_css');
-		$( '.wc_veruspay_customization-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
-		$( '.wc_veruspay_options-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
+		$( '.wc_veruspay_toggledaemon' ).addClass( 'wc_veruspay_active_tab' );
 
+		$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+		$( '.wc_veruspay_walletsettings-toggle' ).addClass('wc_veruspay_set_css');
+		$( '.wc_veruspay_addresses-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+		$( '.wc_veruspay_addresses-toggle' ).addClass('wc_veruspay_set_css');
+		$( '.wc_veruspay_customization-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+		$( '.wc_veruspay_customization-toggle' ).addClass('wc_veruspay_set_css');
+		$( '.wc_veruspay_options-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+		$( '.wc_veruspay_options-toggle' ).addClass('wc_veruspay_set_css');
+		$( '.wc_veruspay_hostedsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+		$( '.wc_veruspay_hostedsettings-toggle' ).addClass('wc_veruspay_set_css');
+		// Click actions  wc_veruspay_customization-toggle
 		$('.wc_veruspay_toggledaemon').click(function(e) {
 			if ( ! ( $( this ).hasClass( 'wc_veruspay_active_tab' ) ) ) {
-				$( this ).toggleClass( 'wc_veruspay_active_tab' );
-				$( '.wc_veruspay_daemonsettings-toggle' ).closest('tbody').toggleClass('wc_veruspay_set_css');
-				$( '.wc_veruspay_daemonsettings-toggle' ).toggleClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_active_tab' ).removeClass( 'wc_veruspay_active_tab' );
+				// hide all
+				$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_walletsettings-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_addresses-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_addresses-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_customization-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_customization-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_options-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_options-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_hostedsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_hostedsettings-toggle' ).addClass('wc_veruspay_set_css');
+				//
+				$( this ).addClass( 'wc_veruspay_active_tab' );
+				$( '.wc_veruspay_daemonsettings-toggle' ).closest('tbody').removeClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_daemonsettings-toggle' ).removeClass('wc_veruspay_set_css');
 			}
 		});
 		$('.wc_veruspay_togglewallet').click(function(e) {
 			if ( ! ( $( this ).hasClass( 'wc_veruspay_active_tab' ) ) ) {
-				$( this ).toggleClass( 'wc_veruspay_active_tab' );
-				$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').toggleClass('wc_veruspay_set_css');
-				$( '.wc_veruspay_walletsettings-toggle' ).toggleClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_active_tab' ).removeClass( 'wc_veruspay_active_tab' );
+				// hide all
+				$( '.wc_veruspay_daemonsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_daemonsettings-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_addresses-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_addresses-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_customization-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_customization-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_options-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_options-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_hostedsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_hostedsettings-toggle' ).addClass('wc_veruspay_set_css');
+				//
+				$( this ).addClass( 'wc_veruspay_active_tab' );
+				$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').removeClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_walletsettings-toggle' ).removeClass('wc_veruspay_set_css');
 			}
 		});
 		$( '.wc_veruspay_toggleaddr' ).click(function(e) {
 			if ( ! ( $( this ).hasClass( 'wc_veruspay_active_tab' ) ) ) {
-				$( this ).toggleClass( 'wc_veruspay_active_tab' );
-				$( '.wc_veruspay_addresses-toggle' ).closest('tbody').toggleClass('wc_veruspay_set_css');
-				$( '.wc_veruspay_addresses-toggle' ).toggleClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_active_tab' ).removeClass( 'wc_veruspay_active_tab' );
+				// hide all
+				$( '.wc_veruspay_daemonsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_daemonsettings-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_walletsettings-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_customization-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_customization-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_options-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_options-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_hostedsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_hostedsettings-toggle' ).addClass('wc_veruspay_set_css');
+				//
+				$( this ).addClass( 'wc_veruspay_active_tab' );
+				$( '.wc_veruspay_addresses-toggle' ).closest('tbody').removeClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_addresses-toggle' ).removeClass('wc_veruspay_set_css');
 			}
 		});
 		$('.wc_veruspay_togglecust').click(function(e) {
 			if ( ! ( $( this ).hasClass( 'wc_veruspay_active_tab' ) ) ) {
-				$( this ).toggleClass( 'wc_veruspay_active_tab' );
-				$( '.wc_veruspay_customization-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_active_tab' ).removeClass( 'wc_veruspay_active_tab' );
+				// hide all
+				$( '.wc_veruspay_daemonsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_daemonsettings-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_walletsettings-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_addresses-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_addresses-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_options-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_options-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_hostedsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_hostedsettings-toggle' ).addClass('wc_veruspay_set_css');
+				//
+				$( this ).addClass( 'wc_veruspay_active_tab' );
+				$( '.wc_veruspay_customization-toggle' ).closest('tbody').removeClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_customization-toggle' ).removeClass('wc_veruspay_set_css');
 			}
 		});
 		$('.wc_veruspay_toggleoptions').click(function(e) {
 			if ( ! ( $( this ).hasClass( 'wc_veruspay_active_tab' ) ) ) {
-				$( this ).toggleClass( 'wc_veruspay_active_tab' );
-				$( '.wc_veruspay_options-toggle' ).closest('tr').toggleClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_active_tab' ).removeClass( 'wc_veruspay_active_tab' );
+				// hide all
+				$( '.wc_veruspay_daemonsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_daemonsettings-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_walletsettings-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_addresses-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_addresses-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_customization-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_customization-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_hostedsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_hostedsettings-toggle' ).addClass('wc_veruspay_set_css');
+				//
+				$( this ).addClass( 'wc_veruspay_active_tab' );
+				$( '.wc_veruspay_options-toggle' ).closest('tbody').removeClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_options-toggle' ).removeClass('wc_veruspay_set_css');
 			}
 		});
 		$('.wc_veruspay_togglehosted').click(function(e) {
-			// NOT YET ENABLED
 			if ( ! ( $( this ).hasClass( 'wc_veruspay_active_tab' ) ) ) {
-				//$( '.wc_veruspay_hostedsettings-toggle' ).closest('tbody').toggleClass('wc_veruspay_set_css');
-				//$( '.wc_veruspay_hostedsettings-toggle' ).toggleClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_active_tab' ).removeClass( 'wc_veruspay_active_tab' );
+				// hide all
+				$( '.wc_veruspay_daemonsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_daemonsettings-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_walletsettings-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_addresses-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_addresses-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_customization-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_customization-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_options-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_options-toggle' ).addClass('wc_veruspay_set_css');
+				//
+				$( this ).addClass( 'wc_veruspay_active_tab' );
+				$( '.wc_veruspay_hostedsettings-toggle' ).closest('tbody').removeClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_hostedsettings-toggle' ).removeClass('wc_veruspay_set_css');
 			}
 		});
 
