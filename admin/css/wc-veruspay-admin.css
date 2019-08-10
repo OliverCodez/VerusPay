@@ -1,6 +1,82 @@
 /* Admin Section */
+.form-table, .form-table td, .form-table td p, .form-table th {
+    font-size: 16px;
+    line-height: 32px;
+}
+.woocommerce table.form-table input.regular-input,
+.woocommerce table.form-table input[type="date"],
+.woocommerce table.form-table input[type="datetime-local"],
+.woocommerce table.form-table input[type="datetime"],
+.woocommerce table.form-table input[type="email"],
+.woocommerce table.form-table input[type="number"],
+.woocommerce table.form-table input[type="password"],
+.woocommerce table.form-table input[type="tel"],
+.woocommerce table.form-table input[type="text"],
+.woocommerce table.form-table input[type="time"],
+.woocommerce table.form-table input[type="url"],
+.woocommerce table.form-table input[type="week"],
+.woocommerce table.form-table textarea {
+    width: 100%!important;
+    padding: 12px!important;
+    font-size: 14px;
+    border-radius: 8px;
+}
+.woocommerce table.form-table select {
+    width: auto;
+    padding: 6px;
+    height: 32px;
+    font-size: 16px;
+    min-width: 70px;
+    border-radius: 8px;
+}
+#wc_veruspay_loading {
+    position: fixed;
+    width:100%;
+    height: 100%;
+    background:#f1f1f1;
+    z-index: 999;
+    display:block;
+    opacity:1;
+    transition-property:opacity, height;
+    transition-duration: 0.7s;
+    transition-timing-function: ease;
+}
+#wc_veruspay_loading::after {
+    content: 'Loading VerusPay . . .';
+    position: relative;
+    background-image: url(../../public/img/blueloading.gif);
+    background-repeat: no-repeat;
+    background-size: 40px;
+    width: 380px;
+    height: 40px;
+    display: block;
+    margin: 0 auto;
+    top: 25%;
+    font-size: 1.6rem;
+    line-height: 40px;
+    background-position-x: left;
+    background-position-y: top;
+    text-align: center;
+    font-weight: bold;
+    color: #264893;
+}
 .wc_veruspay_set_css {
     display: none!important;
+}
+.wc_veruspay_fadeout {
+    opacity:0 !important;
+    height:0px !important;
+    width:0px !important;
+    overflow: hidden !important;
+    transition-property:opacity, height;
+    transition-duration: 0.7s;
+    transition-timing-function: ease;
+}
+.wc_veruspay_fadein {
+	opacity:1!important;
+    transition-property:opacity;
+	transition-duration: 0.7s;
+	transition-timing-function: ease;
 }
 .wc_veruspay_wrapper h2, 
 .wc_veruspay_wrapper h2 {
@@ -28,25 +104,74 @@
 .woo-nav-tab-wrapper+.screen-reader-text+.updated+h2+p {
     font-size: 1rem!important;
 }
-
-.wc-settings-sub-title {
-    font-size: 1.5rem!important;
-    background-color: #ddd;
-    height: 40px;
-    padding: 10px;
-    line-height: 40px;
+#wc_veruspay_admin_menu {
+    display: block;
+    position: relative;
+    margin: 0 auto;
+    min-width: 1200px;
+    height: 95px;
+    border-bottom: 1px solid #264893;
+    padding: 0 2px 0 2px;
+    max-width: 1400px;
 }
-
+.wc_veruspay_tab-container {
+    height: 80px;
+    position: relative;
+    display: block;
+    float: left;
+    width: 200px;
+}
+.wc_veruspay_tab-title {
+    padding: 10px;
+    height:30px;
+    font-size: 16px !important;
+    background-color: #264893;
+    color: #fff;
+    text-transform: uppercase;
+    border: solid 1px #264893;
+    border-radius: 10px 10px 0 0;
+    padding-left: 22px;
+    position: absolute;
+    display: block;
+    margin: 0 1px 0 0;
+    overflow: hidden;
+    text-align: center;
+    transition: height 0.6s ease;
+    bottom: 0;
+    left:0;
+    width: 160px;
+}
+.wc_veruspay_tab-container:hover > .wc_veruspay_tab-title {
+    height:60px;
+}
+.wc_veruspay_active_tab > .wc_veruspay_tab-title {
+    height:60px;
+}
+.wc_veruspay_title-deactive > .wc_veruspay_tab-title {
+    background-color: #cfcfcf;
+    opacity: 0.6;
+    cursor: progress;
+}
 .wc_veruspay_title-sub {
 	background: transparent !important;
     font-size: 1.2rem !important;
     padding: 0 !important;
-	height: 24px !important;
-    line-height: 24px !important;
+	height: 34px !important;
+    line-height: 30px !important;
     margin: 0;
     margin-top: 20px;
     border-bottom: gray 1px solid;
-    max-width: 700px;
+    max-width: 900px;
+    color: #000;
+    margin:0 auto;
+}
+.wc_veruspay_title-sub img {
+    margin: -5px 10px 0 0;
+    max-height: 30px;
+    display: inline-block;
+}
+.wc_veruspay_noshow {
+    display:none;
 }
 .wc_veruspay_After::after {
     position: absolute;
@@ -68,20 +193,8 @@
     line-height: 1.1rem;
     height: 1.1rem;
     background-color: #fffcb5;
+    margin:0 auto;
 }
-.wc_veruspay_title-walletssub {
-    background: transparent !important;
-    font-size: 1.2rem !important;
-    padding: 20 !important;
-	height: 24px !important;
-    line-height: 24px !important;
-    margin: 0;
-    margin-top: 20px;
-    border-bottom: gray 1px solid;
-    border-top: gray 2px solid;
-    max-width: 700px;
-}
-
 .wc_veruspay_title-sub-small {
     font-weight: normal !important;
     font-size: 12px !important;
@@ -89,14 +202,78 @@
     padding: 0 10px !important;
 }
 .wc_veruspay_title-sub-toggle-heading {
-    border: none;
+    border: solid 1px #cfcfcf;
+    border-radius: 10px 10px 0 0;
     background-color: #cfcfcf !important;
     padding: 5px !important;
     padding-left: 30px !important;
 }
+.wc_veruspay_title-sub-toggle-under {
+    padding: 5px !important;
+    padding-left: 30px !important;
+    margin-top: 0;
+    background-color: transparent !important;
+    border-left: solid 1px;
+    border-left-color: currentcolor;
+    border-right: solid 1px;
+    border-right-color: currentcolor;
+    border-bottom: solid 1px;
+    border-bottom-color: currentcolor;
+    border-color: #cfcfcf;
+    border-radius: 0 0 10px 10px;
+}
+.wc_veruspay_coinlist {
+    height: 22px;
+    display: inline-block;
+    background-size: contain;
+    width: 22px;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+    top: 4px;
+    margin: 0 2px;
+    border: 2px solid;
+    border-radius: 15px;
+    border-color: #cfcfcf;
+}
+.wc_veruspay_section_body {
+    padding: 15px 5px 20px 30px;
+    display: block;
+    border: solid 1px #cfcfcf;
+    border-top-color: rgb(207, 207, 207);
+    border-top-style: solid;
+    border-top-width: 1px;
+    max-width: 900px;
+    border-top: none;
+    top: -10px;
+    position: relative;
+    margin:0 auto;
+}
+.wc_veruspay_section_body td {
+    width: 75%;
+}
+.wc_veruspay_section_body > .wc_veruspay_titleonly_row {
+    width: 100%;
+    display: block;
+    float: none;
+    position: relative;
+    height:70px;
+    padding-top: 0;
+}
 .wc_veruspay_title-sub_normal {
-    background: none !important;
-    font-size:1rem !important;
+    height: 40px !important;
+    padding-top: 20px !important;
+}
+.wc_veruspay_title-sub_normal > th > label {
+    font-size: 20px;
+    text-decoration: underline;
+}
+.wc_veruspay_titleonly_row > th {
+    width: 100% !important;
+    padding: 0 !important;
+}
+.wc_veruspay_titleonly_row > td {
+    display:none !important;
 }
 .wc_veruspay_indent {
     margin-left: 15px;
@@ -108,32 +285,93 @@
 .wc_veruspay_fiat_rate {
     position:relative;
 }
-.wc_veruspay_fiat_rate:after {
-    content: "Price updated every 1 min";
-    position: absolute;
-    top: 20px;
-    width: 200px;
-    left: -100px;
-    font-size: .8rem;
-    font-style: italic;
-    color: #757474;
-}
 .wc_veruspay_hidden{
     display:none;
 }
 .wc_veruspay_pointer:hover {
     cursor: pointer;
 }
+.wc_veruspay_hostedsettings-toggle {
+    margin-top: 14px;
+}
+.wc_veruspay_wrapper .woocommerce-save-button {
+    width: 200px;
+    height: 60px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    border-radius: 10px;
+    border: 1px solid #264893;
+    background: #264893;
+    box-shadow: none;
+    margin: 0 auto;
+    margin-top: 60px;
+    display: block;
+    text-shadow: none;
+}
+/* Slider Checkboxes */
+/*
+    <label class="wc_veruspay_control wc_veruspay_control--checkbox">First checkbox
+      <input type="checkbox" checked="checked"/>
+      <div class="wc_veruspay_control__indicator"></div>
+    </label>
+*/
+.wc_veruspay_control {
+    display: block;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  .wc_veruspay_control input {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+  }
+  .wc_veruspay_control__indicator {
+    position: absolute;
+    top: -13px;
+    left: 0;
+    height: 26px;
+    width: 44px;
+    background: #fff;
+    border: 2px solid #cfcfcf;
+    border-radius: 16px;
+  }
+  .wc_veruspay_control input:checked ~ .wc_veruspay_control__indicator {
+    background-color: #28f24c;
+    border: 2px solid #28f24c;
+  }
+  .wc_veruspay_control--checkbox .wc_veruspay_control__indicator:after {
+    content: '';
+    position:absolute;
+    display: block;
+    left:0;
+    top:0;
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 2px #ddd;
+    transition: all 0.2s ease;
+  }
+  .wc_veruspay_control input:checked ~ .wc_veruspay_control__indicator:after{
+    left: 18px;
+    top: 0px;
+    transition: all 0.3s ease;
+  }
+  /* END */
 .wc_veruspay_cashout {
     display: inline-block;
     width: 120px;
     height: 24px;
     text-align: center;
-    border: #008de6 solid 1px;
+    border: #264893 solid 1px;
     cursor: pointer;
     font-weight: bold;
     color: #fff;
-    background-color: #008de6;
+    background-color: #264893;
     border-radius: 10px;
     margin: 0 10px;
     line-height: 24px;
