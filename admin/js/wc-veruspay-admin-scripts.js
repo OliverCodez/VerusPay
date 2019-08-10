@@ -2,8 +2,8 @@ var storecurrency = veruspay_admin_params.storecurrency;
 jQuery( function( $ ) {
 	$(document).ready(function() {
 		$( '#verus_chain_tools_version' ).insertAfter('#woocommerce_veruspay_verus_gateway_access_code').css('display','inline-block');
-		$( '.wc_veruspay_top_options' ).closest( 'label' ).addClass( 'wc_veruspay_control wc_veruspay_control--checkbox' );
-		$( '<div class="wc_veruspay_control__indicator"></div>' ).insertAfter( '.wc_veruspay_top_options' );
+		$( '.wc_veruspay_checkbox_option' ).closest( 'label' ).addClass( 'wc_veruspay_control wc_veruspay_control--checkbox' );
+		$( '<div class="wc_veruspay_control__indicator"></div>' ).insertAfter( '.wc_veruspay_checkbox_option' );
 		$( '.wc_veruspay_section_heading' ).next().find( 'tbody' ).addClass( 'wc_veruspay_section_body' );
 		$( '.wc_veruspay_tab-container' ).next( 'table' ).remove();
 		$( '#wc_veruspay_admin_menu' ).insertBefore( '.wc_veruspay_toggledaemon' );
@@ -170,7 +170,11 @@ jQuery( function( $ ) {
 				$( '.wc_veruspay_hostedsettings-toggle' ).removeClass('wc_veruspay_set_css');
 			}
 		});
-
+		$( '#wc_veruspay_loading' ).delay(2000).queue( function( next ){
+			$( this ).addClass( 'wc_veruspay_fadeout' );
+			$( '#mainform' ).addClass( 'wc_veruspay_fadein' ).css('opacity','');
+			next();
+		});
 		// Refresh prices
 		var lastPrice = function() {
 			$( '.wc_veruspay_fiat_rate' ).each(function(){

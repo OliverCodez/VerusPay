@@ -5,13 +5,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 // Enqueue Admin JS and CSS
 if ( is_admin() ) {
+    echo '<div id="wc_veruspay_loading"></div><style>#mainform{opacity:0;}</style>';
     wp_register_script( 'wc_veruspay_admin_scripts', plugins_url( 'admin/js/wc-veruspay-admin-scripts.js', dirname( __FILE__ ) ) );
     wp_localize_script( 'wc_veruspay_admin_scripts', 'veruspay_admin_params', array( 'storecurrency' => get_woocommerce_currency() ) );
     wp_enqueue_style( 'veruspay_admin_css', plugins_url( 'admin/css/wc-veruspay-admin.css', dirname( __FILE__ ) ) );
     wp_enqueue_script( 'wc_veruspay_admin_scripts' );
     echo '<div id="wc_veruspay_admin_menu"></div>';
 }
-// Check for access code and connectivity
+// Check for store status, access code and connectivity
+$wc_veruspay_store_status = $this->get_option( 'enabled' );
+$wc_veruspay_store_stat_array = array();
 $wc_veruspay_daemon_code_1 = $this->get_option( 'daemon_code_1' );
 $wc_veruspay_daemon_ip_1 = $this->get_option( 'daemon_ip_1' );
 if ( empty( $wc_veruspay_daemon_code_1 ) || empty( $wc_veruspay_daemon_ip_1 ) ) {
@@ -41,9 +44,11 @@ else {
     $wc_veruspay_daemon_fullip_1 = $_proto1 . $wc_veruspay_daemon_ip_1;
     $wc_veruspay_global['chains'] = wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_daemon_fullip_1, '_stat_', 'chainlist' );
     // Begin checking
-    if ( empty( $wc_veruspay_global['chains'] ) ) {
+    
+    if ( empty( $wc_veruspay_global['chains'] ) || is_string( $wc_veruspay_global['chains'] ) ) {
         $_statsArray['1'][0] = ' - Status: <span style="color:red;font-size:16px;font-style:italic">UNREACHABLE</span>';
         if ( ! array_filter( $_daemonsArray ) ) {
+            $this->form_fields = apply_filters( 'wc_veruspay_form_fields', wc_veruspay_setup() );
             $this->update_option( 'enabled', 'no' );
         }
     }
@@ -57,6 +62,7 @@ else {
         $_statsArray['1'][0] = ' - Status: <span style="color:green;font-size:16px;font-style:italic">ONLINE</span>';
         // Add primary daemon chains to global array
         foreach ( $wc_veruspay_global['chains'] as $key => $item ) {
+            $chain_lo = strtolower( $key );
             $chain_up = strtoupper( $key );
             $wc_veruspay_global['chains'][$chain_up]['S'] = $this->get_option( 'daemon_fn_1' );
             $wc_veruspay_global['chains'][$chain_up]['IP'] = $wc_veruspay_daemon_fullip_1;
@@ -65,10 +71,16 @@ else {
             if ( $wc_veruspay_global['chains'][$chain_up]['ST'] == 1 ) {
                 $_stat = 'border-color: #13f413';
                 $_tooltip = $chain_up . ': ONLINE';
+                if ( $this->get_option( $chain_lo . '_enable' ) == 'yes' ) {
+                    $wc_veruspay_store_stat_array[] = 'online';
+                }
             }
             else {
                 $_stat = 'border-color:#f92a2a;opacity:0.6;';
                 $_tooltip = $chain_up . ': OFFLINE';
+                if ( $this->get_option( $chain_lo . '_enable' ) == 'yes' && strlen( $this->get_option( $chain_lo . '_storeaddresses' ) ) > 60 ) {
+                    $wc_veruspay_store_stat_array[] = 'online';
+                }
             }
             $_statsArray['1'][1] = $_statsArray['1'][1] . '<span title="' . $_tooltip . '" class="wc_veruspay_coinlist" style="background-image: url(' . $wc_veruspay_global['coinimg'] . $chain_up .'.png);'.$_stat.'"></span>';
         }
@@ -94,7 +106,7 @@ else {
                 }
                 else {
                     $_list = wc_veruspay_go( $_code, $_ip, '_stat_', 'chainlist' );
-                    if ( empty( $_list ) || strpos( $_list, 'ERR:' ) !== false || $item === 'duplicate daemon' || strpos( $_list, 'cURL error' ) !== false ) {
+                    if ( empty( $_list ) || is_string( $_list ) || $item === 'duplicate daemon' ) {
                         $_statsArray[$key][0] = ' - Status: <span style="color:red;font-size:16px;font-style:italic">UNREACHABLE</span>';
                     }
                     else if ( $_list === '_no_chains_found_' ) {
@@ -103,6 +115,7 @@ else {
                     else {
                         $_statsArray[$key][0] = ' - Status: <span style="color:green;font-size:16px;font-style:italic">ONLINE</span>';
                         foreach ( $_list as $_key => $_item ) {
+                            $chain_lo = strtolower( $_key );
                             $chain_up = strtoupper( $_key );
                             $_list[$chain_up]['S'] = $this->get_option( 'daemon_fn_' . $key );
                             $_list[$chain_up]['IP'] = $_ip;
@@ -111,10 +124,16 @@ else {
                             if ( $_list[$chain_up]['ST'] == 1 ) {
                                 $_stat = 'border-color: #13f413';
                                 $_tooltip = $chain_up . ': ONLINE';
+                                if ( $this->get_option( $chain_lo . '_enable' ) == 'yes' ) {
+                                    $wc_veruspay_store_stat_array[] = 'online';
+                                }
                             }
                             else {
                                 $_stat = 'border-color:#f92a2a;opacity:0.6;';
                                 $_tooltip = $chain_up . ': OFFLINE';
+                                if ( $this->get_option( $chain_lo . '_enable' ) == 'yes' && strlen( $this->get_option( $chain_lo . '_storeaddresses' ) ) > 60 ) {
+                                    $wc_veruspay_store_stat_array[] = 'online';
+                                }
                             }
                             $_statsArray[$key][1] = $_statsArray[$key][1] . '<span title="' . $_tooltip . '" class="wc_veruspay_coinlist" style="background-image: url(' . $wc_veruspay_global['coinimg'] . $chain_up .'.png);'.$_stat.'"></span>';
                         }
@@ -127,6 +146,11 @@ else {
         /**
          * Each element is assigned id with "woocommerce_veruspay_verus_gateway_" prepended to item name below
          */
+        if ( $wc_veruspay_store_status == 'yes' ) {
+            if( ! in_array( 'online', $wc_veruspay_store_stat_array ) ) {
+                $this->update_option( 'enabled', 'no' );
+            }
+        }
         if ( $this->get_option( 'test_mode' ) == 'yes' ) {
             $_testmsg = '<span style="color:red">TEST MODE ENABLED</span>';
         }
@@ -149,9 +173,9 @@ else {
             'enabled' => array(
                 'title' => __( 'ENABLE VERUSPAY', 'veruspay-verus-gateway' ),
                 'type' => 'checkbox',
-                'label' => __( ' ', 'veruspay-verus-gateway' ),
+                'label' => ' ',
                 'default' => 'yes',
-                'class' => 'wc_veruspay_top_options wc_veruspay_enable-check',
+                'class' => 'wc_veruspay_checkbox_option wc_veruspay_enable-check',
             ),
             // Enable/Disable Testmode
             'test_mode' => array(
@@ -159,7 +183,7 @@ else {
                 'type' => 'checkbox',
                 'label' => ' ',
                 'default' => 'no',
-                'class' => 'wc_veruspay_top_options wc_veruspay_testmode-check',
+                'class' => 'wc_veruspay_checkbox_option wc_veruspay_testmode-check',
             ),
             // Show/Hide Tabs Headings
             // Daemon Server Title (interactive to show/hide Daemon section)
@@ -220,10 +244,9 @@ else {
             'hosted_enable' => array(
                 'title' => __( 'Enable', 'veruspay-verus-gateway' ),
                 'type' => 'checkbox',
-                'label' => __( 'Enable VerusPay Hosted Daemon', 'veruspay-verus-gateway' ),
-                'description' => '',
+                'label' => ' ',
                 'default' => 'yes',
-                'class' => 'wc_veruspay_hostedsettings-toggle',
+                'class' => 'wc_veruspay_checkbox_option wc_veruspay_hostedsettings-toggle',
             ),
             'hosted_access' => array(
                 'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
@@ -266,10 +289,9 @@ else {
             'daemon_ssl_1' => array(
                 'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
                 'type' => 'checkbox',
-                'label' => __( 'Enable SSL connection', 'veruspay-verus-gateway' ),
-                'description' => '',
+                'label' => ' ',
                 'default' => 'yes',
-                'class' => 'wc_veruspay_daemonsettings-toggle',
+                'class' => 'wc_veruspay_checkbox_option wc_veruspay_daemonsettings-toggle',
             ),
             'daemon_code_1' => array(
                 'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
@@ -309,10 +331,9 @@ else {
             'daemon_ssl_2' => array(
                 'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
                 'type' => 'checkbox',
-                'label' => __( 'Enable SSL connection', 'veruspay-verus-gateway' ),
-                'description' => '',
+                'label' => ' ',
                 'default' => 'yes',
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['2'] . '-ssl',
+                'class' => 'wc_veruspay_checkbox_option wc_veruspay_daemonsettings-toggle ' . $_classArray['2'] . '-ssl',
             ),
             'daemon_code_2' => array(
                 'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
@@ -352,10 +373,9 @@ else {
             'daemon_ssl_3' => array(
                 'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
                 'type' => 'checkbox',
-                'label' => __( 'Enable SSL connection', 'veruspay-verus-gateway' ),
-                'description' => '',
+                'label' => ' ',
                 'default' => 'yes',
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['3'] . '-ssl',
+                'class' => 'wc_veruspay_checkbox_option wc_veruspay_daemonsettings-toggle ' . $_classArray['3'] . '-ssl',
             ),
             'daemon_code_3' => array(
                 'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
@@ -395,10 +415,9 @@ else {
             'daemon_ssl_4' => array(
                 'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
                 'type' => 'checkbox',
-                'label' => __( 'Enable SSL connection', 'veruspay-verus-gateway' ),
-                'description' => '',
+                'label' => ' ',
                 'default' => 'yes',
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['4'] . '-ssl',
+                'class' => 'wc_veruspay_checkbox_option wc_veruspay_daemonsettings-toggle ' . $_classArray['4'] . '-ssl',
             ),
             'daemon_code_4' => array(
                 'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
@@ -438,10 +457,9 @@ else {
             'daemon_ssl_5' => array(
                 'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
                 'type' => 'checkbox',
-                'label' => __( 'Enable SSL connection', 'veruspay-verus-gateway' ),
-                'description' => '',
+                'label' => ' ',
                 'default' => 'yes',
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['5'] . '-ssl',
+                'class' => 'wc_veruspay_checkbox_option wc_veruspay_daemonsettings-toggle ' . $_classArray['5'] . '-ssl',
             ),
             'daemon_code_5' => array(
                 'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
@@ -481,10 +499,9 @@ else {
             'daemon_ssl_6' => array(
                 'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
                 'type' => 'checkbox',
-                'label' => __( 'Enable SSL connection', 'veruspay-verus-gateway' ),
-                'description' => '',
+                'label' => ' ',
                 'default' => 'yes',
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['6'] . '-ssl',
+                'class' => 'wc_veruspay_checkbox_option wc_veruspay_daemonsettings-toggle ' . $_classArray['6'] . '-ssl',
             ),
             'daemon_code_6' => array(
                 'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
@@ -524,10 +541,9 @@ else {
             'daemon_ssl_7' => array(
                 'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
                 'type' => 'checkbox',
-                'label' => __( 'Enable SSL connection', 'veruspay-verus-gateway' ),
-                'description' => '',
+                'label' => ' ',
                 'default' => 'yes',
-                'class' => 'wc_veruspay_daemonsettings-toggle ' . $_classArray['7'] . '-ssl',
+                'class' => 'wc_veruspay_checkbox_option wc_veruspay_daemonsettings-toggle ' . $_classArray['7'] . '-ssl',
             ),
             'daemon_code_7' => array(
                 'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
@@ -689,7 +705,7 @@ else {
                     '10' => __( 'Medium', 'veruspay-verus-gateway' ),
                     '12' => __( 'Large', 'veruspay-verus-gateway' ),
                 ),
-                'class' => 'wc_veruspay_options-toggle',
+                'class' => 'wc_veruspay_options-toggle wc-enhanced-select',
             ),
             'qr_invoice_memo' => array(
                 'title' => __( 'Invoice QR Memo Text', 'veruspay-verus-gateway' ),
@@ -711,10 +727,8 @@ else {
             'discount_fee' => array(
                 'title' => __( 'Set Discount/Fee?', 'veruspay-verus-gateway' ),
                 'type' => 'checkbox',
-                'label' => 'Set a discount or fee for using crypto as payment method?',
-                'description' => __( 'Setup a discount or fee, in %, applied to purchases during checkout for using crypto payments.', 'veruspay-verus-gateway' ),
-                'desc_tip' => TRUE,
-                'class' => 'wc_veruspay_setdiscount wc_veruspay_options-toggle',
+                'label' => ' ',
+                'class' => 'wc_veruspay_checkbox_option wc_veruspay_setdiscount wc_veruspay_options-toggle',
             ),
             'disc_title' => array(
                 'title' => __( 'Title (visible in checkout)', 'veruspay-verus-gateway' ),
@@ -727,7 +741,6 @@ else {
             'disc_type'	=> array(
                 'title' => __( 'Type (Discount or Fee?)', 'veruspay-verus-gateway' ),
                 'type' => 'select',
-                'class' => 'wc-enhanced-select',
                 'description'	=> __( 'Choose whether to discount or charge an extra fee for using Verus', 'veruspay-verus-gateway' ),
                 'default' => 'Discount',
                 'desc_tip' => TRUE,
@@ -735,7 +748,7 @@ else {
                     '-' => __( 'Discount', 'veruspay-verus-gateway' ),
                     '+'	=> __( 'Fee', 'veruspay-verus-gateway' ),
                 ),
-                'class' => 'wc_veruspay_discount-toggle wc_veruspay_options-toggle',
+                'class' => 'wc_veruspay_discount-toggle wc_veruspay_options-toggle wc-enhanced-select',
             ),
             'disc_amt' => array(
                 'title' => __( 'Amount (%)', 'veruspay-verus-gateway' ),
@@ -775,10 +788,9 @@ else {
                 $chain_lo.'_enable' => array(
                     'title' => __( 'Enable '.$item['FN'].' Payments', 'veruspay-verus-gateway' ),
                     'type' => 'checkbox',
-                    'label' => 'Enable Receiving '.$item['FN'].' Payments?',
-                    'description' => '',
+                    'label' => ' ',
                     'default' => 'yes',
-                    'class' => 'wc_veruspay_setwalletip wc_veruspay_walletsettings-toggle',
+                    'class' => 'wc_veruspay_checkbox_option wc_veruspay_setwalletip wc_veruspay_walletsettings-toggle',
                 ),
             );
             // Sapling Enforce (if applicable)
@@ -788,10 +800,9 @@ else {
                 $wc_veruspay_add_wallet_data[$chain_lo.'_sapling']	= array(
                     'title' => __( $chain_up.' Privacy Only', 'veruspay-verus-gateway' ),
                     'type' => 'checkbox',
-                    'label' => __( 'Enforce '.$item['FN'].' Sapling Privacy Payments', 'veruspay-verus-gateway' ),
-                    'description' => '',
+                    'label' => ' ',
                     'default' => 'no',
-                    'class' => 'wc-veruspay-sapling-option wc_veruspay_walletsettings-toggle',
+                    'class' => 'wc_veruspay_checkbox_option wc-veruspay-sapling-option wc_veruspay_walletsettings-toggle',
                 );
                 $wc_veruspay_sapling_settings = array(
                     'ZC' => 1,
@@ -804,10 +815,9 @@ else {
                 $wc_veruspay_add_wallet_data[$chain_lo.'_sapling']	= array(	
                     'title' => __( $chain_up.' Privacy', 'veruspay-verus-gateway' ),
                     'type' => 'checkbox',
-                    'label' => __( $chain_up.' Sapling Privacy Enforced by Design', 'veruspay-verus-gateway' ),
-                    'description' => '',
+                    'label' => ' ',
                     'default' => 'yes',
-                    'class' => 'wc-veruspay-sapling-option wc_veruspay_walletsettings-toggle wc_veruspay_hidden',
+                    'class' => 'wc_veruspay_checkbox_option wc-veruspay-sapling-option wc_veruspay_walletsettings-toggle wc_veruspay_hidden',
                 );
                 $wc_veruspay_sapling_settings = array(
                     'ZC' => 1,
@@ -834,28 +844,61 @@ else {
                     $wc_veruspay_add_wallet_data[$chain_lo.'_stake_enable'] = array(
                         'title' => __( 'Enable Staking', 'veruspay-verus-gateway' ),
                         'type' => 'checkbox',
-                        'label' => 'Enable Staking',
-                        'description' => '',
+                        'label' => ' ',
                         'default' => 'no',
-                        'class' => 'wc_veruspay_enable_mining wc_veruspay_walletsettings-toggle',
+                        'class' => 'wc_veruspay_checkbox_option wc_veruspay_enable_mining wc_veruspay_walletsettings-toggle',
                     );
                 }
                 if ( isset( $item['GM'] ) && $item['GM'] == 1 ) {
                     $wc_veruspay_add_wallet_data[$chain_lo.'_mine_enable'] = array(
                         'title' => __( 'Enable Mining', 'veruspay-verus-gateway' ),
                         'type' => 'checkbox',
-                        'label' => 'Enable Mining',
-                        'description' => '',
+                        'label' => ' ',
                         'default' => 'no',
-                        'class' => 'wc_veruspay_enable_mining wc_veruspay_walletsettings-toggle',
+                        'class' => 'wc_veruspay_checkbox_option wc_veruspay_enable_mining wc_veruspay_walletsettings-toggle',
                     );
                     $wc_veruspay_add_wallet_data[$chain_lo.'_mine_value'] = array(
                         'title' => __( 'Mining Threads', 'veruspay-verus-gateway' ),
-                        'type' => 'text',
+                        'type' => 'select',
                         'description' => __( 'Enter the number of threads to dedicate to mining this coin', 'veruspay-verus-gateway' ),
                         'default' => '0',
                         'desc_tip' => TRUE,
-                        'class' => 'wc_veruspay_enable_mining wc_veruspay_walletsettings-toggle',
+                        'options' => array(
+                            '0' => __( '0', 'veruspay-verus-gateway' ),
+                            '1' => __( '1', 'veruspay-verus-gateway' ),
+                            '2' => __( '2', 'veruspay-verus-gateway' ),
+                            '3' => __( '3', 'veruspay-verus-gateway' ),
+                            '4' => __( '4', 'veruspay-verus-gateway' ),
+                            '5' => __( '5', 'veruspay-verus-gateway' ),
+                            '6' => __( '6', 'veruspay-verus-gateway' ),
+                            '7' => __( '7', 'veruspay-verus-gateway' ),
+                            '8' => __( '8', 'veruspay-verus-gateway' ),
+                            '9' => __( '9', 'veruspay-verus-gateway' ),
+                            '10' => __( '10', 'veruspay-verus-gateway' ),
+                            '11' => __( '11', 'veruspay-verus-gateway' ),
+                            '12' => __( '12', 'veruspay-verus-gateway' ),
+                            '13' => __( '13', 'veruspay-verus-gateway' ),
+                            '14' => __( '14', 'veruspay-verus-gateway' ),
+                            '15' => __( '15', 'veruspay-verus-gateway' ),
+                            '16' => __( '16', 'veruspay-verus-gateway' ),
+                            '17' => __( '17', 'veruspay-verus-gateway' ),
+                            '18' => __( '18', 'veruspay-verus-gateway' ),
+                            '19' => __( '19', 'veruspay-verus-gateway' ),
+                            '20' => __( '20', 'veruspay-verus-gateway' ),
+                            '21' => __( '21', 'veruspay-verus-gateway' ),
+                            '22' => __( '22', 'veruspay-verus-gateway' ),
+                            '23' => __( '23', 'veruspay-verus-gateway' ),
+                            '24' => __( '24', 'veruspay-verus-gateway' ),
+                            '25' => __( '25', 'veruspay-verus-gateway' ),
+                            '26' => __( '26', 'veruspay-verus-gateway' ),
+                            '27' => __( '27', 'veruspay-verus-gateway' ),
+                            '28' => __( '28', 'veruspay-verus-gateway' ),
+                            '29' => __( '29', 'veruspay-verus-gateway' ),
+                            '30' => __( '30', 'veruspay-verus-gateway' ),
+                            '31' => __( '31', 'veruspay-verus-gateway' ),
+                            '32' => __( '32', 'veruspay-verus-gateway' ),
+                        ),
+                        'class' => 'wc_veruspay_enable_mining wc_veruspay_walletsettings-toggle wc-enhanced-select',
                     );
                 }
             }
@@ -1128,14 +1171,6 @@ else {
                 }
             }
         }
-        // TODO : Using following if statement, check if any wallet is enabled and online/manually capable, and if store is enabled, and enable or disable accordingly
-        //$wc_veruspay_is_enabled[] = 'yes';
-        //$wc_veruspay_is_enabled[] = 'no';
-        if ( ! in_array( 'yes', $wc_veruspay_is_enabled ) ) {
-            $this->update_option( 'enabled', 'no' );
-        }
-        // Set wc_veruspay_chains data meta field
-        $this->update_option('wc_veruspay_chains', $wc_veruspay_global['chains']);
     }    
 }
 function wc_veruspay_setup() {
@@ -1154,8 +1189,9 @@ function wc_veruspay_setup() {
         'enabled' => array(
             'title' => __( 'Enable/Disable', 'veruspay-verus-gateway' ),
             'type' => 'checkbox',
-            'label' => __( 'Enable VerusPay', 'veruspay-verus-gateway' ),
-            'default' => 'yes'
+            'label' => ' ',
+            'default' => 'yes',
+            'class' => 'wc_veruspay_checkbox_option wc_veruspay_enable-check',
             ),
         // Deamon Path
         'daemon_stat_1' => array(
@@ -1181,9 +1217,9 @@ function wc_veruspay_setup() {
         'daemon_ssl_1' => array(
             'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
             'type' => 'checkbox',
-            'label' => __( 'Enable SSL connection', 'veruspay-verus-gateway' ),
-            'description' => '',
+            'label' => ' ',
             'default' => 'yes',
+            'class' => 'wc_veruspay_checkbox_option '
         ),
         'daemon_code_1' => array(
             'title' => __( 'Access Code', 'veruspay-verus-gateway' ),

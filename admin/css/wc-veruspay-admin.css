@@ -1,6 +1,82 @@
 /* Admin Section */
+.form-table, .form-table td, .form-table td p, .form-table th {
+    font-size: 16px;
+    line-height: 32px;
+}
+.woocommerce table.form-table input.regular-input,
+.woocommerce table.form-table input[type="date"],
+.woocommerce table.form-table input[type="datetime-local"],
+.woocommerce table.form-table input[type="datetime"],
+.woocommerce table.form-table input[type="email"],
+.woocommerce table.form-table input[type="number"],
+.woocommerce table.form-table input[type="password"],
+.woocommerce table.form-table input[type="tel"],
+.woocommerce table.form-table input[type="text"],
+.woocommerce table.form-table input[type="time"],
+.woocommerce table.form-table input[type="url"],
+.woocommerce table.form-table input[type="week"],
+.woocommerce table.form-table textarea {
+    width: 100%!important;
+    padding: 12px!important;
+    font-size: 14px;
+    border-radius: 8px;
+}
+.woocommerce table.form-table select {
+    width: auto;
+    padding: 6px;
+    height: 32px;
+    font-size: 16px;
+    min-width: 70px;
+    border-radius: 8px;
+}
+#wc_veruspay_loading {
+    position: fixed;
+    width:100%;
+    height: 100%;
+    background:#f1f1f1;
+    z-index: 999;
+    display:block;
+    opacity:1;
+    transition-property:opacity, height;
+    transition-duration: 0.7s;
+    transition-timing-function: ease;
+}
+#wc_veruspay_loading::after {
+    content: 'Loading VerusPay . . .';
+    position: relative;
+    background-image: url(../../public/img/blueloading.gif);
+    background-repeat: no-repeat;
+    background-size: 40px;
+    width: 380px;
+    height: 40px;
+    display: block;
+    margin: 0 auto;
+    top: 25%;
+    font-size: 1.6rem;
+    line-height: 40px;
+    background-position-x: left;
+    background-position-y: top;
+    text-align: center;
+    font-weight: bold;
+    color: #264893;
+}
 .wc_veruspay_set_css {
     display: none!important;
+}
+.wc_veruspay_fadeout {
+    opacity:0 !important;
+    height:0px !important;
+    width:0px !important;
+    overflow: hidden !important;
+    transition-property:opacity, height;
+    transition-duration: 0.7s;
+    transition-timing-function: ease;
+}
+.wc_veruspay_fadein {
+	opacity:1!important;
+    transition-property:opacity;
+	transition-duration: 0.7s;
+	transition-timing-function: ease;
 }
 .wc_veruspay_wrapper h2, 
 .wc_veruspay_wrapper h2 {
