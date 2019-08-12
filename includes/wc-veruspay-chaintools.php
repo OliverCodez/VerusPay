@@ -173,8 +173,8 @@ function wc_veruspay_get( $chain, $method, $params = NULL ) {
  */
 function wc_veruspay_price( $chain, $currency ) {
     global $wc_veruspay_global;
-    $currency = strtoupper($currency);
-    $chain = strtoupper($chain);
+    $currency = strtoupper( $currency );
+    $chain = strtoupper( $chain );
     if ( ! isset( $chain ) ) {
         $chain = 'VRSC';
     }
