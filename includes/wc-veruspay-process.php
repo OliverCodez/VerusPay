@@ -3,7 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } ?>
-<h1 class="entry-title"><?php echo $wc_veruspay_global['text_help']['title_on_hold']; ?><span style="color:#007bff !important;"><?php echo $wc_veruspay_price; ?></span> <?php echo strtoupper( $wc_veruspay_coin ); ?>:</h1>
+<h1 class="entry-title"><?php echo $wc_veruspay_global['text_help']['title_on_hold']; ?><span style="color:#007bff !important;"><?php echo $wc_veruspay_price; ?></span> <?php echo $_chain_up; ?>:</h1>
 <div class="wc_veruspay_payment_container">
     <p class="wc_veruspay_processing-payment"><?php echo $wc_veruspay_global['text_help']['msg_waiting_payment']; ?> <span id="wc_veruspay_timeleft"><?php echo $wc_veruspay_time_remaining; ?></span> mins</p> 
     <noscript><p class="wc_veruspay_timelimit" data-time="<?php echo $wc_veruspay_time_remaining; ?>"><form method="post" action=""><button type="submit" name="woocommerce_check_status" value="check_status"><?php echo $wc_veruspay_global['text_help']['check_status']; ?></button></form></p></noscript>
