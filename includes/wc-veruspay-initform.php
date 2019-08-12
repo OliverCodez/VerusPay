@@ -1098,9 +1098,6 @@ else {
                 }
             }
         }
-        echo '<pre>';
-        print_r($wc_veruspay_global['chains']);
-        echo '</pre>';
         $this->update_option( 'wc_veruspay_chains', $wc_veruspay_global['chains'] );
     }
 }
