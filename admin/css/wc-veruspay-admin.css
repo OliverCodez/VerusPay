@@ -53,11 +53,11 @@
     margin: 0 auto;
     top: 25%;
     font-size: 1.6rem;
+    font-weight:lighter;
     line-height: 40px;
     background-position-x: left;
     background-position-y: top;
     text-align: center;
-    font-weight: bold;
     color: #264893;
 }
 .wc_veruspay_set_css {
@@ -82,7 +82,8 @@
 .wc_veruspay_wrapper h2 {
     display: block!important;
     height: 60px;
-    font-size: 2rem!important;
+    font-size: 2.6rem!important;
+    font-weight:lighter;
     line-height: 60px;
     margin: 10px 0 10px 60px;
 }
@@ -151,6 +152,15 @@
     background-color: #cfcfcf;
     opacity: 0.6;
     cursor: progress;
+}
+.wc_veruspay_setup_title {
+    width: auto;
+    font-size: 2.2rem !important;
+    font-weight:lighter;
+    background-color: #264893;
+    color: #fff;
+    padding: 30px;
+    border-radius: 16px;
 }
 .wc_veruspay_title-sub {
 	background: transparent !important;

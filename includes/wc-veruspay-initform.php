@@ -78,6 +78,7 @@ else {
                 }
             }
             else {
+                $wc_veruspay_global['chains'][$_chain_up]['ST'] = 0;
                 $_stat = 'border-color:#f92a2a;opacity:0.6;';
                 $_tooltip = $_chain_up . ': OFFLINE';
                 if ( $this->get_option( $_chain_lo . '_enable' ) == 'yes' && strlen( $this->get_option( $_chain_lo . '_storeaddresses' ) ) > 30 ) {
@@ -135,6 +136,7 @@ else {
                                 }
                             }
                             else {
+                                $_list[$_chain_up]['ST'] = 0;
                                 $_stat = 'border-color:#f92a2a;opacity:0.6;';
                                 $_tooltip = $_chain_up . ': OFFLINE';
                                 if ( $this->get_option( $_chain_lo . '_enable' ) == 'yes' && strlen( $this->get_option( $_chain_lo . '_storeaddresses' ) ) > 30 ) {
@@ -604,7 +606,7 @@ else {
                 'title' => __( 'Payment Page Message', 'veruspay-verus-gateway' ),
                 'type' => 'textarea',
                 'description' => __( 'VerusPay-specific message that will be added to the payment page and email, just below the payment address.', 'veruspay-verus-gateway' ),
-                'default' => 'Some additional message to your customer at payment page',
+                'default' => 'Message appears below QR codes at payment processing page',
                 'desc_tip' => TRUE,
                 'class' => 'wc_veruspay_customization-toggle',
             ),
@@ -659,7 +661,7 @@ else {
                 'title' => __( 'Crypto Decimals', 'veruspay-verus-gateway' ),
                 'type' => 'select',
                 'description'	=> __( 'Choose the max decimals to use for crypto prices (up to 8).', 'veruspay-verus-gateway' ),
-                'default' => '4',
+                'default' => '6',
                 'desc_tip' => TRUE,
                 'options' => array(
                     '1'	=> __( '1', 'veruspay-verus-gateway' ),
@@ -937,7 +939,7 @@ else {
                     'title' => __( 'Store ' . $_chain_up . ' Addresses', 'veruspay-verus-gateway' ),
                     'type' => 'textarea',
                     'description' => __( 'Enter ' . $_chain_up . ' addresses you own. If your store has a lot of traffic, we recommend 500 min.  These will also act as a fallback payment method in case there are issues with the wallet for Live stores.', 'veruspay-verus-gateway' ),
-                    'default' => '',
+                    'default' => 'e.g. RHZe298HEehoeHFHEHOEWHOIHEEIHSSLKHF etc',
                     'desc_tip' => TRUE,
                     'class' => 'wc_veruspay_addresses-toggle',
                 );
@@ -1086,6 +1088,8 @@ else {
                 if ( $wc_veruspay_global['chains'][$_chain_up]['TC'] == 1 ){
                     if ( ( strpos( $wc_veruspay_global['chains'][$_chain_up]['AD'], 'e.g.') ) === FALSE ) {
                         if ( strlen( $wc_veruspay_global['chains'][$_chain_up]['AD'] ) < 10 ) {
+                            $this->update_option( $_chain_lo . '_storeaddresses', '' );
+                            $wc_veruspay_global['chains'][$_chain_up]['AD'] = '';
                             $wc_veruspay_global['chains'][$_chain_up]['AC'] = 0;
                         }
                         else {
@@ -1109,9 +1113,10 @@ function wc_veruspay_setup() {
             'class' => 'wc_veruspay_set_css',
             ),
         'stat' => array(
-            'title' => 'Setup',
+            'title' => 'Initial Setup',
             'type' => 'title',
             'description' => '',
+            'class' => 'wc_veruspay_setup_title',
         ),
         // Enable/Disable the VerusPay gateway
         'enabled' => array(
@@ -1122,11 +1127,6 @@ function wc_veruspay_setup() {
             'class' => 'wc_veruspay_checkbox_option wc_veruspay_enable-check',
             ),
         // Deamon Path
-        'daemon_stat_1' => array(
-            'title' => __( 'Status: Not Setup', 'veruspay-verus-gateway' ),
-            'type' => 'title',
-            'description' => '',
-        ),
         'daemon_fn_1' => array(
             'title' => __( 'Custom Name', 'veruspay-verus-gateway' ),
             'type' => 'text',

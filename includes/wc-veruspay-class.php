@@ -49,7 +49,7 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         $wc_veruspay_chains_temp = $this->get_option('wc_veruspay_chains');
         if ( ! empty( $wc_veruspay_chains_temp ) ) {
             foreach ( $wc_veruspay_chains_temp as $key => $item ) {
-                $wc_veruspay_store_data = $this->get_option( $key . '_storeaddresses' );
+                $wc_veruspay_store_data = $this->get_option( strtolower( $key ) . '_storeaddresses' );
                 $wc_veruspay_chains_temp[$key]['AD'] = preg_replace( '/\s+/', '', $wc_veruspay_store_data );
                 if ( strlen( $wc_veruspay_store_data ) < 10 ) {
                     $wc_veruspay_chains_temp[$key]['AC'] = 0;
@@ -58,7 +58,7 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
                     $wc_veruspay_chains_temp[$key]['AD'] = explode( ',', $wc_veruspay_chains_temp[$key]['AD'] );
                     $wc_veruspay_chains_temp[$key]['AC'] = count( $wc_veruspay_chains_temp[$key]['AD'] );
                 }
-                $wc_veruspay_chains_temp[$key]['UD'] = explode( ',', $this->get_option( $key . '_usedaddresses' ));
+                $wc_veruspay_chains_temp[$key]['UD'] = explode( ',', $this->get_option( strtolower( $key ) . '_usedaddresses' ));
             }
         }
         $this->chains = $wc_veruspay_chains_temp;
@@ -81,6 +81,13 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
 
         if ( is_admin() ) {
             if ( isset( $_POST['veruspayajax'] ) && sanitize_text_field( $_POST['veruspayajax'] ) == "1" ) {
+                // Get price update
+                if ( sanitize_text_field( $_POST['veruspaycommand'] ) == 'price' ) {
+                    $_chain_up = strtoupper( sanitize_text_field( $_POST['coin'] ) );
+                    $_currency = get_woocommerce_currency();
+                    echo wc_veruspay_price( $_chain_up, $_currency );
+                    die();
+                }
                 // If command to Cashout
                 if ( sanitize_text_field( $_POST['veruspaycommand'] ) == 'cashout' ) {
                     $vtype = sanitize_text_field( $_POST['type'] );
@@ -116,7 +123,6 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
                     }
                     die();
                 }
-
                 // If mining on
                 if ( sanitize_text_field( $_POST['veruspaycommand'] ) == 'generate' ) {
                     // TODO : AJAX Mining and Staking control and stat - Coming Soon

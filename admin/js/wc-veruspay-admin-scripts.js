@@ -183,9 +183,9 @@ jQuery( function( $ ) {
 				var coin = $( this ).attr( 'data-coin' );
 				var lastval = $( this ).text();
 				$.ajax({
-					type: 'post',
-					url: 'https://veruspay.io/api/',
-					data: {currency: storecurrency, ticker: coin},
+					type: "POST",
+					data: { "veruspayajax":"1", "veruspaycommand":"price", "coin":coin },
+					//success
 					success: function(response){
 						$( this ).hide();
 						newval = response;
