@@ -32,7 +32,7 @@ jQuery( function( $ ) {
 		if ( $( '#message' ).hasClass( 'updated' ) ) {
 			var savedURL = location.href + '&veruspay_settings_saved';
 			location.href = savedURL;
-			location.reload();
+			//location.reload();
 		}
 		if ( $('.wc_veruspay_togglewallet').hasClass( 'wallet_updated' ) ) {
 			location.reload();
@@ -328,6 +328,14 @@ jQuery( function( $ ) {
 			$('.wc_veruspay_cashout_complete-modalback').fadeOut();
 			$('.wc_veruspay_cashout_complete-modalcontent').text('');
 		});
+		// - //
+
+		// Mining Control //
+
+		// - //
+
+		// Staking Control //
+
 		// - //
 	});
 });

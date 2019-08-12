@@ -89,10 +89,10 @@ function wc_veruspay_go( $wc_veruspay_accesscode, $url, $chain, $method, $params
         else if ( ! isset( $data['result'] ) ) {
             return 'ERR: ' . $wc_veruspay_global['text_help']['vct_0'];
         }
-        else if ( $data['result'] === 'error' ) {
+        else if ( $data['result'] == 'error' ) {
             return 'ERR: ' . $data['return'];
         }
-        else if ( $data['result'] === 'success' ) {
+        else if ( $data['result'] == 'success' ) {
             return $data['return'];
         }
 		else {
@@ -177,6 +177,13 @@ function wc_veruspay_price( $chain, $currency ) {
     $chain = strtoupper($chain);
     if ( ! isset( $chain ) ) {
         $chain = 'VRSC';
+    }
+    // TODO : VRSCTEST added for testing and debugging
+    if ( $chain == 'VRSCTEST' ) {
+        $chain = 'VRSC';
+    }
+    if ( $chain == 'BTC' ) {
+        $chain = 'ZEC';
     }
     return wc_veruspay_wp_get_curl( $wc_veruspay_global['chain_dtls']['fiat']['api'] . '?currency=' . $currency . '&ticker=' . $chain );
 }
