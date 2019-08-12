@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             <select name="wc_veruspay_coin" id="wc_veruspay_coin" class="" aria-hidden="true" onchange="this.form.submit()">
             <?php
                 foreach ( $this->chains as $key => $item ) {
+                    echo 'coin: '.$key.', and enabled: '.$item['EN'];
                     if ( $item['EN'] == 'yes' ) {
                         if ( $key == $wc_veruspay_coin ) {
                             echo '<option value="' . $key . '" selected="selected">' . $item['FN'] . '</option>';
@@ -25,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         <div class="wc_veruspay_price">
             <?php echo strtoupper( $wc_veruspay_coin ) . ' ' . $wc_veruspay_global['text_help']['price']; ?>: <span class="vrsc-total-price"><?php echo $wc_veruspay_price; ?></span>
             <span class="wc_veruspay_icon-sml">
-                <img id="wc_veruspay_icon-price" class="wc_veruspay_icon-sml" src="<?php echo plugins_url( '../public/img/wc-veruspay-refresh.png', __FILE__ ) ?>" border="0" alt="Refresh" /><noscript><button type="submit" class="button alt wc_veruspay_noscript" name="woocommerce_checkout_update_totals" value="Refresh <?php echo strtoupper( $wc_veruspay_coin ); ?> Price"><?php echo $wc_veruspay_global['text_help']['refresh']; ?></button></noscript>
+                <img id="wc_veruspay_icon-price" class="wc_veruspay_icon-sml" src="<?php echo $wc_veruspay_global['paths']['public']['img'] . 'wc-veruspay-refresh.png'; ?>" border="0" alt="Refresh" /><noscript><button type="submit" class="button alt wc_veruspay_noscript" name="woocommerce_checkout_update_totals" value="Refresh <?php echo strtoupper( $wc_veruspay_coin ); ?> Price"><?php echo $wc_veruspay_global['text_help']['refresh']; ?></button></noscript>
             </span>
         </div>
         <div class="wc_veruspay_small_note">
