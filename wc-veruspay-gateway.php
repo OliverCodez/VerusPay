@@ -14,9 +14,9 @@ error_reporting(E_ALL);
  * License URI: https://opensource.org/licenses/MIT
  * Text Domain: veruspay-verus-gateway
  * Domain Path: /i18n/languages/
- * Tested up to: 5.2.1
+ * Tested up to: 5.2.2
  * WC requires at least: 3.5.6
- * WC tested up to: 3.6.3
+ * WC tested up to: 3.7.0
  */
 // No Direct Access
 if ( ! defined( 'ABSPATH' ) ) {

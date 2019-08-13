@@ -22,6 +22,59 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
             'products'
         );
         if ( is_admin() ) {
+            $this->init_form_fields();
+            // Possible future use: $this->init_settings();
+        }
+        $this->enabled = $this->get_option( 'enabled' );
+        $this->test_mode = 'yes' == $this->get_option( 'test_mode' );
+        if ( $this->test_mode ) {
+            $this->title = __( 'TEST MODE', 'veruspay-verus-gateway' );
+        }
+        else {
+            $this->title = __( 'VerusPay', 'veruspay-verus-gateway' );
+        }
+        $this->verusQR = '0.1.0'; // For Invoice QR codes
+        // TODO : Change to VRSC before release
+        $this->coin = 'VRSCTEST';
+        $this->store_inv_msg = $this->get_option( 'qr_invoice_memo' );
+        $this->store_img = $this->get_option( 'qr_invoice_image' );
+        $this->description  = $this->get_option( 'description' );
+        $this->msg_before_sale = $this->get_option( 'msg_before_sale' );
+        $this->msg_after_sale = $this->get_option( 'msg_after_sale' );
+        $this->msg_cancel = $this->get_option( 'msg_cancel' );
+        $this->email_order = $this->get_option( 'email_order' );
+        $this->email_cancelled = $this->get_option( 'email_cancelled' );
+        $this->email_completed = $this->get_option( 'email_completed' );
+        // Clean and count store addresses for backup / manual use
+        $wc_veruspay_chains_temp = $this->get_option('wc_veruspay_chains');
+        if ( ! empty( $wc_veruspay_chains_temp ) ) {
+            foreach ( $wc_veruspay_chains_temp as $key => $item ) {
+                $wc_veruspay_store_data = $this->get_option( strtolower( $key ) . '_storeaddresses' );
+                $wc_veruspay_chains_temp[$key]['AD'] = preg_replace( '/\s+/', '', $wc_veruspay_store_data );
+                if ( strlen( $wc_veruspay_store_data ) < 10 ) {
+                    $wc_veruspay_chains_temp[$key]['AC'] = 0;
+                }
+                else if ( strlen( $wc_veruspay_store_data ) > 10 ) {
+                    $wc_veruspay_chains_temp[$key]['AD'] = explode( ',', $wc_veruspay_chains_temp[$key]['AD'] );
+                    $wc_veruspay_chains_temp[$key]['AC'] = count( $wc_veruspay_chains_temp[$key]['AD'] );
+                }
+                $wc_veruspay_chains_temp[$key]['UD'] = explode( ',', $this->get_option( strtolower( $key ) . '_usedaddresses' ));
+            }
+        }
+        $this->chains = $wc_veruspay_chains_temp;
+        $this->decimals = $this->get_option( 'decimals' ); 
+        $this->pricetime = $this->get_option( 'pricetime' );
+        $this->orderholdtime = $this->get_option( 'orderholdtime' );
+        $this->confirms = $this->get_option( 'confirms' );
+        $this->qr_max_size = $this->get_option( 'qr_max_size' );
+        $this->discount_fee = 'yes' == $this->get_option( 'discount_fee' );
+        $this->verus_dis_title = $this->get_option( 'disc_title' );
+        $this->verus_dis_type = $this->get_option( 'disc_type' );
+        if ( is_numeric( $this->get_option( 'disc_amt' ) ) ) {
+            $this->verus_dis_amt = ( $this->get_option( 'disc_amt' ) / 100 );
+        }
+        // Process Custom Ajax
+        if ( is_admin() ) {
             if ( isset( $_POST['veruspayajax'] ) && sanitize_text_field( $_POST['veruspayajax'] ) == "1" ) {
                 // Get price update
                 if ( sanitize_text_field( $_POST['veruspaycommand'] ) == 'price' ) {
@@ -73,56 +126,6 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
             }
             // Set admin modal
             require_once( $wc_veruspay_global['paths']['admin_modal-3'] );
-            $this->init_form_fields();
-            // Possible future use: $this->init_settings();
-        }
-        $this->enabled = $this->get_option( 'enabled' );
-        $this->test_mode = 'yes' == $this->get_option( 'test_mode' );
-        if ( $this->test_mode ) {
-            $this->title = __( 'TEST MODE', 'veruspay-verus-gateway' );
-        }
-        else {
-            $this->title = __( 'VerusPay', 'veruspay-verus-gateway' );
-        }
-        $this->verusQR = '0.1.0'; // For Invoice QR codes
-        // TODO : Change to VRSC before release
-        $this->coin = 'VRSCTEST';
-        $this->store_inv_msg = $this->get_option( 'qr_invoice_memo' );
-        $this->store_img = $this->get_option( 'qr_invoice_image' );
-        $this->description  = $this->get_option( 'description' );
-        $this->msg_before_sale = $this->get_option( 'msg_before_sale' );
-        $this->msg_after_sale = $this->get_option( 'msg_after_sale' );
-        $this->msg_cancel = $this->get_option( 'msg_cancel' );
-        $this->email_order = $this->get_option( 'email_order' );
-        $this->email_cancelled = $this->get_option( 'email_cancelled' );
-        $this->email_completed = $this->get_option( 'email_completed' );
-        // Clean and count store addresses for backup / manual use
-        $wc_veruspay_chains_temp = $this->get_option('wc_veruspay_chains');
-        if ( ! empty( $wc_veruspay_chains_temp ) ) {
-            foreach ( $wc_veruspay_chains_temp as $key => $item ) {
-                $wc_veruspay_store_data = $this->get_option( strtolower( $key ) . '_storeaddresses' );
-                $wc_veruspay_chains_temp[$key]['AD'] = preg_replace( '/\s+/', '', $wc_veruspay_store_data );
-                if ( strlen( $wc_veruspay_store_data ) < 10 ) {
-                    $wc_veruspay_chains_temp[$key]['AC'] = 0;
-                }
-                else if ( strlen( $wc_veruspay_store_data ) > 10 ) {
-                    $wc_veruspay_chains_temp[$key]['AD'] = explode( ',', $wc_veruspay_chains_temp[$key]['AD'] );
-                    $wc_veruspay_chains_temp[$key]['AC'] = count( $wc_veruspay_chains_temp[$key]['AD'] );
-                }
-                $wc_veruspay_chains_temp[$key]['UD'] = explode( ',', $this->get_option( strtolower( $key ) . '_usedaddresses' ));
-            }
-        }
-        $this->chains = $wc_veruspay_chains_temp;
-        $this->decimals = $this->get_option( 'decimals' ); 
-        $this->pricetime = $this->get_option( 'pricetime' );
-        $this->orderholdtime = $this->get_option( 'orderholdtime' );
-        $this->confirms = $this->get_option( 'confirms' );
-        $this->qr_max_size = $this->get_option( 'qr_max_size' );
-        $this->discount_fee = 'yes' == $this->get_option( 'discount_fee' );
-        $this->verus_dis_title = $this->get_option( 'disc_title' );
-        $this->verus_dis_type = $this->get_option( 'disc_type' );
-        if ( is_numeric( $this->get_option( 'disc_amt' ) ) ) {
-            $this->verus_dis_amt = ( $this->get_option( 'disc_amt' ) / 100 );
         }
         // Add actions for payment gateway, scripts, thank you page, and emails
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );

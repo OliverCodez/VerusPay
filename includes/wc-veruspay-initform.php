@@ -5,12 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 // Enqueue Admin JS and CSS
 if ( is_admin() ) {
-    echo '<div id="wc_veruspay_loading"></div><style>#mainform{opacity:0;}</style>';
-    wp_register_script( 'wc_veruspay_admin_scripts', $wc_veruspay_global['paths']['admin']['js'] . 'wc-veruspay-admin-scripts.js' );
-    wp_localize_script( 'wc_veruspay_admin_scripts', 'veruspay_admin_params', array( 'storecurrency' => get_woocommerce_currency() ) );
-    wp_enqueue_style( 'veruspay_admin_css', $wc_veruspay_global['paths']['admin']['css'] . 'wc-veruspay-admin.css' );
-    wp_enqueue_script( 'wc_veruspay_admin_scripts' );
-    echo '<div id="wc_veruspay_admin_menu"></div>';
+    if ( ! isset( $_POST['veruspayajax'] ) ) {
+        echo '<div id="wc_veruspay_loading"></div><style>#mainform{opacity:0;}</style>';
+        wp_register_script( 'wc_veruspay_admin_scripts', $wc_veruspay_global['paths']['admin']['js'] . 'wc-veruspay-admin-scripts.js' );
+        wp_localize_script( 'wc_veruspay_admin_scripts', 'veruspay_admin_params', array( 'storecurrency' => get_woocommerce_currency() ) );
+        wp_enqueue_style( 'veruspay_admin_css', $wc_veruspay_global['paths']['admin']['css'] . 'wc-veruspay-admin.css' );
+        wp_enqueue_script( 'wc_veruspay_admin_scripts' );
+        echo '<div id="wc_veruspay_admin_menu"></div>';
+    }
 }
 // Check for store status, access code and connectivity
 $wc_veruspay_store_status = $this->get_option( 'enabled' );
