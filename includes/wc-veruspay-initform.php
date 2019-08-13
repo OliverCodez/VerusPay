@@ -46,7 +46,7 @@ else {
     // Begin checking
     
     if ( empty( $wc_veruspay_global['chains'] ) || is_string( $wc_veruspay_global['chains'] ) ) {
-        $_statsArray['1'][0] = ' - Status: <span style="color:red;font-size:16px;font-style:italic">UNREACHABLE</span>';
+        $_statsArray['1'][0] = ' - Status: <span class="wc_veruspay_stat wc_veruspay_white_on_orange">UNREACHABLE</span>';
         if ( ! array_filter( $_daemonsArray ) ) {
             $this->form_fields = apply_filters( 'wc_veruspay_form_fields', wc_veruspay_setup() );
             $this->update_option( 'enabled', 'no' );
@@ -54,14 +54,16 @@ else {
         $this->update_option( 'wc_veruspay_chains', $wc_veruspay_global['chains'] );
     }
 	else if ( $wc_veruspay_global['chains'] == '_no_chains_found_' ) {
-        $_statsArray['1'][0] = ' - Status: <span style="color:orange;font-size:16px;font-style:italic">OFFLINE</span>';
+        $_vctversion = wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_daemon_fullip_1, '_stat_', 'vct_version' );
+        $_statsArray['1'][0] = ' - Status: <span class="wc_veruspay_stat wc_veruspay_white_on_red">OFFLINE</span><span class="wc_veruspay_version">v' . $_vctversion . '</span>';
         if ( ! array_filter( $_daemonsArray ) ) {
             $this->update_option( 'enabled', 'no' );
         }
         $this->update_option( 'wc_veruspay_chains', $wc_veruspay_global['chains'] );
 	}
     else {
-        $_statsArray['1'][0] = ' - Status: <span style="color:green;font-size:16px;font-style:italic">ONLINE</span>';
+        $_vctversion = wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_daemon_fullip_1, '_stat_', 'vct_version' );
+        $_statsArray['1'][0] = ' - Status: <span class="wc_veruspay_stat wc_veruspay_white_on_green">ONLINE</span><span class="wc_veruspay_version">v' . $_vctversion . '</span>';
         // Add primary daemon chains to global array
         foreach ( $wc_veruspay_global['chains'] as $key => $item ) {
             $_chain_up = strtoupper( $key );
@@ -109,18 +111,20 @@ else {
                 }
                 $_ip = $_proto . $item;
                 if ( empty( $_code ) ) {
-                    $_statsArray[$key][0] = '<span style="color:red">Access Code Required</span>';
+                    $_statsArray[$key][0] = '<span class="wc_veruspay_red">Access Code Required</span>';
                 }
                 else {
                     $_list = wc_veruspay_go( $_code, $_ip, '_stat_', 'chainlist' );
                     if ( empty( $_list ) || is_string( $_list ) || $item == 'duplicate daemon' ) {
-                        $_statsArray[$key][0] = ' - Status: <span style="color:red;font-size:16px;font-style:italic">UNREACHABLE</span>';
+                        $_statsArray[$key][0] = ' - Status: <span class="wc_veruspay_stat wc_veruspay_white_on_red">UNREACHABLE</span>';
                     }
                     else if ( $_list == '_no_chains_found_' ) {
-                        $_statsArray[$key][0] = ' - Status: <span style="color:orange;font-size:16px;font-style:italic">OFFLINE</span>';
+                        $_vctversion = wc_veruspay_go( $_code, $_ip, '_stat_', 'vct_version' );
+                        $_statsArray[$key][0] = ' - Status: <span class="wc_veruspay_stat wc_veruspay_white_on_orange">OFFLINE</span><span class="wc_veruspay_version">v' . $_vctversion . '</span>';
                     }
                     else {
-                        $_statsArray[$key][0] = ' - Status: <span style="color:green;font-size:16px;font-style:italic">ONLINE</span>';
+                        $_vctversion = wc_veruspay_go( $_code, $_ip, '_stat_', 'vct_version' );
+                        $_statsArray[$key][0] = ' - Status: <span class="wc_veruspay_stat wc_veruspay_white_on_green">ONLINE</span><span class="wc_veruspay_version">v' . $_vctversion . '</span>';
                         foreach ( $_list as $_key => $_item ) {
                             $_chain_up = strtoupper( $_key );
                             $_chain_lo = strtolower( $_key );
@@ -164,7 +168,7 @@ else {
             }
         }
         if ( $this->get_option( 'test_mode' ) == 'yes' ) {
-            $_testmsg = '<span style="color:red">TEST MODE ENABLED</span>';
+            $_testmsg = '<span sclass="wc_veruspay_red">TEST MODE ENABLED</span>';
         }
         else {
             $_testmsg = 'TEST MODE';
@@ -778,18 +782,26 @@ else {
             $wc_veruspay_set_t = 0;
             $wc_veruspay_set_z = 0;
             if ( $wc_veruspay_global['chains'][$_chain_up]['ST'] == 1 ) {
-                $wc_veruspay_wallet_stat = '<span style="color:green">ONLINE</span>';
+                $wc_veruspay_global['chains'][$_chain_up]['VV'] = wc_veruspay_go( $wc_veruspay_global['chains'][$_chain_up]['DC'], $wc_veruspay_global['chains'][$_chain_up]['IP'], '_stat_', 'vct_version' );
+                $wc_veruspay_global['chains'][$_chain_up]['BV'] = wc_veruspay_go( $wc_veruspay_global['chains'][$_chain_up]['DC'], $wc_veruspay_global['chains'][$_chain_up]['IP'], $_chain_up, 'version' );
+                $wc_veruspay_wallet_stat = '<span class="wc_veruspay_stat wc_veruspay_white_on_green">ONLINE</span><span class="wc_veruspay_version">v' . $wc_veruspay_global['chains'][$_chain_up]['BV'] . '</span>';
             }
             else if ( strlen( $this->get_option( $_chain_lo . '_storeaddresses' ) ) > 30 ) {
-                $wc_veruspay_wallet_stat = '<span style="color:orange">OFFLINE/MANUAL</span>';
+                $wc_veruspay_wallet_stat = '<span class="wc_veruspay_stat wc_veruspay_white_on_orange">OFFLINE/MANUAL</span>';
             }
             else {
-                $wc_veruspay_wallet_stat = '<span style="color:red">OFFLINE</span>';
+                $wc_veruspay_wallet_stat = '<span class="wc_veruspay_stat wc_veruspay_white_on_red">OFFLINE</span>';
+            }
+            // Check for live API price, disable wallet if unable to retrieve
+            $wc_veruspay_price_init = wc_veruspay_price( $_chain_up,  get_woocommerce_currency() );
+            if ( (int)$wc_veruspay_price_init < 0.00000000 || ! is_numeric( $wc_veruspay_price_init ) || $wc_veruspay_price_init == NULL || empty( $wc_veruspay_price_init ) ) {
+                $wc_veruspay_price_init = 'NaN';
+                $this->update_option( $_chain_lo . '_enable', 'no' );
             }
             // Add to Wallet Settings array
             $wc_veruspay_add_wallet_data = array(
                 $_chain_lo.'_wallet_title' => array(
-                    'title' => __( '<img style="margin: 0 10px 0 0;" src="' . $wc_veruspay_global['coinimg'] . $_chain_up .'.png" />' . $_chain_up . ' ' . $item['FN'] . ' Wallet - Fiat Price: ' . get_woocommerce_currency_symbol() . '<span class="wc_veruspay_fiat_rate" data-coin="'.$_chain_up.'">' . wc_veruspay_price( $_chain_up,  get_woocommerce_currency() ) . '</span>', 'veruspay-verus-gateway' ),
+                    'title' => __( '<img class="wc_veruspay_mr10" src="' . $wc_veruspay_global['coinimg'] . $_chain_up .'.png" />' . $_chain_up . ' ' . $item['FN'] . ' Wallet - Fiat Price: ' . get_woocommerce_currency_symbol() . '<span class="wc_veruspay_fiat_rate" data-coin="'.$_chain_up.'">' . $wc_veruspay_price_init . '</span>', 'veruspay-verus-gateway' ),
                     'type' => 'title',
                     'description' => '',
                     'class' => 'wc_veruspay_section_heading wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_walletsettings-toggle',
@@ -929,7 +941,7 @@ else {
             $wc_veruspay_add_address_data = array();
             if ( $item['TX'] == 0 || $item['TX'] == 1 ) {
                 $wc_veruspay_add_address_data[$_chain_lo.'_addresses_title'] = array(
-                    'title' => __( '<img style="margin: 0 10px 0 0;" src="' . $wc_veruspay_global['coinimg'] . $_chain_up .'.png" />' . $item['FN'] . ' ' . $_chain_up . ' Transparent Backup Addresses', 'veruspay-verus-gateway' ),
+                    'title' => __( '<img class="wc_veruspay_mr10" src="' . $wc_veruspay_global['coinimg'] . $_chain_up .'.png" />' . $item['FN'] . ' ' . $_chain_up . ' Transparent Backup Addresses', 'veruspay-verus-gateway' ),
                     'type' => 'title',
                     'description' => '',
                     'class' => 'wc_veruspay_section_heading wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_addresses-toggle',
@@ -960,16 +972,8 @@ else {
             }
             $wc_veruspay_chain_addtl_settings = array(
                 'EN' => $this->get_option( $_chain_lo.'_enable' ),
-                'VV' => 'ERR', // VCT Version
-                'BV' => 'ERR', // Blockchain Version
             );
             $wc_veruspay_global['chains'][$_chain_up] = array_merge( $wc_veruspay_global['chains'][$_chain_up], $wc_veruspay_chain_addtl_settings, $wc_veruspay_sapling_settings );
-            // Setup status of wallet to true or false
-            if ( $wc_veruspay_global['chains'][$_chain_up]['ST'] == 1 ) {
-                $wc_veruspay_global['chains'][$_chain_up]['VV'] = wc_veruspay_go( $wc_veruspay_global['chains'][$_chain_up]['DC'], $wc_veruspay_global['chains'][$_chain_up]['IP'], $_chain_up, 'vct_version' );
-                $wc_veruspay_global['chains'][$_chain_up]['BV'] = wc_veruspay_go( $wc_veruspay_global['chains'][$_chain_up]['DC'], $wc_veruspay_global['chains'][$_chain_up]['IP'], $_chain_up, 'version' );
-                echo '<span id="verus_chain_tools_version" style="display:none">VerusChainTools Version: ' . $wc_veruspay_global['chains'][$_chain_up]['VV'] . '</span>';
-            }
             // Insert Wallet Management Sections
             if ( $wc_veruspay_global['chains'][$_chain_up]['ST'] == 1 ) {
                 $wc_veruspay_formfields_bal_t = json_decode( wc_veruspay_go( $wc_veruspay_global['chains'][$_chain_up]['DC'], $wc_veruspay_global['chains'][$_chain_up]['IP'], $_chain_up, 'bal' ), TRUE )['transparent'];
@@ -1001,25 +1005,25 @@ else {
                 }
                 if($wc_veruspay_formfields_bal_t > 0){
                     if ( strlen( $item['T'] ) < 10 ) {
-                        $wc_veruspay_withdraw_t = '<br><span class="wc_veruspay_cashout_text" id="wc_veruspay_cashout_text-'.$_chain_lo.'-getttotalbalance"><span style="font-weight:bold;color:red;">No Transparent Cashout Address Set!</span> Set on your wallet server using the UpdateCashout.sh script.</span>';
+                        $wc_veruspay_withdraw_t = '<br><span class="wc_veruspay_cashout_text" id="wc_veruspay_cashout_text-'.$_chain_lo.'-getttotalbalance"><span class="wc_veruspay_red">Cashout T-Addr Not Found</span> Set on your wallet server using the UpdateCashout.sh script.</span>';
                     }
                     else {
-                        $wc_veruspay_withdraw_t = '<br><span class="wc_veruspay_cashout_text" id="wc_veruspay_cashout_text-'.$_chain_lo.'-getttotalbalance">Cashout to <span style="font-weight:bold;">'.$item['T'].'?</span> <div id="wc_veruspay_tbal-'.$_chain_lo.'-button" class="wc_veruspay_cashout" data-coin="' . $_chain_lo . '" data-type="cashout_t" data-addrtype="Transparent" data-amount="'.$wc_veruspay_formfields_bal_t.'" data-address="'.$item['T'].'">GO</div></span>';
+                        $wc_veruspay_withdraw_t = '<br><span class="wc_veruspay_cashout_text" id="wc_veruspay_cashout_text-'.$_chain_lo.'-getttotalbalance">Cashout to <span class="wc_veruspay_weight-bold">'.$item['T'].'?</span> <div id="wc_veruspay_tbal-'.$_chain_lo.'-button" class="wc_veruspay_cashout" data-coin="' . $_chain_lo . '" data-type="cashout_t" data-addrtype="Transparent" data-amount="'.$wc_veruspay_formfields_bal_t.'" data-address="'.$item['T'].'">GO</div></span>';
                     }
                 }
                 else {
-                    $wc_veruspay_withdraw_t = '<br><span class="wc_veruspay_cashout_text wc_veruspay_hidden" id="wc_veruspay_cashout_text-'.$_chain_lo.'-getttotalbalance">Cashout to <span style="font-weight:bold;">'.$item['T'].'?</span> <div id="wc_veruspay_tbal-'.$_chain_lo.'-button" class="wc_veruspay_cashout" data-coin="' . $_chain_lo . '" data-type="cashout_t" data-addrtype="Transparent" data-amount="'.$wc_veruspay_formfields_bal_t.'" data-address="'.$item['T'].'">GO</div></span>';
+                    $wc_veruspay_withdraw_t = '<br><span class="wc_veruspay_cashout_text wc_veruspay_hidden" id="wc_veruspay_cashout_text-'.$_chain_lo.'-getttotalbalance">Cashout to <span class="wc_veruspay_weight-bold">'.$item['T'].'?</span> <div id="wc_veruspay_tbal-'.$_chain_lo.'-button" class="wc_veruspay_cashout" data-coin="' . $_chain_lo . '" data-type="cashout_t" data-addrtype="Transparent" data-amount="'.$wc_veruspay_formfields_bal_t.'" data-address="'.$item['T'].'">GO</div></span>';
                 }
                 if($wc_veruspay_formfields_bal_z > 0){
                     if ( strlen( $item['Z'] ) < 10 ) {
-                        $wc_veruspay_withdraw_z = '<br><span class="wc_veruspay_cashout_text" id="wc_veruspay_cashout_text-'.$_chain_lo.'-getztotalbalance"><span style="font-weight:bold;color:red;">No Private Cashout Address Set!</span> Set on your wallet server using the UpdateCashout.sh script.</span>';
+                        $wc_veruspay_withdraw_z = '<br><span class="wc_veruspay_cashout_text" id="wc_veruspay_cashout_text-'.$_chain_lo.'-getztotalbalance"><span class="wc_veruspay_red">Cashout Z-Addr Not Found</span> Set on your wallet server using the UpdateCashout.sh script.</span>';
                     }
                     else {
-                        $wc_veruspay_withdraw_z = '<br><span class="wc_veruspay_cashout_text" id="wc_veruspay_cashout_text-'.$_chain_lo.'-getztotalbalance">Cashout to <span style="font-weight:bold;">'.$item['Z'].'?</span> <div id="wc_veruspay_zbal-'.$_chain_lo.'-button" class="wc_veruspay_cashout" data-coin="' . $_chain_lo . '" data-type="cashout_z" data-addrtype="Private" data-amount="'.$wc_veruspay_formfields_bal_z.'" data-address="'.$item['Z'].'">GO</div></span>';
+                        $wc_veruspay_withdraw_z = '<br><span class="wc_veruspay_cashout_text" id="wc_veruspay_cashout_text-'.$_chain_lo.'-getztotalbalance">Cashout to <span class="wc_veruspay_weight-bold">'.$item['Z'].'?</span> <div id="wc_veruspay_zbal-'.$_chain_lo.'-button" class="wc_veruspay_cashout" data-coin="' . $_chain_lo . '" data-type="cashout_z" data-addrtype="Private" data-amount="'.$wc_veruspay_formfields_bal_z.'" data-address="'.$item['Z'].'">GO</div></span>';
                     }
                 }
                 else {
-                    $wc_veruspay_withdraw_z = '<br><span class="wc_veruspay_cashout_text wc_veruspay_hidden" id="wc_veruspay_cashout_text-'.$_chain_lo.'-getztotalbalance">Cashout to <span style="font-weight:bold;">'.$item['Z'].'?</span> <div id="wc_veruspay_zbal-'.$_chain_lo.'-button" class="wc_veruspay_cashout" data-coin="' . $_chain_lo . '" data-type="cashout_z" data-addrtype="Private" data-amount="'.$wc_veruspay_formfields_bal_z.'" data-address="'.$item['Z'].'">GO</div></span>';
+                    $wc_veruspay_withdraw_z = '<br><span class="wc_veruspay_cashout_text wc_veruspay_hidden" id="wc_veruspay_cashout_text-'.$_chain_lo.'-getztotalbalance">Cashout to <span class="wc_veruspay_weight-bold">'.$item['Z'].'?</span> <div id="wc_veruspay_zbal-'.$_chain_lo.'-button" class="wc_veruspay_cashout" data-coin="' . $_chain_lo . '" data-type="cashout_z" data-addrtype="Private" data-amount="'.$wc_veruspay_formfields_bal_z.'" data-address="'.$item['Z'].'">GO</div></span>';
                 }				
             }
             else {
@@ -1029,7 +1033,7 @@ else {
                 $wc_veruspay_formfields_bal_u = 'Err: No Connection to VerusChainTools or Not Installed!';
                 $wc_veruspay_withdraw_t = '';
                 $wc_veruspay_withdraw_z = '';
-                echo '<div style="height:0px!important" id="wc_veruspay_'.$_chain_lo.'_nostat"></div>';
+                echo '<div class="wc_veruspay_noheight" id="wc_veruspay_'.$_chain_lo.'_nostat"></div>';
             }
             // Setup sub array
             $wc_veruspay_wallet_management_data = array();
@@ -1048,7 +1052,7 @@ else {
                 );
                 $wc_veruspay_global['chains'][$_chain_up] = array_merge( $wc_veruspay_global['chains'][$_chain_up], $wc_veruspay_transparent_chain_settings );
                 $wc_veruspay_wallet_management_data[$_chain_lo.'_wallet_tbalance'] = array(
-                    'title' => __( 'Transparent Balance: <span style="font-weight:normal;"><span class="wc_veruspay_bal_admin '.$wc_veruspay_bal_red_css.'" id="wc_veruspay_tbal-'.$_chain_lo.'" data-coin="'.$_chain_lo.'" data-type="transparent">' . $wc_veruspay_formfields_bal_t . '</span> ' . $_chain_up . $wc_veruspay_withdraw_t . '</span>' , 'veruspay-verus-gateway' ),
+                    'title' => __( 'Transparent Balance: <span class="wc_veruspay_weight-normal"><span class="wc_veruspay_bal_admin '.$wc_veruspay_bal_red_css.'" id="wc_veruspay_tbal-'.$_chain_lo.'" data-coin="'.$_chain_lo.'" data-type="transparent">' . $wc_veruspay_formfields_bal_t . '</span> ' . $_chain_up . $wc_veruspay_withdraw_t . '</span>' , 'veruspay-verus-gateway' ),
                     'type' => 'text',
                     'default' => '',
                     'description' => '',
@@ -1057,7 +1061,7 @@ else {
             }
             if ( $wc_veruspay_set_z == 1 ) {
                 $wc_veruspay_wallet_management_data[$_chain_lo.'_wallet_zbalance'] = array(
-                    'title' => __( 'Private (Sapling) Balance: <span style="font-weight:normal;"><span class="wc_veruspay_bal_admin '.$wc_veruspay_bal_red_css.'" id="wc_veruspay_zbal-'.$_chain_lo.'" data-coin="'.$_chain_lo.'" data-type="private">' . $wc_veruspay_formfields_bal_z . '</span> ' . $_chain_up . $wc_veruspay_withdraw_z . '</span>' , 'veruspay-verus-gateway' ),
+                    'title' => __( 'Private (Sapling) Balance: <span class="wc_veruspay_weight-normal"><span class="wc_veruspay_bal_admin '.$wc_veruspay_bal_red_css.'" id="wc_veruspay_zbal-'.$_chain_lo.'" data-coin="'.$_chain_lo.'" data-type="private">' . $wc_veruspay_formfields_bal_z . '</span> ' . $_chain_up . $wc_veruspay_withdraw_z . '</span>' , 'veruspay-verus-gateway' ),
                     'type' => 'text',
                     'default' => '',
                     'description' => '',
@@ -1065,7 +1069,7 @@ else {
                 );
             }
             $wc_veruspay_wallet_management_data[$_chain_lo.'_wallet_unbalance'] = array(
-                'title' => __( 'Unconfirmed Incoming Balance: <span style="font-weight:normal;"><span class="wc_veruspay_bal_admin '.$wc_veruspay_bal_red_css.'" id="wc_veruspay_ubal-'.$_chain_lo.'" data-coin="'.$_chain_lo.'" data-type="unconfirmed">' . $wc_veruspay_formfields_bal_u . '</span> ' . $_chain_up . '</span>' , 'veruspay-verus-gateway' ),
+                'title' => __( 'Unconfirmed Incoming Balance: <span class="wc_veruspay_weight-normal"><span class="wc_veruspay_bal_admin '.$wc_veruspay_bal_red_css.'" id="wc_veruspay_ubal-'.$_chain_lo.'" data-coin="'.$_chain_lo.'" data-type="unconfirmed">' . $wc_veruspay_formfields_bal_u . '</span> ' . $_chain_up . '</span>' , 'veruspay-verus-gateway' ),
                 'type' => 'text',
                 'default' => '',
                 'description' => '',
@@ -1155,9 +1159,9 @@ function wc_veruspay_setup() {
             'label' => __( 'Access Code', 'veruspay-verus-gateway' ),
         ),
         'access_code_instructions' => array(
-            'title' => __( '<span style="color:red">VERUSPAY DISABLED:</span> Activation Instructions', 'veruspay-verus-gateways' ),
+            'title' => __( '<span class="wc_veruspay_red">VERUSPAY DISABLED:</span> Activation Instructions', 'veruspay-verus-gateways' ),
             'type' => 'title',
-            'description' => '<span style="font-size:16px">Thank you for installing VerusPay!<br><br>To use this self-sovereign payment plugin, you must install VerusChainTools on your wallet server (the server where your Verus or compatible wallet is installed).  At the successful completion of VerusChainTools installation and config on your wallet server, you\'ll be provided with an Access Code.  Enter that code above, save settings, and complete the configuration of VerusPay in the fields that will appear below.<br><br><span style="font-weight:bold">For configuration instructions visit <a href="https://veruspay.io/setup/">VerusPay.io/setup</a></span></span><br><br><br>',
+            'description' => '<span class="wc_veruspay_size-normal">Thank you for installing VerusPay!<br><br>To use this self-sovereign payment plugin, you must install VerusChainTools on your wallet server (the server where your Verus or compatible wallet is installed).  At the successful completion of VerusChainTools installation and config on your wallet server, you\'ll be provided with an Access Code.  Enter that code above, save settings, and complete the configuration of VerusPay in the fields that will appear below.<br><br><span class="wc_veruspay_weight-bold">For configuration instructions visit <a href="https://veruspay.io/setup/">VerusPay.io/setup</a></span></span><br><br><br>',
             'class' => 'wc_veruspay_title-sub',
             ),
     );

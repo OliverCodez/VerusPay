@@ -205,10 +205,15 @@ function wc_veruspay_price( $chain, $currency ) {
                     $rkey = $key;
                 }
             }
-            $_chain_id = $l[$rkey]['id'];
-            $r = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_global['paths']['ext']['coingeckoapi'] . 'simple/price?ids=' . $_chain_id . '&vs_currencies=' . $_cur_lo ), TRUE )[$_chain_id][$_cur_lo];
-            if ( is_numeric( $r ) ) {
-                return $r;
+            if ( isset( $rkey ) ) {
+                $_chain_id = $l[$rkey]['id'];
+                $r = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_global['paths']['ext']['coingeckoapi'] . 'simple/price?ids=' . $_chain_id . '&vs_currencies=' . $_cur_lo ), TRUE )[$_chain_id][$_cur_lo];
+                if ( is_numeric( $r ) ) {
+                    return $r;
+                }
+                else {
+                    return 'NaN';
+                }
             }
             else {
                 return 'NaN';

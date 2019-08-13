@@ -3,7 +3,7 @@ jQuery( function( $ ) {
 	$(document).ready(function() {
 		$( '#verus_chain_tools_version' ).insertAfter('#woocommerce_veruspay_verus_gateway_access_code').css('display','inline-block');
 		$( '.wc_veruspay_checkbox_option' ).closest( 'label' ).addClass( 'wc_veruspay_control wc_veruspay_control--checkbox' );
-		$( '<div class="wc_veruspay_control__indicator"></div>' ).insertAfter( '.wc_veruspay_checkbox_option' );
+		$( '<div class="wc_veruspay_control_container"><div class="wc_veruspay_control__indicator"></div></div>' ).insertAfter( '.wc_veruspay_checkbox_option' );
 		$( '.wc_veruspay_section_heading' ).next().find( 'tbody' ).addClass( 'wc_veruspay_section_body' );
 		$( '.wc_veruspay_tab-container' ).next( 'table' ).remove();
 		$( '#wc_veruspay_admin_menu' ).insertBefore( '.wc_veruspay_toggledaemon' );
@@ -177,39 +177,35 @@ jQuery( function( $ ) {
 		});
 		// Refresh prices
 		var lastPrice = function() {
-			$( '.wc_veruspay_fiat_rate' ).each(function(){
-				var bkcolor = 'transparent';
+			$( '.wc_veruspay_fiat_rate' ).each( function() {
 				var newval = '';
 				var coin = $( this ).attr( 'data-coin' );
 				var lastval = $( this ).text();
+				var div = this;
 				$.ajax({
 					type: "POST",
 					data: { "veruspayajax":"1", "veruspaycommand":"price", "coin":coin },
-					//success
 					success: function(response){
-						$( this ).hide();
+						$(div).hide();
 						newval = response;
 						if ( lastval > newval ) {
-							var value = newval.toString();
-							$( this ).html(value).css('background-color','red');
-							$( this ).fadeIn(800).queue( function(next){
-								$( this ).css( 'background-color', 'transparent' ); 
+							$( div ).html( newval ).css('background-color','red');
+							$( div ).fadeIn(800).queue( function(next){
+								$( div ).css( 'background-color', 'transparent' ); 
 								next();
 							});
 						}
 						if ( lastval < newval ) {
-							var value = newval.toString();
-							$( this ).html(value).css('background-color','green');
-							$( this ).fadeIn(800).queue( function(next){
-								$( this ).css( 'background-color', 'transparent' ); 
+							$( div ).html( newval ).css('background-color','#12ee12');
+							$( div ).fadeIn(800).queue( function(next){
+								$( div ).css( 'background-color', 'transparent' ); 
 								next();
 							});					
 						}
 						else {
-							var value = newval.toString();
-							$( this ).html(value).css('background-color','green');
-							$( this ).fadeIn(800).queue( function(next){
-								$( this ).css( 'background-color', 'transparent' ); 
+							$( div ).html( newval ).css('background-color','#12ee12');
+							$( div ).fadeIn(800).queue( function(next){
+								$( div ).css( 'background-color', 'transparent' ); 
 								next();
 							});				
 						}						

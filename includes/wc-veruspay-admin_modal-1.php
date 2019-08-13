@@ -5,5 +5,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 } ?>
 <h4><?php echo $_chain_up; ?> Private Cashout Results</h4>
 <p>
-    <span style="font-weight:bold">Your successful private cashouts are listed below with each opid:</span>
+    <span class="wc_veruspay_weight-bold">Your successful private cashouts are listed below with each opid:</span>
 </p>

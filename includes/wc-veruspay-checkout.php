@@ -3,8 +3,8 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } ?>
-<div id="wc-<?php echo esc_attr( $this->id ); ?>-cc-form" class="wc-payment-form" style="background:transparent;">
-    <div class="woocommerce-Price-amount" style="height:100px;">
+<div id="wc-<?php echo esc_attr( $this->id ); ?>-cc-form" class="wc-payment-form wc_veruspay_transparent-bg">
+    <div class="woocommerce-Price-amount wc_veruspay_select-checkout">
         <div class="wc_veruspay_coin_select">
             <span class="wc_veruspay_logo" style="background-image: url(<?php echo $wc_veruspay_global['coinimg'] . $_chain_up . '.png'; ?>);"></span>
             <select name="wc_veruspay_coin" id="wc_veruspay_coin" class="" aria-hidden="true" onchange="this.form.submit()">
