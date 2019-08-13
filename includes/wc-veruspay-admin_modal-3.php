@@ -3,7 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } ?>
-<div class="wc_veruspay_cashout-modalback" style="display:none">
+<div class="wc_veruspay_cashout-modalback" style="display:none;">
     <div class="wc_veruspay_cashout-modalinner">
         <h4>Verify Before Proceeding</h4>
         <p>You are about to send <span class="wc_veruspay_modal_amount"></span> <span class="wc_veruspay_modal_coin"></span> to your <span class="wc_veruspay_modal_coin"></span> <span class="wc_veruspay_modal_type"></span> address.  Please verify the coin, amount, and type (Private or Transparent) are correct, and that you have access to/own the receive address, before you continue:</p>

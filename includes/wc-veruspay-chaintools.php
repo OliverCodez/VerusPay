@@ -52,10 +52,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Go
  * Function to access VCT API using wordpress built-in wp_remote_post
  */
-function wc_veruspay_go( $wc_veruspay_accesscode, $url, $chain, $method, $params = NULL ) {
+function wc_veruspay_go( $chaindc, $url, $chain, $method, $params = NULL ) {
     global $wc_veruspay_global;
     $body = array(
-        'a' => $wc_veruspay_accesscode,
+        'a' => $chaindc,
         'c' => $chain,
         'm' => $method,
         'p' => $params, // Passed as json_encode string of correct array layout of parameters in question
@@ -128,7 +128,7 @@ function wc_veruspay_get( $chain, $method, $params = NULL ) {
         else {
             $results = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_global['chain_dtls'][$cl]['getaddress'] . $params ), TRUE );
             $results = $results[ $wc_veruspay_global['chain_dtls'][$cl]['txname'] ];
-            $wc_veruspay_confirmations = array();
+            $confs = array();
             foreach ( $results as $item ) {
                 usleep(500);
                 if ( $wc_veruspay_global['chain_dtls'][$cl]['txlevel'] === NULL ) {
@@ -139,10 +139,10 @@ function wc_veruspay_get( $chain, $method, $params = NULL ) {
                 }
                 $txresults = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_global['chain_dtls'][$cl]['gettx'] . $txhash . $wc_veruspay_global['chain_dtls'][$cl]['txtrail'] ), TRUE );
                 if ( $txresults[$wc_veruspay_global['chain_dtls'][$cl]['htname']] > 1 ) {
-                    $wc_veruspay_confirmations[$txhash] = $txresults['confirmations'];
+                    $confs[$txhash] = $txresults['confirmations'];
                 }
             }
-            return min($wc_veruspay_confirmations);
+            return min($confs);
         }
         break;
         case 'getrawtx':
@@ -169,23 +169,60 @@ function wc_veruspay_get( $chain, $method, $params = NULL ) {
 
 /**
  * Price
- * Real-time Price Data. Supported coins: VRSC, ARRR, KMD, ZEC
+ * Real-time Price Data via VerusPay API or CoinGecko API. Supported coins via VerusPay API: VRSC, ARRR, KMD, ZEC
  */
 function wc_veruspay_price( $chain, $currency ) {
     global $wc_veruspay_global;
-    $currency = strtoupper( $currency );
-    $chain = strtoupper( $chain );
-    if ( ! isset( $chain ) ) {
-        $chain = 'VRSC';
+    $_cur_up = strtoupper( $currency );
+    $_cur_lo = strtolower( $currency );
+    $_chain_up = strtoupper( $chain );
+    $_chain_lo = strtolower( $chain );
+    // Default to VerusCoin
+    if ( ! isset( $_chain_up ) ) {
+        $_chain_up = 'VRSC';
     }
-    // TODO : VRSCTEST added for testing and debugging
+    // TODO : VRSCTEST & BTC added for testing and debugging
     if ( $chain == 'VRSCTEST' ) {
-        $chain = 'VRSC';
+        $_chain_up = 'VRSC';
+        $_chain_lo = 'vrsc';
     }
-    if ( $chain == 'BTC' ) {
-        $chain = 'ZEC';
+    // END TESTING 
+    if ( in_array( $_chain_lo, $wc_veruspay_global['chain_list'] ) ) {
+        $r = wc_veruspay_wp_get_curl( $wc_veruspay_global['chain_dtls']['fiat']['api'] . '?currency=' . $_cur_up . '&ticker=' . $_chain_up );
+        if ( is_numeric( $r ) ) {
+            return $r;
+        }
+        else {
+            return 'NaN';
+        }
     }
-    return wc_veruspay_wp_get_curl( $wc_veruspay_global['chain_dtls']['fiat']['api'] . '?currency=' . $currency . '&ticker=' . $chain );
+    else {
+        $lc = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_global['paths']['ext']['coingeckoapi'] . 'simple/supported_vs_currencies' ), TRUE );
+        if ( in_array( $_cur_lo, $lc ) ) {
+            $l = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_global['paths']['ext']['coingeckoapi'] . 'coins/list' ), TRUE );
+            foreach( $l as $key => $item ) {
+                if ( $item['symbol'] == $_chain_lo ) {
+                    $rkey = $key;
+                }
+            }
+            if ( isset( $rkey ) ) {
+                $_chain_id = $l[$rkey]['id'];
+                $r = json_decode( wc_veruspay_wp_get_curl( $wc_veruspay_global['paths']['ext']['coingeckoapi'] . 'simple/price?ids=' . $_chain_id . '&vs_currencies=' . $_cur_lo ), TRUE )[$_chain_id][$_cur_lo];
+                if ( is_numeric( $r ) ) {
+                    return $r;
+                }
+                else {
+                    return 'NaN';
+                }
+            }
+            else {
+                return 'NaN';
+            }
+        }
+        else {
+            return 'NaN';
+        }
+    }
 }
 /**
  * QR API

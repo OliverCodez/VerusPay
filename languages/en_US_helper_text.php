@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $wc_veruspay_text_help = array(
 	'en_US' => array(
 		'method_desc' => 'Allows purchases to be made using cryptocurrency.',
+		'method_desc2' => ' installed. Please see Daemons section for VerusChainTools (VCT) versions for each daemon. Version 0.4+ of VCT is required for compatibility.  Please see Wallets section for individual coin/daemon versions.',
 		'refresh' => 'Refresh',
 		'price' => 'Price',
 		'exchange_rate' => 'Exchange Rate',
