@@ -3,17 +3,6 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-// Enqueue Admin JS and CSS
-if ( is_admin() ) {
-    if ( ! isset( $_POST['veruspayajax'] ) ) {
-        echo '<div id="wc_veruspay_loading"></div><style>#mainform{opacity:0;}</style>';
-        wp_register_script( 'wc_veruspay_admin_scripts', $wc_veruspay_global['paths']['admin']['js'] . 'wc-veruspay-admin-scripts.js' );
-        wp_localize_script( 'wc_veruspay_admin_scripts', 'veruspay_admin_params', array( 'storecurrency' => get_woocommerce_currency() ) );
-        wp_enqueue_style( 'veruspay_admin_css', $wc_veruspay_global['paths']['admin']['css'] . 'wc-veruspay-admin.css' );
-        wp_enqueue_script( 'wc_veruspay_admin_scripts' );
-        echo '<div id="wc_veruspay_admin_menu"></div>';
-    }
-}
 // Check for store status, access code and connectivity
 $wc_veruspay_store_status = $this->get_option( 'enabled' );
 $wc_veruspay_store_stat_array = array();
@@ -1089,11 +1078,11 @@ else {
         foreach ( $wc_veruspay_global['chains'] as $key => $item ) {
             $_chain_up = strtoupper( $key );
             $_chain_lo = strtolower( $key );
-            // If wallet supports transparent addresses, check for manually entered addrs and cleanup addresses, prep for next step
+            // If wallet supports transparent addresses, check for manually entered addrs and cleanup addresses, prep and format before saving
             if ( $wc_veruspay_global['chains'][$_chain_up]['EN'] == 'yes' ) {
                 if ( $wc_veruspay_global['chains'][$_chain_up]['TC'] == 1 ){
                     if ( ( strpos( $wc_veruspay_global['chains'][$_chain_up]['AD'], 'e.g.') ) === FALSE ) {
-                        if ( strlen( $wc_veruspay_global['chains'][$_chain_up]['AD'] ) < 10 ) {
+                        if ( strlen( $wc_veruspay_global['chains'][$_chain_up]['AD'] ) < 30 ) {
                             $this->update_option( $_chain_lo . '_storeaddresses', '' );
                             $wc_veruspay_global['chains'][$_chain_up]['AD'] = '';
                             $wc_veruspay_global['chains'][$_chain_up]['AC'] = 0;
@@ -1105,6 +1094,16 @@ else {
                         }
                         $this->form_fields[ $_chain_lo . '_storeaddresses' ][ 'title' ] = __( 'Store Addresses (' . $wc_veruspay_global['chains'][$_chain_up]['AC'] . ')', 'veruspay-verus-gateway' );
                     }
+                    $wc_veruspay_store_data = $this->get_option( $_chain_lo . '_storeaddresses' );
+                    $wc_veruspay_global['chains'][$_chain_up]['AD'] = preg_replace( '/\s+/', '', $wc_veruspay_store_data );
+                    if ( strlen( $wc_veruspay_store_data ) < 30 ) {
+                        $wc_veruspay_global['chains'][$_chain_up]['AC'] = 0;
+                    }
+                    else if ( strlen( $wc_veruspay_store_data ) > 30 ) {
+                        $wc_veruspay_global['chains'][$_chain_up]['AD'] = explode( ',', $wc_veruspay_global['chains'][$_chain_up]['AD'] );
+                        $wc_veruspay_global['chains'][$_chain_up]['AC'] = count( $wc_veruspay_global['chains'][$_chain_up]['AD'] );
+                    }
+                    $wc_veruspay_global['chains'][$_chain_up]['UD'] = explode( ',', $this->get_option( $_chain_lo . '_usedaddresses' ));
                 }
             }
         }
