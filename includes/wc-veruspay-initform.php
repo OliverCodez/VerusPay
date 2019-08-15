@@ -857,11 +857,11 @@ else {
                 $wc_veruspay_generate_stat = json_decode( wc_veruspay_go( $wc_veruspay_global['chains'][$_chain_up]['DC'], $wc_veruspay_global['chains'][$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
                 if ( isset( $item['GS'] ) ) {
                     if ( $wc_veruspay_generate_stat['staking'] == TRUE ) {
-                        $_gs_title = '<span style="color:green">Staking Active</span>';
+                        $_gs_title = '<span class="wc_veruspay_green wc_veruspay_stake_' . $_chain_up . '">Staking Active</span>';
                         $_gs_class = ' wc_veruspay_is_checked';
                     }
                     else {
-                        $_gs_title = 'Activate Staking';
+                        $_gs_title = '<span class="wc_veruspay_stake_' . $_chain_up . '">Activate Staking</span>';
                         $_gs_class = ' wc_veruspay_is_unchecked';
                     }
                     $wc_veruspay_add_wallet_data['stake_enable_' . $_chain_up] = array(
@@ -874,16 +874,16 @@ else {
                 }
                 if ( isset( $item['GM'] ) ) {
                     if ( (int)$wc_veruspay_generate_stat['numthreads'] > 0 ) {
-                        $_gm_title = '<span style="color:green">Mining on ' . $wc_veruspay_generate_stat['numthreads'] . ' threads</span>';
+                        $_gm_title = '<span class="wc_veruspay_green wc_veruspay_mine_' . $_chain_up . '" data-threads="' . $wc_veruspay_generate_stat['numthreads'] . '">Mining on ' . $wc_veruspay_generate_stat['numthreads'] . ' threads</span>';
                         $_gm_class = ' wc_veruspay_is_active';
                         $_gm_stat = 'Active';
                         $_gm_stop = 'Stop Mining';
                     }
                     else {
-                        $_gm_title = 'Activate Mining on:';
+                        $_gm_title = '<span class="wc_veruspay_mine_' . $_chain_up . '" data-threads="' . $wc_veruspay_generate_stat['numthreads'] . '">Activate Mining</span>';
                         $_gm_class = ' wc_veruspay_is_inactive';
                         $_gm_stat = 'Inactive (Select Threads to Begin)';
-                        $_gm_stop = '0';
+                        $_gm_stop = 'Stop Mining';
                     }
                     $wc_veruspay_add_wallet_data['generate_threads_' . $_chain_up] = array(
                         'title' => __( $_gm_title, 'veruspay-verus-gateway' ),
