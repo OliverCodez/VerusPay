@@ -1,7 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 /**
  * Plugin Name: VerusPay Verus Gateway
  * Plugin URI: https://wordpress.org/plugins/veruspay-verus-gateway/
@@ -33,6 +30,7 @@ $wc_veruspay_pre = 'woocommerce_';
 $wc_veruspay_apd = '_settings';
 $wc_veruspay_woo = 'woocommerce/woocommerce.php';
 $wc_veruspay_ver = '0.4.0';
+// TODO : Change default to VRSC
 $wc_veruspay_default_coin = 'VRSCTEST';
 $wc_veruspay_vrsc_qr_version = '0.1.0';
 $wc_veruspay_io = 'https://veruspay.io/ext/';
@@ -465,7 +463,8 @@ function wc_veruspay_address_column_style() {
 
 function wc_veruspay_set_address( $order_id ) {
 	global $wc_veruspay_global;
-	$wc_veruspay_chains = get_option( $wc_veruspay_global['wc'] )['wc_veruspay_chains'];
+	$wc_veruspay_settings = get_option( $wc_veruspay_global['wc'] );
+	$wc_veruspay_chains = $wc_veruspay_settings['wc_veruspay_chains'];
 	// Only proceed if processing a VerusPay payment
 	if ( ! empty( get_post_meta( $order_id, '_wc_veruspay_coin', TRUE ) ) ) {
 		// If store is in Native mode and reachable, get a fresh address
@@ -504,9 +503,10 @@ function wc_veruspay_set_address( $order_id ) {
 						if ( ( $wc_veruspay_key = array_search( $wc_veruspay_address, $wc_veruspay_chains[$_chain_up]['AD'] ) ) !== FALSE ) {
 							unset( $wc_veruspay_chains[$_chain_up]['AD'][$wc_veruspay_key] );
 						}
-						update_option( $wc_veruspay_global['wc'][$_chain_lo . '_storeaddresses'], implode( ','.PHP_EOL, $wc_veruspay_chains[$_chain_up]['AD'] ) );
+						$wc_veruspay_settings[$_chain_lo . '_storeaddresses'] = implode( ','.PHP_EOL, $wc_veruspay_chains[$_chain_up]['AD'] );
 						array_push( $wc_veruspay_chains[$_chain_up]['UD'], $wc_veruspay_address );
-						update_option( $wc_veruspay_global['wc'][$_chain_lo . '_usedaddresses'], trim( implode( ','.PHP_EOL, $wc_veruspay_chains[$_chain_up]['UD'] ),"," ) );
+						$wc_veruspay_settings[$_chain_lo . '_usedaddresses'] = trim( implode( ','.PHP_EOL, $wc_veruspay_chains[$_chain_up]['UD'] ),"," );
+						update_option( $wc_veruspay_global['wc'], $wc_veruspay_settings );
 						$wc_veruspay_address = reset( $wc_veruspay_chains[$_chain_up]['AD'] );
 						if( strlen( $wc_veruspay_address ) < 10 ) {
 							update_post_meta( $order_id, '_wc_veruspay_address', sanitize_text_field( 'MissingAddress-1' ) );
@@ -520,9 +520,10 @@ function wc_veruspay_set_address( $order_id ) {
 					if ( ( $wc_veruspay_key = array_search( $wc_veruspay_address, $wc_veruspay_chains[$_chain_up]['AD'] ) ) !== FALSE ) {
 						unset( $wc_veruspay_chains[$_chain_up]['AD'][$wc_veruspay_key] );
 					}
-					update_option( $wc_veruspay_global['wc'][$_chain_lo . '_storeaddresses'], implode( ','.PHP_EOL, $wc_veruspay_chains[$_chain_up]['AD'] ) );
+					$wc_veruspay_settings[$_chain_lo . '_storeaddresses'] = implode( ','.PHP_EOL, $wc_veruspay_chains[$_chain_up]['AD'] );
 					array_push( $wc_veruspay_chains[$_chain_up]['UD'], $wc_veruspay_address );
-					update_option( $wc_veruspay_global['wc'][$_chain_lo . '_usedaddresses'], trim( implode( ','.PHP_EOL, $wc_veruspay_chains[$_chain_up]['UD'] ),"," ) );
+					$wc_veruspay_settings[$_chain_lo . '_usedaddresses'] = trim( implode( ','.PHP_EOL, $wc_veruspay_chains[$_chain_up]['UD'] ),"," );
+					update_option( $wc_veruspay_global['wc'], $wc_veruspay_settings );
 					if( strlen( $wc_veruspay_address ) < 10 ) {
 						update_post_meta( $order_id, '_wc_veruspay_address', sanitize_text_field( 'MissingAddress-2' ) );
 						update_post_meta( $order_id, '_wc_veruspay_status', sanitize_text_field( 'noaddress' ) );

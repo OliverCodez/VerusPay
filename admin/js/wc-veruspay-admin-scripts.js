@@ -17,6 +17,14 @@ jQuery( function( $ ) {
 		$( '.wc_veruspay_daemon_add-title' ).hide();
 		$( '.wc_veruspay_daemon_add-status').hide();
 		$( '.wc_veruspay_daemon_add-fn,.wc_veruspay_daemon_add-ip,.wc_veruspay_daemon_add-ssl,.wc_veruspay_daemon_add-code' ).closest('tbody').hide();
+
+		// Conditional
+		$( '.wc_veruspay_is_checked' ).prop( 'checked', true );
+		$( '.wc_veruspay_is_unchecked' ).prop( 'checked', false );
+		$( '.wc_veruspay_is_inactive option' ).prop( 'selected', false );
+		$( '.wc_veruspay_is_inactive option[value="Inactive (Select Threads to Begin)"]').prop( 'selected', true );
+		$( '.wc_veruspay_is_active option[value="Active"]' ).prop( 'selected', true );
+
 		// Conditional fields for discount/fee section
 		if ( $( '.wc_veruspay_setdiscount' ).is( ':checked' ) ) {
 			$( '.wc_veruspay_discount-toggle' ).closest('tr').show();
@@ -259,11 +267,6 @@ jQuery( function( $ ) {
 				}
 			});
 		}
-		// Refresh Staking/Mining Status
-		var refreshGenerateStat = function() {
-			
-		}
-
 		// Run process intervals
 		setInterval( function() {
 			lastPrice();
@@ -347,6 +350,28 @@ jQuery( function( $ ) {
 		// - //
 
 		// Mining Control //
+// TODO: Will need following for later
+		$( '.wc_veruspay_setstake' ).on( 'change', function(e) {
+			var stakeid = $( this ).attr( 'id' );
+			coin = stakeid.replace( 'woocommerce_veruspay_verus_gateway_stake_enable_', '' );
+			if ( $( this ).is( ':checked' ) ) {
+				alert(coin);
+			}
+			else {
+				alert('unchecked');
+			}
+		});
+
+
+		$( '.wc_veruspay_setgenerate' ).on( 'change', function(e) {
+			var optionSelected = $( 'option:selected', this );
+			var valueSelected = this.value;
+			var mineid = $( this ).attr( 'id' );
+			coin = mineid.replace( 'woocommerce_veruspay_verus_gateway_generate_threads_', '' );
+			alert(coin);
+			alert(valueSelected);
+		});
+
 
 		// - //
 
