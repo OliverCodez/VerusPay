@@ -13,7 +13,9 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
     public function __construct() {
         global $wc_veruspay_global;
         // Begin plugin definitions and define primary method title and description
-        $this->id = 'veruspay_verus_gateway';
+        $this->id = $wc_veruspay_global['id'];
+        $this->update_option( 'vrscqrver', $wc_veruspay_global['vrscqrver'] );
+        $this->update_option( 'default_coin', $wc_veruspay_global['default_coin'] );
         $this->icon = apply_filters( 'woocommerce_veruspay_icon', $wc_veruspay_global['paths']['public']['img'] . 'wc-veruspay-icon-32x.png' );
         $this->has_fields = TRUE;
         $this->method_title = __( 'VerusPay', 'veruspay-verus-gateway' );
@@ -22,6 +24,15 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
             'products'
         );
         if ( is_admin() ) {
+            // Load admin-only content
+            echo '<div id="wc_veruspay_loading"></div><style>#mainform{opacity:0;}</style>';
+            require_once( $wc_veruspay_global['paths']['admin_modal-3'] );
+            // Enqueue Admin JS and CSS; Initialize form
+            wp_register_script( 'wc_veruspay_admin_scripts', $wc_veruspay_global['paths']['admin']['js'] . 'wc-veruspay-admin-scripts.js' );
+            wp_localize_script( 'wc_veruspay_admin_scripts', 'veruspay_admin_params', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'storecurrency' => get_woocommerce_currency() ) );
+            wp_enqueue_style( 'veruspay_admin_css', $wc_veruspay_global['paths']['admin']['css'] . 'wc-veruspay-admin.css' );
+            wp_enqueue_script( 'wc_veruspay_admin_scripts' );
+            echo '<div id="wc_veruspay_admin_menu"></div>';
             $this->init_form_fields();
             // Possible future use: $this->init_settings();
         }
@@ -33,9 +44,9 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         else {
             $this->title = __( 'VerusPay', 'veruspay-verus-gateway' );
         }
-        $this->verusQR = '0.1.0'; // For Invoice QR codes
+        $this->verusQR = $this->get_option( 'vrscqrver'); // For Invoice QR codes  
         // TODO : Change to VRSC before release
-        $this->coin = 'VRSCTEST';
+        $this->coin = $this->get_option( 'default_coin' );
         $this->store_inv_msg = $this->get_option( 'qr_invoice_memo' );
         $this->store_img = $this->get_option( 'qr_invoice_image' );
         $this->description  = $this->get_option( 'description' );
@@ -46,22 +57,7 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         $this->email_cancelled = $this->get_option( 'email_cancelled' );
         $this->email_completed = $this->get_option( 'email_completed' );
         // Clean and count store addresses for backup / manual use
-        $wc_veruspay_chains_temp = $this->get_option('wc_veruspay_chains');
-        if ( ! empty( $wc_veruspay_chains_temp ) ) {
-            foreach ( $wc_veruspay_chains_temp as $key => $item ) {
-                $wc_veruspay_store_data = $this->get_option( strtolower( $key ) . '_storeaddresses' );
-                $wc_veruspay_chains_temp[$key]['AD'] = preg_replace( '/\s+/', '', $wc_veruspay_store_data );
-                if ( strlen( $wc_veruspay_store_data ) < 10 ) {
-                    $wc_veruspay_chains_temp[$key]['AC'] = 0;
-                }
-                else if ( strlen( $wc_veruspay_store_data ) > 10 ) {
-                    $wc_veruspay_chains_temp[$key]['AD'] = explode( ',', $wc_veruspay_chains_temp[$key]['AD'] );
-                    $wc_veruspay_chains_temp[$key]['AC'] = count( $wc_veruspay_chains_temp[$key]['AD'] );
-                }
-                $wc_veruspay_chains_temp[$key]['UD'] = explode( ',', $this->get_option( strtolower( $key ) . '_usedaddresses' ));
-            }
-        }
-        $this->chains = $wc_veruspay_chains_temp;
+        $this->chains = $this->get_option('wc_veruspay_chains');
         $this->decimals = $this->get_option( 'decimals' ); 
         $this->pricetime = $this->get_option( 'pricetime' );
         $this->orderholdtime = $this->get_option( 'orderholdtime' );
@@ -73,60 +69,6 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         if ( is_numeric( $this->get_option( 'disc_amt' ) ) ) {
             $this->verus_dis_amt = ( $this->get_option( 'disc_amt' ) / 100 );
         }
-        // Process Custom Ajax
-        if ( is_admin() ) {
-            if ( isset( $_POST['veruspayajax'] ) && sanitize_text_field( $_POST['veruspayajax'] ) == "1" ) {
-                // Get price update
-                if ( sanitize_text_field( $_POST['veruspaycommand'] ) == 'price' ) {
-                    $_chain_up = strtoupper( sanitize_text_field( $_POST['coin'] ) );
-                    $_currency = get_woocommerce_currency();
-                    echo wc_veruspay_price( $_chain_up, $_currency );
-                    die();
-                }
-                // If command to Cashout
-                if ( sanitize_text_field( $_POST['veruspaycommand'] ) == 'cashout' ) {
-                    $vtype = sanitize_text_field( $_POST['type'] );
-                    $_chain_up = strtoupper( sanitize_text_field( $_POST['coin'] ) );
-                    $_chain_lo = strtolower( $_chain_up );
-                    if ( $vtype == 'cashout_t' ) {
-                        $wc_veruspay_cashout_results = wc_veruspay_go( $this->chains[$_chain_up]['DC'], $this->chains[$_chain_up]['IP'], $_chain_up, $vtype );
-                        require_once( $wc_veruspay_global['paths']['admin_modal-0'] );
-                    }
-                    if ( $vtype == 'cashout_z' ) {
-                        $wc_veruspay_cashout_results = json_decode( wc_veruspay_go( $this->chains[$_chain_up]['DC'], $this->chains[$_chain_up]['IP'], $_chain_up, $vtype ), TRUE );
-                        require_once( $wc_veruspay_global['paths']['admin_modal-1'] );
-                        foreach( $wc_veruspay_cashout_results as $key => $item ) {
-                            require_once( $wc_veruspay_global['paths']['admin_modal-2'] );
-                        }
-                    }
-                    die();
-                }
-                // If command to check balances
-                if ( sanitize_text_field( $_POST['veruspaycommand'] ) == 'balance' ) {
-                    $ctype = sanitize_text_field( $_POST['type'] );
-                    $_chain_up = strtoupper( sanitize_text_field( $_POST['coin'] ) );
-                    $_chain_lo = strtolower( $_chain_up );
-                    $wc_veruspay_balance_refresh = json_decode( wc_veruspay_go( $this->chains[$_chain_up]['DC'], $this->chains[$_chain_up]['IP'], $_chain_up, 'bal' ), TRUE )[$ctype];
-                    if ( strpos( $wc_veruspay_balance_refresh, 'Not Found' ) !== FALSE ) {
-                        echo 'Err: ' . $wc_veruspay_global['text_help']['admin_0'];
-                    }
-                    else if ( number_format( $wc_veruspay_balance_refresh, 8) == NULL ) {
-                        echo 'Err: ' . $wc_veruspay_global['text_help']['admin_1'];
-                    }
-                    else {
-                        echo number_format( $wc_veruspay_balance_refresh, 8);
-                    }
-                    die();
-                }
-                // If mining on
-                if ( sanitize_text_field( $_POST['veruspaycommand'] ) == 'generate' ) {
-                    // TODO : AJAX Mining and Staking control and stat - Coming Soon
-                    die();
-                }
-            }
-            // Set admin modal
-            require_once( $wc_veruspay_global['paths']['admin_modal-3'] );
-        }
         // Add actions for payment gateway, scripts, thank you page, and emails
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
         add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
@@ -135,7 +77,8 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
     }
     /**
      * Init Form Fields
-     * Initialize form fields
+     * 
+     * Initialize form fields for the admin settings area only
      * @access public
      * @param global $wc_veruspay_global
      */
@@ -254,7 +197,13 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         // Setup Sapling checkbox if Sapling is not enforced by store owner setting, unless enforced by coin (ARRR)
         $wc_veruspay_sapling_option = '';
         if( is_checkout() && $wc_veruspay_payment_method == 'veruspay_verus_gateway' && $this->chains[$_chain_up]['ST'] == 1 && $this->chains[$_chain_up]['ZC'] == 1 && $this->chains[$_chain_up]['SP'] == 'no' ) {
-            $wc_veruspay_sapling_option = '<div class="wc_veruspay_sapling-option"><div class="wc_veruspay_sapling-checkbox wc_veruspay_sapling_tooltip"><label><input id="veruspay_sapling" type="checkbox" class="checkbox" name="wc_veruspay_sapling" value="yes" checked>' . $wc_veruspay_global['text_help']['msg_sapling_label'] . '</label><span class="wc_veruspay_sapling_tooltip-text">' . $wc_veruspay_global['text_help']['msg_sapling_tooltip'] . '</span></div></div>';
+            if ( $this->chains[$_chain_up]['SD'] == 'no' ) {
+                $_sapling_checked = ' ';
+            }
+            else {
+                $_sapling_checked = ' checked';
+            }
+            $wc_veruspay_sapling_option = '<div class="wc_veruspay_sapling-option"><div class="wc_veruspay_sapling-checkbox wc_veruspay_sapling_tooltip"><label><input id="veruspay_sapling" type="checkbox" class="checkbox" name="wc_veruspay_sapling" value="yes"'.$_sapling_checked.'>' . $wc_veruspay_global['text_help']['msg_sapling_label'] . '</label><span class="wc_veruspay_sapling_tooltip-text">' . $wc_veruspay_global['text_help']['msg_sapling_tooltip'] . '</span></div></div>';
         }
         else if ( is_checkout() && $wc_veruspay_payment_method == 'veruspay_verus_gateway' && $this->chains[$_chain_up]['ST'] == 1 && $this->chains[$_chain_up]['ZC'] == 1 && $this->chains[$_chain_up]['SP'] == 'yes' ) {
             echo '<input id="veruspay_enforce_sapling" type="hidden" name="wc_veruspay_sapling" value="yes">';

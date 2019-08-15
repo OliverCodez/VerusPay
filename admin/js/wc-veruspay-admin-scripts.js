@@ -1,4 +1,5 @@
 var storecurrency = veruspay_admin_params.storecurrency;
+var ajax_url = veruspay_admin_params.ajax_url;
 jQuery( function( $ ) {
 	$(document).ready(function() {
 		$( '#verus_chain_tools_version' ).insertAfter('#woocommerce_veruspay_verus_gateway_access_code').css('display','inline-block');
@@ -9,12 +10,21 @@ jQuery( function( $ ) {
 		$( '#wc_veruspay_admin_menu' ).insertBefore( '.wc_veruspay_toggledaemon' );
 		$( '.wc_veruspay_tab-container' ).appendTo( '#wc_veruspay_admin_menu' );
 		$( '.wc_veruspay_noinput' ).closest( 'tr' ).addClass( 'wc_veruspay_titleonly_row' );
+		$( '.wc_veruspay_noinput' ).closest( 'tr' ).find( 'td' ).find( 'legend' ).remove();
 		$( '.wc_veruspay_title-sub_normal' ).closest( 'tr' ).addClass ( 'wc_veruspay_title-sub_normal' );
 		$( '.wc_veruspay_set_css' ).closest( 'div' ).addClass( 'wc_veruspay_wrapper' );
 		$( '.wc_veruspay_daemon_add-button').closest('td').prev().hide();
 		$( '.wc_veruspay_daemon_add-title' ).hide();
 		$( '.wc_veruspay_daemon_add-status').hide();
 		$( '.wc_veruspay_daemon_add-fn,.wc_veruspay_daemon_add-ip,.wc_veruspay_daemon_add-ssl,.wc_veruspay_daemon_add-code' ).closest('tbody').hide();
+
+		// Conditional
+		$( '.wc_veruspay_is_checked' ).prop( 'checked', true );
+		$( '.wc_veruspay_is_unchecked' ).prop( 'checked', false );
+		$( '.wc_veruspay_is_inactive option' ).prop( 'selected', false );
+		$( '.wc_veruspay_is_inactive option[value="Inactive (Select Threads to Begin)"]').prop( 'selected', true );
+		$( '.wc_veruspay_is_active option[value="Active"]' ).prop( 'selected', true );
+
 		// Conditional fields for discount/fee section
 		if ( $( '.wc_veruspay_setdiscount' ).is( ':checked' ) ) {
 			$( '.wc_veruspay_discount-toggle' ).closest('tr').show();
@@ -183,8 +193,12 @@ jQuery( function( $ ) {
 				var lastval = $( this ).text();
 				var div = this;
 				$.ajax({
+					url: ajax_url,
 					type: "POST",
-					data: { "veruspayajax":"1", "veruspaycommand":"price", "coin":coin },
+					data: {
+						action:"wc_veruspay_price_refresh",
+						"coin":coin
+					},
 					success: function(response){
 						$(div).hide();
 						newval = response;
@@ -213,17 +227,22 @@ jQuery( function( $ ) {
 				});
 			});
 		}
-				
 		// Refresh balances
 		var refreshBalance = function() {
 			$( ".wc_veruspay_bal_admin" ).each(function() {
 				var ccoin = $(this).attr("data-coin");
 				var ctype = $(this).attr("data-type");
 				var update = $(this).attr('id');
+				var div = this;
 				if ( $('#wc_veruspay_'+ccoin+'_nostat').length == 0 ) {
 					$.ajax({
+						url: ajax_url,
 						type: "POST",
-						data: { "veruspayajax":"1", "veruspaycommand":"balance", "coin":ccoin, "type":ctype },
+						data: {
+							action:"wc_veruspay_balance_refresh",
+							"coin":ccoin,
+							"type":ctype
+						},
 						success: function(response){
 							if ( response == 0 ) {
 								$("#"+update).removeClass("wc_veruspay_red");
@@ -248,7 +267,6 @@ jQuery( function( $ ) {
 				}
 			});
 		}
-
 		// Run process intervals
 		setInterval( function() {
 			lastPrice();
@@ -258,7 +276,7 @@ jQuery( function( $ ) {
 		setInterval( function() {
 			refreshBalance();
 			var nowtime = $.now();
-		}, (15000));
+		}, (20000));
 		// - //
 
 		$('.wc_veruspay_daemon_add-button').click(function() {
@@ -309,8 +327,13 @@ jQuery( function( $ ) {
 			$('.wc_veruspay_modal_address').text('');
 			$('.wc_veruspay_cashout_processing-modalback').fadeIn();
 			$.ajax({
+				url: ajax_url,
 				type: "POST",
-				data: { "veruspayajax":"1", "veruspaycommand":"cashout", "coin":vcoin, "type":vtype }
+				data: {
+					action:"wc_veruspay_cashout_do",
+					"coin":vcoin,
+					"type":vtype
+				}
 			}).done(function(data) {
 				$('.wc_veruspay_cashout_processing-modalback').hide();
 				$('.wc_veruspay_cashout_complete-modalcontent').html(data);
@@ -327,6 +350,28 @@ jQuery( function( $ ) {
 		// - //
 
 		// Mining Control //
+// TODO: Will need following for later
+		$( '.wc_veruspay_setstake' ).on( 'change', function(e) {
+			var stakeid = $( this ).attr( 'id' );
+			coin = stakeid.replace( 'woocommerce_veruspay_verus_gateway_stake_enable_', '' );
+			if ( $( this ).is( ':checked' ) ) {
+				alert(coin);
+			}
+			else {
+				alert('unchecked');
+			}
+		});
+
+
+		$( '.wc_veruspay_setgenerate' ).on( 'change', function(e) {
+			var optionSelected = $( 'option:selected', this );
+			var valueSelected = this.value;
+			var mineid = $( this ).attr( 'id' );
+			coin = mineid.replace( 'woocommerce_veruspay_verus_gateway_generate_threads_', '' );
+			alert(coin);
+			alert(valueSelected);
+		});
+
 
 		// - //
 
