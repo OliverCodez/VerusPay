@@ -25,7 +25,7 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         );
         if ( is_admin() ) {
             // Load admin-only content
-            echo '<div id="wc_veruspay_loading"></div><style>#mainform{opacity:0;}</style>';
+            echo '<div id="wc_veruspay_loading"></div><div id="wc_veruspay_gen_modal" style="display:none;"><p id="wc_veruspay-activatingstake">Activating Staking</p><p id="wc_veruspay-deactivatingstake">Deactivating Staking</p><p id="wc_veruspay-activatingmine">Activating Mining</p><p id="wc_veruspay-deactivatingmine">Deactivating Mining</p></div><style>#mainform{opacity:0;}</style>';
             require_once( $wc_veruspay_global['paths']['admin_modal-3'] );
             // Enqueue Admin JS and CSS; Initialize form
             wp_register_script( 'wc_veruspay_admin_scripts', $wc_veruspay_global['paths']['admin']['js'] . 'wc-veruspay-admin-scripts.js' );
