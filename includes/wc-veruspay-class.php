@@ -34,7 +34,6 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
             wp_enqueue_script( 'wc_veruspay_admin_scripts' );
             echo '<div id="wc_veruspay_admin_menu"></div>';
             $this->init_form_fields();
-            // Possible future use: $this->init_settings();
         }
         $this->enabled = $this->get_option( 'enabled' );
         $this->test_mode = 'yes' == $this->get_option( 'test_mode' );
@@ -44,8 +43,7 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         else {
             $this->title = __( 'VerusPay', 'veruspay-verus-gateway' );
         }
-        $this->verusQR = $this->get_option( 'vrscqrver'); // For Invoice QR codes  
-        // TODO : Change to VRSC before release
+        $this->verusQR = $this->get_option( 'vrscqrver'); // For Invoice QR codes
         $this->coin = $this->get_option( 'default_coin' );
         $this->store_inv_msg = $this->get_option( 'qr_invoice_memo' );
         $this->store_img = $this->get_option( 'qr_invoice_image' );
@@ -84,7 +82,7 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
      */
     public function init_form_fields() {
         global $wc_veruspay_global;
-        require_once( $wc_veruspay_global['paths']['init_path'] );
+        require_once( $wc_veruspay_global['paths']['admin_init'] );
     }
     /**
      * Payment Scripts
