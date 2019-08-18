@@ -14,6 +14,7 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         global $wc_veruspay_global;
         // Begin plugin definitions and define primary method title and description
         $this->id = $wc_veruspay_global['id'];
+        $this->mode = get_option( 'veruspay_mode' );
         $this->update_option( 'vrscqrver', $wc_veruspay_global['vrscqrver'] );
         $this->update_option( 'default_coin', $wc_veruspay_global['default_coin'] );
         $this->icon = apply_filters( 'woocommerce_veruspay_icon', $wc_veruspay_global['paths']['public']['img'] . 'wc-veruspay-icon-32x.png' );
@@ -23,25 +24,15 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         $this->supports = array(
             'products'
         );
-        if ( is_admin() ) {
-            // Load admin-only content
-            echo '<div id="wc_veruspay_loading"></div><div id="wc_veruspay_gen_modal" style="display:none;"><p id="wc_veruspay-activatingstake">Activating Staking</p><p id="wc_veruspay-deactivatingstake">Deactivating Staking</p><p id="wc_veruspay-activatingmine">Activating Mining</p><p id="wc_veruspay-deactivatingmine">Deactivating Mining</p></div><style>#mainform{opacity:0;}</style>';
-            require_once( $wc_veruspay_global['paths']['admin_modal-3'] );
-            // Enqueue Admin JS and CSS; Initialize form
-            wp_register_script( 'wc_veruspay_admin_scripts', $wc_veruspay_global['paths']['admin']['js'] . 'wc-veruspay-admin-scripts.js' );
-            wp_localize_script( 'wc_veruspay_admin_scripts', 'veruspay_admin_params', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'storecurrency' => get_woocommerce_currency() ) );
-            wp_enqueue_style( 'veruspay_admin_css', $wc_veruspay_global['paths']['admin']['css'] . 'wc-veruspay-admin.css' );
-            wp_enqueue_script( 'wc_veruspay_admin_scripts' );
-            echo '<div id="wc_veruspay_admin_menu"></div>';
-            $this->init_form_fields();
-        }
         $this->enabled = $this->get_option( 'enabled' );
         $this->test_mode = 'yes' == $this->get_option( 'test_mode' );
         if ( $this->test_mode ) {
             $this->title = __( 'TEST MODE', 'veruspay-verus-gateway' );
+            $this->testmsg = '<span sclass="wc_veruspay_red">TEST MODE ENABLED</span>';
         }
         else {
             $this->title = __( 'VerusPay', 'veruspay-verus-gateway' );
+            $this->testmsg = 'TEST MODE';
         }
         $this->verusQR = $this->get_option( 'vrscqrver'); // For Invoice QR codes
         $this->coin = $this->get_option( 'default_coin' );
@@ -66,6 +57,18 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         $this->verus_dis_type = $this->get_option( 'disc_type' );
         if ( is_numeric( $this->get_option( 'disc_amt' ) ) ) {
             $this->verus_dis_amt = ( $this->get_option( 'disc_amt' ) / 100 );
+        }
+        if ( is_admin() ) {
+            // Load admin-only content
+            echo '<div id="wc_veruspay_loading"></div><div id="wc_veruspay_setup_modal" style="display:none;"><p id="wc_veruspay_mode-full">Full Mode Selected: Provide your first (primary) Daemon Server details then click Continue.</p><p id="wc_veruspay_mode-manual">Manual Mode Selected, click Continue.</p><p id="wc_veruspay_mode-hosted">Not Yet Available (coming soon)</p></div><div id="wc_veruspay_gen_modal" style="display:none;"><p id="wc_veruspay-activatingstake">Activating Staking</p><p id="wc_veruspay-deactivatingstake">Deactivating Staking</p><p id="wc_veruspay-activatingmine">Activating Mining</p><p id="wc_veruspay-deactivatingmine">Deactivating Mining</p></div><style>#mainform{opacity:0;}</style>';
+            require_once( $wc_veruspay_global['paths']['admin_modal-3'] );
+            // Enqueue Admin JS and CSS; Initialize form
+            wp_register_script( 'wc_veruspay_admin_scripts', $wc_veruspay_global['paths']['admin']['js'] . 'wc-veruspay-admin-scripts.js' );
+            wp_localize_script( 'wc_veruspay_admin_scripts', 'veruspay_admin_params', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'storecurrency' => get_woocommerce_currency() ) );
+            wp_enqueue_style( 'veruspay_admin_css', $wc_veruspay_global['paths']['admin']['css'] . 'wc-veruspay-admin.css' );
+            wp_enqueue_script( 'wc_veruspay_admin_scripts' );
+            echo '<div id="wc_veruspay_admin_menu" class="wc_veruspay_noheight"></div>';
+            $this->init_form_fields();
         }
         // Add actions for payment gateway, scripts, thank you page, and emails
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );

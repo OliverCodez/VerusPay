@@ -2,30 +2,47 @@ var storecurrency = veruspay_admin_params.storecurrency;
 var ajax_url = veruspay_admin_params.ajax_url;
 jQuery( function( $ ) {
 	$(document).ready(function() {
+		/**
+		 * On Load Section
+		 * Functions and changes occurring on load only
+		 */
+		// Check and reload if just saved
+		if ( $( '#message' ).hasClass( 'updated' ) ) {
+			var savedURL = location.href + '&veruspay_settings_saved';
+			location.href = savedURL;
+			location.reload();
+		}
+		if ( $('.wc_veruspay_togglewallet').hasClass( 'wallet_updated' ) ) {
+			location.reload();
+		}
+		// Format and adjust classes on load
 		$( '#verus_chain_tools_version' ).insertAfter('#woocommerce_veruspay_verus_gateway_access_code').css('display','inline-block');
 		$( '.wc_veruspay_checkbox_option' ).closest( 'label' ).addClass( 'wc_veruspay_control wc_veruspay_control--checkbox' );
 		$( '<div class="wc_veruspay_control_container"><div class="wc_veruspay_control__indicator"></div></div>' ).insertAfter( '.wc_veruspay_checkbox_option' );
 		$( '.wc_veruspay_section_heading' ).next().find( 'tbody' ).addClass( 'wc_veruspay_section_body' );
 		$( '.wc_veruspay_tab-container' ).next( 'table' ).remove();
-		$( '#wc_veruspay_admin_menu' ).insertBefore( '.wc_veruspay_toggledaemon' );
-		$( '.wc_veruspay_tab-container' ).appendTo( '#wc_veruspay_admin_menu' );
+		if ( $('.wc_veruspay_toggledaemon').length == 0 ) {
+			$( '#wc_veruspay_admin_menu' ).remove();
+			$( '.woocommerce-save-button' ).text( 'Continue' );
+		}
+		else {
+			$( '#wc_veruspay_admin_menu' ).removeClass( 'wc_veruspay_noheight' ).insertBefore( '.wc_veruspay_toggledaemon' );
+			$( '.wc_veruspay_tab-container' ).appendTo( '#wc_veruspay_admin_menu' );
+		}
 		$( '.wc_veruspay_noinput' ).closest( 'tr' ).addClass( 'wc_veruspay_titleonly_row' );
 		$( '.wc_veruspay_noinput' ).closest( 'tr' ).find( 'td' ).find( 'legend' ).remove();
 		$( '.wc_veruspay_title-sub_normal' ).closest( 'tr' ).addClass ( 'wc_veruspay_title-sub_normal' );
 		$( '.wc_veruspay_set_css' ).closest( 'div' ).addClass( 'wc_veruspay_wrapper' );
+		$( '.wc_veruspay_hide_all' ).closest( 'tr' ).hide();
 		$( '.wc_veruspay_daemon_add-button').closest('td').prev().hide();
 		$( '.wc_veruspay_daemon_add-title' ).hide();
 		$( '.wc_veruspay_daemon_add-status').hide();
 		$( '.wc_veruspay_daemon_add-fn,.wc_veruspay_daemon_add-ip,.wc_veruspay_daemon_add-ssl,.wc_veruspay_daemon_add-code' ).closest('tbody').hide();
-
-		// Conditional
 		$( '.wc_veruspay_is_checked' ).prop( 'checked', true );
 		$( '.wc_veruspay_is_unchecked' ).prop( 'checked', false );
 		$( '.wc_veruspay_is_inactive option' ).prop( 'selected', false );
 		$( '.wc_veruspay_is_inactive option[value="Inactive (Select Threads to Begin)"]').prop( 'selected', true );
 		$( '.wc_veruspay_is_active option[value="Active"]' ).prop( 'selected', true );
-
-		// Conditional fields for discount/fee section
 		if ( $( '.wc_veruspay_setdiscount' ).is( ':checked' ) ) {
 			$( '.wc_veruspay_discount-toggle' ).closest('tr').show();
 		}
@@ -39,16 +56,7 @@ jQuery( function( $ ) {
 				$( '.wc_veruspay_discount-toggle' ).closest('tr').hide();
 			}
 		});
-		if ( $( '#message' ).hasClass( 'updated' ) ) {
-			var savedURL = location.href + '&veruspay_settings_saved';
-			location.href = savedURL;
-			//location.reload();
-		}
-		if ( $('.wc_veruspay_togglewallet').hasClass( 'wallet_updated' ) ) {
-			location.reload();
-		}
 		$( '.wc_veruspay_toggledaemon' ).addClass( 'wc_veruspay_active_tab' );
-
 		$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
 		$( '.wc_veruspay_walletsettings-toggle' ).addClass('wc_veruspay_set_css');
 		$( '.wc_veruspay_addresses-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
@@ -59,6 +67,49 @@ jQuery( function( $ ) {
 		$( '.wc_veruspay_options-toggle' ).addClass('wc_veruspay_set_css');
 		$( '.wc_veruspay_hostedsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
 		$( '.wc_veruspay_hostedsettings-toggle' ).addClass('wc_veruspay_set_css');
+		// After Loaded, Fade-Out Loading Screen
+		$( '#wc_veruspay_loading' ).delay(4000).queue( function( next ){
+			$( this ).fadeOut(800);
+			$( '#mainform' ).addClass( 'wc_veruspay_fadein' ).css('opacity','');
+			next();
+		});
+
+		/**
+		 * Interactive Section
+		 * Click, Select, Intervals, Change events, etc
+		 */
+		// Setup Page
+		$( '.wc_veruspay_mode_select' ).on( 'change', function(e) {
+			var valueSelected = this.value;
+			if ( valueSelected == '0' ) {
+				$( '#wc_veruspay_setup_modal' ).fadeIn();
+				$( '#wc_veruspay_mode-full' ).fadeIn().delay(1000).queue( function( next ) {
+					$( '.wc_veruspay_daemonsettings-toggle' ).closest( 'tr' ).show();
+					$( '#wc_veruspay_setup_modal' ).fadeOut();
+					$( this ).fadeOut();
+					next();
+				});
+			}
+			if ( valueSelected == '1' ) {
+				$( '#wc_veruspay_setup_modal' ).fadeIn();
+				$( '#wc_veruspay_mode-manual' ).fadeIn().delay(1000).queue( function( next ) {
+					$( '.wc_veruspay_daemonsettings-toggle' ).closest( 'tr' ).hide();
+					$( '#wc_veruspay_setup_modal' ).fadeOut();
+					$( this ).fadeOut();
+					next();
+				});
+			}
+			// Not Yet Implemented:
+			/*if ( valueSelected == '2' ) {
+				$( '#wc_veruspay_setup_modal' ).fadeIn();
+				$( '#wc_veruspay_mode-hosted' ).fadeIn().delay(3000).queue( function( next ) {
+					$( '#wc_veruspay_setup_modal' ).fadeOut();
+					$( this ).fadeOut();
+					next();
+				});
+			}*/
+		});
+
 		// Click actions  wc_veruspay_customization-toggle
 		$('.wc_veruspay_toggledaemon').click(function(e) {
 			if ( ! ( $( this ).hasClass( 'wc_veruspay_active_tab' ) ) ) {
@@ -180,11 +231,6 @@ jQuery( function( $ ) {
 				$( '.wc_veruspay_hostedsettings-toggle' ).removeClass('wc_veruspay_set_css');
 			}
 		});
-		$( '#wc_veruspay_loading' ).delay(2000).queue( function( next ){
-			$( this ).addClass( 'wc_veruspay_fadeout' );
-			$( '#mainform' ).addClass( 'wc_veruspay_fadein' ).css('opacity','');
-			next();
-		});
 		// Refresh prices
 		var lastPrice = function() {
 			$( '.wc_veruspay_fiat_rate' ).each( function() {
@@ -294,10 +340,8 @@ jQuery( function( $ ) {
 			var icomm = $(this).attr("data-type");
 			var iamount = $(this).attr("data-amount");
 			var iaddress = $(this).attr("data-address");
-
 			$('#wc_veruspay_modal_button-cashout').attr("data-coin",icoin);
 			$('#wc_veruspay_modal_button-cashout').attr("data-type",icomm);
-
 			$('.wc_veruspay_modal_coin').text(icoin);
 			$('.wc_veruspay_modal_type').text(itype);
 			$('.wc_veruspay_modal_amount').text(iamount);

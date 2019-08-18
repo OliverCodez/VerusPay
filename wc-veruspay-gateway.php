@@ -64,6 +64,7 @@ $wc_veruspay_global = array(
 		'admin_plugin' => $wc_veruspay_root . 'admin/includes/wc-veruspay-admin_plugin.php',
 		'admin_store' => $wc_veruspay_root . 'admin/includes/wc-veruspay-admin_store.php',
 		'admin_ajax' => $wc_veruspay_root . 'admin/includes/wc-veruspay-admin_ajax.php',
+		'admin_func' => $wc_veruspay_root . 'admin/includes/wc-veruspay-admin_func.php',
 		'admin_modal-0' => $wc_veruspay_root . 'admin/includes/wc-veruspay-admin_modal-0.php',
 		'admin_modal-1' => $wc_veruspay_root . 'admin/includes/wc-veruspay-admin_modal-1.php',
 		'admin_modal-2' => $wc_veruspay_root . 'admin/includes/wc-veruspay-admin_modal-2.php',
@@ -157,6 +158,7 @@ function wc_veruspay_init() {
         add_action( 'wp_ajax_wc_veruspay_balance_refresh', 'wc_veruspay_balance_refresh' );
 		add_action( 'wp_ajax_wc_veruspay_generate_ctrl', 'wc_veruspay_generate_ctrl' );
 		require_once( $wc_veruspay_global['paths']['admin_ajax'] );
+		require_once( $wc_veruspay_global['paths']['admin_func'] );
 	}
 }
 /**
@@ -797,18 +799,4 @@ function wc_veruspay_check_order_status() {
 			}	
 		}
 	}        
-}
-// Operational functions
-function array_splice_assoc( &$input, $offset, $length, $replacement ) {
-	$replacement = ( array ) $replacement;
-	$key_indices = array_flip(array_keys( $input ) );
-	if ( isset( $input[$offset] ) && is_string( $offset ) ) {
-		$offset = $key_indices[$offset];
-	}
-	if ( isset( $input[$length] ) && is_string( $length ) ) {
-		$length = $key_indices[$length] - $offset;
-	}
-	$input = array_slice( $input, 0, $offset, TRUE )
-					+ $replacement
-					+ array_slice( $input, $offset + $length, NULL, TRUE );
 }
