@@ -14,7 +14,7 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         global $wc_veruspay_global;
         // Begin plugin definitions and define primary method title and description
         $this->id = $wc_veruspay_global['id'];
-        $this->mode = get_option( 'veruspay_mode' );
+        $this->mode = $this->get_option( 'veruspay_mode' );
         $this->update_option( 'vrscqrver', $wc_veruspay_global['vrscqrver'] );
         $this->update_option( 'default_coin', $wc_veruspay_global['default_coin'] );
         $this->icon = apply_filters( 'woocommerce_veruspay_icon', $wc_veruspay_global['paths']['public']['img'] . 'wc-veruspay-icon-32x.png' );

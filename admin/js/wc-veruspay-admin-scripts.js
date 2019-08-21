@@ -21,12 +21,21 @@ jQuery( function( $ ) {
 		$( '<div class="wc_veruspay_control_container"><div class="wc_veruspay_control__indicator"></div></div>' ).insertAfter( '.wc_veruspay_checkbox_option' );
 		$( '.wc_veruspay_section_heading' ).next().find( 'tbody' ).addClass( 'wc_veruspay_section_body' );
 		$( '.wc_veruspay_tab-container' ).next( 'table' ).remove();
-		if ( $('.wc_veruspay_toggledaemon').length == 0 ) {
+		if ( $('.wc_veruspay_toggledaemon').length == 0 && $('.wc_veruspay_togglecoins').length == 0 ) {
+			alert('setup');
 			$( '#wc_veruspay_admin_menu' ).remove();
 			$( '.woocommerce-save-button' ).text( 'Continue' );
 		}
-		else {
+		if ( $('.wc_veruspay_toggledaemon').length == 1 ) {
+			alert('daemons');
+			$( '.wc_veruspay_coinsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+			$( '.wc_veruspay_coinsettings-toggle' ).addClass('wc_veruspay_set_css');
 			$( '#wc_veruspay_admin_menu' ).removeClass( 'wc_veruspay_noheight' ).insertBefore( '.wc_veruspay_toggledaemon' );
+			$( '.wc_veruspay_tab-container' ).appendTo( '#wc_veruspay_admin_menu' );
+		}
+		if ( $('.wc_veruspay_toggledaemon').length == 0 && $('.wc_veruspay_togglecoins').length == 1 ) {
+			alert('coin only');
+			$( '#wc_veruspay_admin_menu' ).removeClass( 'wc_veruspay_noheight' ).insertBefore( '.wc_veruspay_togglecoins' );
 			$( '.wc_veruspay_tab-container' ).appendTo( '#wc_veruspay_admin_menu' );
 		}
 		$( '.wc_veruspay_noinput' ).closest( 'tr' ).addClass( 'wc_veruspay_titleonly_row' );
@@ -34,10 +43,17 @@ jQuery( function( $ ) {
 		$( '.wc_veruspay_title-sub_normal' ).closest( 'tr' ).addClass ( 'wc_veruspay_title-sub_normal' );
 		$( '.wc_veruspay_set_css' ).closest( 'div' ).addClass( 'wc_veruspay_wrapper' );
 		$( '.wc_veruspay_hide_all' ).closest( 'tr' ).hide();
+		// Daemon Adds
 		$( '.wc_veruspay_daemon_add-button').closest('td').prev().hide();
 		$( '.wc_veruspay_daemon_add-title' ).hide();
 		$( '.wc_veruspay_daemon_add-status').hide();
 		$( '.wc_veruspay_daemon_add-fn,.wc_veruspay_daemon_add-ip,.wc_veruspay_daemon_add-ssl,.wc_veruspay_daemon_add-code' ).closest('tbody').hide();
+		// Coin Adds
+		$( '.wc_veruspay_coin_add-button').closest('td').prev().hide();
+		$( '.wc_veruspay_coin_add-title' ).hide();
+		$( '.wc_veruspay_coin_add-status').hide();
+		$( '.wc_veruspay_coin_add-fn,.wc_veruspay_coin_add-ip,.wc_veruspay_coin_add-ssl,.wc_veruspay_coin_add-code' ).closest('tbody').hide();
+		// Check boxes
 		$( '.wc_veruspay_is_checked' ).prop( 'checked', true );
 		$( '.wc_veruspay_is_unchecked' ).prop( 'checked', false );
 		$( '.wc_veruspay_is_inactive option' ).prop( 'selected', false );
@@ -56,7 +72,12 @@ jQuery( function( $ ) {
 				$( '.wc_veruspay_discount-toggle' ).closest('tr').hide();
 			}
 		});
-		$( '.wc_veruspay_toggledaemon' ).addClass( 'wc_veruspay_active_tab' );
+		if ( $('.wc_veruspay_toggledaemon').length == 0 && $('.wc_veruspay_togglecoins').length == 1 ) {
+			$( '.wc_veruspay_togglecoins' ).addClass( 'wc_veruspay_active_tab' );
+		}
+		else {
+			$( '.wc_veruspay_toggledaemon' ).addClass( 'wc_veruspay_active_tab' );
+		}
 		$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
 		$( '.wc_veruspay_walletsettings-toggle' ).addClass('wc_veruspay_set_css');
 		$( '.wc_veruspay_addresses-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
@@ -81,7 +102,7 @@ jQuery( function( $ ) {
 		// Setup Page
 		$( '.wc_veruspay_mode_select' ).on( 'change', function(e) {
 			var valueSelected = this.value;
-			if ( valueSelected == '0' ) {
+			if ( valueSelected == 'daemon' ) {
 				$( '#wc_veruspay_setup_modal' ).fadeIn();
 				$( '#wc_veruspay_mode-full' ).fadeIn().delay(1000).queue( function( next ) {
 					$( '.wc_veruspay_daemonsettings-toggle' ).closest( 'tr' ).show();
@@ -90,7 +111,7 @@ jQuery( function( $ ) {
 					next();
 				});
 			}
-			if ( valueSelected == '1' ) {
+			if ( valueSelected == 'manual' ) {
 				$( '#wc_veruspay_setup_modal' ).fadeIn();
 				$( '#wc_veruspay_mode-manual' ).fadeIn().delay(1000).queue( function( next ) {
 					$( '.wc_veruspay_daemonsettings-toggle' ).closest( 'tr' ).hide();
@@ -111,10 +132,13 @@ jQuery( function( $ ) {
 		});
 
 		// Click actions  wc_veruspay_customization-toggle
+		
 		$('.wc_veruspay_toggledaemon').click(function(e) {
 			if ( ! ( $( this ).hasClass( 'wc_veruspay_active_tab' ) ) ) {
 				$( '.wc_veruspay_active_tab' ).removeClass( 'wc_veruspay_active_tab' );
 				// hide all
+				$( '.wc_veruspay_coinsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_coinsettings-toggle' ).addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_walletsettings-toggle' ).addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_addresses-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
@@ -131,12 +155,36 @@ jQuery( function( $ ) {
 				$( '.wc_veruspay_daemonsettings-toggle' ).removeClass('wc_veruspay_set_css');
 			}
 		});
+		$('.wc_veruspay_togglecoins').click(function(e) {
+			if ( ! ( $( this ).hasClass( 'wc_veruspay_active_tab' ) ) ) {
+				$( '.wc_veruspay_active_tab' ).removeClass( 'wc_veruspay_active_tab' );
+				// hide all
+				$( '.wc_veruspay_daemonsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_daemonsettings-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_walletsettings-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_addresses-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_addresses-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_customization-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_customization-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_options-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_options-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_hostedsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_hostedsettings-toggle' ).addClass('wc_veruspay_set_css');
+				//
+				$( this ).addClass( 'wc_veruspay_active_tab' );
+				$( '.wc_veruspay_coinsettings-toggle' ).closest('tbody').removeClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_coinsettings-toggle' ).removeClass('wc_veruspay_set_css');
+			}
+		});
 		$('.wc_veruspay_togglewallet').click(function(e) {
 			if ( ! ( $( this ).hasClass( 'wc_veruspay_active_tab' ) ) ) {
 				$( '.wc_veruspay_active_tab' ).removeClass( 'wc_veruspay_active_tab' );
 				// hide all
 				$( '.wc_veruspay_daemonsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_daemonsettings-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_coinsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_coinsettings-toggle' ).addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_addresses-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_addresses-toggle' ).addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_customization-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
@@ -157,6 +205,8 @@ jQuery( function( $ ) {
 				// hide all
 				$( '.wc_veruspay_daemonsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_daemonsettings-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_coinsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_coinsettings-toggle' ).addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_walletsettings-toggle' ).addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_customization-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
@@ -177,6 +227,8 @@ jQuery( function( $ ) {
 				// hide all
 				$( '.wc_veruspay_daemonsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_daemonsettings-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_coinsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_coinsettings-toggle' ).addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_walletsettings-toggle' ).addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_addresses-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
@@ -197,6 +249,8 @@ jQuery( function( $ ) {
 				// hide all
 				$( '.wc_veruspay_daemonsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_daemonsettings-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_coinsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_coinsettings-toggle' ).addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_walletsettings-toggle' ).addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_addresses-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
@@ -217,6 +271,8 @@ jQuery( function( $ ) {
 				// hide all
 				$( '.wc_veruspay_daemonsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_daemonsettings-toggle' ).addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_coinsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
+				$( '.wc_veruspay_coinsettings-toggle' ).addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_walletsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_walletsettings-toggle' ).addClass('wc_veruspay_set_css');
 				$( '.wc_veruspay_addresses-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
@@ -324,7 +380,7 @@ jQuery( function( $ ) {
 			var nowtime = $.now();
 		}, (20000));
 		// - //
-
+		// Add Daemons
 		$('.wc_veruspay_daemon_add-button').click(function() {
 			$('.wc_veruspay_daemon_add-title:first').removeClass('wc_veruspay_daemon_add-title').show();
 			$('.wc_veruspay_daemon_add-status:first').removeClass('wc_veruspay_daemon_add-status').show();
@@ -332,6 +388,15 @@ jQuery( function( $ ) {
 			$('.wc_veruspay_daemon_add-ip:first').removeClass('wc_veruspay_daemon_add-ip').closest('tbody').show();
 			$('.wc_veruspay_daemon_add-ssl:first').removeClass('wc_veruspay_daemon_add-ssl').closest('tbody').show();
 			$('.wc_veruspay_daemon_add-code:first').removeClass('wc_veruspay_daemon_add-code').closest('tbody').show();
+		});
+		// Add Manual Coins
+		$('.wc_veruspay_coin_add-button').click(function() {
+			$('.wc_veruspay_coin_add-title:first').removeClass('wc_veruspay_coin_add-title').show();
+			$('.wc_veruspay_coin_add-status:first').removeClass('wc_veruspay_coin_add-status').show();
+			$('.wc_veruspay_coin_add-fn:first').removeClass('wc_veruspay_coin_add-fn').closest('tbody').show();
+			$('.wc_veruspay_coin_add-ip:first').removeClass('wc_veruspay_coin_add-ip').closest('tbody').show();
+			$('.wc_veruspay_coin_add-ssl:first').removeClass('wc_veruspay_coin_add-ssl').closest('tbody').show();
+			$('.wc_veruspay_coin_add-code:first').removeClass('wc_veruspay_coin_add-code').closest('tbody').show();
 		});
 		// 1-Click Cashout Initiated
 		$('.wc_veruspay_cashout').click(function() {

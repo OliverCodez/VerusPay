@@ -87,6 +87,11 @@ $wc_veruspay_global = array(
 	'coinimg' => $wc_veruspay_io . 'coinimages/',
 	'text_help' => $wc_veruspay_text_help[$wc_veruspay_locale],
 	'chain_ref' => array(),
+	'chains' => array(
+		'daemon' => array(),
+		'manual' => array(),
+		'hosted' => array(),
+	),
 );
 /**
  * WooCommerce Active
