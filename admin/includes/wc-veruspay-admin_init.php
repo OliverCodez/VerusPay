@@ -437,7 +437,7 @@ if ( $this->mode == 'daemon' ) {
             'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_toggledaemon wc_veruspay_pointer',
         ),
         'coin_settings_show' => array(
-            'title' => __( '<span class="wc_veruspay_tab-title">Manual Coins</span>', 'veruspay-verus-gateway' ),
+            'title' => __( '<span class="wc_veruspay_tab-title">Coins</span>', 'veruspay-verus-gateway' ),
             'type' => 'title',
             'description' => '',
             'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_togglecoins wc_veruspay_pointer',
@@ -449,7 +449,7 @@ else if ( $this->mode == 'manual' ) {
     $_manualArray = array('','',);
     $wc_veruspay_init_firsttabs = array(
         'coin_settings_show' => array(
-            'title' => __( '<span class="wc_veruspay_tab-title">Manual Coins</span>', 'veruspay-verus-gateway' ),
+            'title' => __( '<span class="wc_veruspay_tab-title">Coins</span>', 'veruspay-verus-gateway' ),
             'type' => 'title',
             'description' => '',
             'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_togglecoins wc_veruspay_pointer',
@@ -490,7 +490,7 @@ else if ( $this->mode == 'hosted' ) {
             'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_toggledaemon wc_veruspay_pointer',
         ),
         'coin_settings_show' => array(
-            'title' => __( '<span class="wc_veruspay_tab-title">Manual Coins</span>', 'veruspay-verus-gateway' ),
+            'title' => __( '<span class="wc_veruspay_tab-title">Manage Coins</span>', 'veruspay-verus-gateway' ),
             'type' => 'title',
             'description' => '',
             'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_togglecoins wc_veruspay_pointer',
@@ -566,7 +566,7 @@ $wc_veruspay_init_tabs = array_merge( $wc_veruspay_init_firsttabs, array(
 // TODO : Define this field section and how to add dynamically more
 $wc_veruspay_coins = array(
     'coin_heading' => array(
-        'title' => __( 'Add Custom/Manual Coins', 'veruspay-verus-gateway' ),
+        'title' => __( 'Manage Coins', 'veruspay-verus-gateway' ),
         'type' => 'title',
         'description' => '',
         'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_coinsettings-toggle',
