@@ -604,7 +604,7 @@ $wc_veruspay_coins = array(
     ),
     // Add Coin Button
     'add_coin' => array(
-        'title' => __( '+ Add Manual Coin (non-daemon-based)', 'veruspay-verus-gateway' ),
+        'title' => __( '+ Add Manual Coin', 'veruspay-verus-gateway' ),
         'type' => 'title',
         'class' => 'wc_veruspay_coinsettings-toggle wc_veruspay_coin_add-button',
     ),
