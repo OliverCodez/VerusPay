@@ -572,7 +572,7 @@ $wc_veruspay_coins = array(
         'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_coinsettings-toggle',
     ),
     'coin_stat' => array(
-        'title' => __( 'Manually Configured Coins: ' . $_statsArray['1'][1], 'veruspay-verus-gateway' ),
+        'title' => __( 'Manually Configured Coins: ECHOADDEDCOINS', 'veruspay-verus-gateway' ),
         'type' => 'title',
         'description' => '',
         'class' => 'wc_veruspay_section_heading wc_veruspay_title-sub wc_veruspay_title-sub-toggle-under wc_veruspay_coinsettings-toggle',
