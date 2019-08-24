@@ -1,4 +1,7 @@
 /* Admin Section */
+.wcs-nux__notice {
+    display:none!important;
+}
 .form-table, .form-table td, .form-table td p, .form-table th {
     font-size: 1rem;
     line-height: 32px;
@@ -246,6 +249,18 @@
     margin-top: -80px;
 }
 .wc_veruspay_daemon_add-button {
+    border: solid 1px #000;
+    border-radius: 1rem;
+    max-width: 250px;
+    padding: 10px;
+    font-size: 1.1rem !important;
+    cursor: pointer;
+    line-height: 1.1rem;
+    height: 1.1rem;
+    background-color: #fffcb5;
+    margin:0 auto;
+}
+.wc_veruspay_coin_add-button {
     border: solid 1px #000;
     border-radius: 1rem;
     max-width: 250px;

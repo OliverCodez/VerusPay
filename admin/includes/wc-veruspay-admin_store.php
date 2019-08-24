@@ -13,7 +13,7 @@ function wc_veruspay_display_crypto_address_in_admin( $order ) {
 	global $wc_veruspay_global;
 	$order_id = method_exists( $order, 'get_id' ) ? $order->get_id() : $order->id;
 	$wc_veruspay_payment_method = $order->get_payment_method();
-	if ( $wc_veruspay_payment_method == 'veruspay_verus_gateway' ){
+	if ( $wc_veruspay_payment_method == $wc_veruspay_global['id'] ){
 		$wc_veruspay_order_status = get_post_meta( $order_id, '_wc_veruspay_status', TRUE );
 		if ( $wc_veruspay_order_status == 'noaddress' ) {
 			foreach  ( $order->get_items() as $item_key => $item_values) {                             
@@ -76,7 +76,7 @@ function wc_veruspay_add_order_column_content( $column ) {
 		global $post;
 		global $wc_veruspay_global;
 		$order = wc_get_order( $post->ID );
-		if ( $order->get_payment_method() == 'veruspay_verus_gateway' ){
+		if ( $order->get_payment_method() == $wc_veruspay_global['id'] ){
 			$order_id = $post->ID;
 			$_chain_up = strtoupper( get_post_meta( $order_id, '_wc_veruspay_coin', TRUE ) );
 			$_chain_lo = strtolower( $_chain_up );

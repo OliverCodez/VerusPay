@@ -58,7 +58,7 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         if ( is_numeric( $this->get_option( 'disc_amt' ) ) ) {
             $this->verus_dis_amt = ( $this->get_option( 'disc_amt' ) / 100 );
         }
-        if ( is_admin() ) {
+        if ( is_admin() && isset( $_GET['section'] ) && $_GET['section'] == $wc_veruspay_global['id'] ) {
             // Load admin-only content
             echo '<div id="wc_veruspay_loading"></div><div id="wc_veruspay_setup_modal" style="display:none;"><p id="wc_veruspay_mode-full">Full Mode Selected: Provide your first (primary) Daemon Server details then click Continue.</p><p id="wc_veruspay_mode-manual">Manual Mode Selected, click Continue.</p><p id="wc_veruspay_mode-hosted">Not Yet Available (coming soon)</p></div><div id="wc_veruspay_gen_modal" style="display:none;"><p id="wc_veruspay-activatingstake">Activating Staking</p><p id="wc_veruspay-deactivatingstake">Deactivating Staking</p><p id="wc_veruspay-activatingmine">Activating Mining</p><p id="wc_veruspay-deactivatingmine">Deactivating Mining</p></div><style>#mainform{opacity:0;}</style>';
             require_once( $wc_veruspay_global['paths']['admin_modal-3'] );
@@ -197,7 +197,7 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         
         // Setup Sapling checkbox if Sapling is not enforced by store owner setting, unless enforced by coin (ARRR)
         $wc_veruspay_sapling_option = '';
-        if( is_checkout() && $wc_veruspay_payment_method == 'veruspay_verus_gateway' && $this->chains[$_chain_up]['ST'] == 1 && $this->chains[$_chain_up]['ZC'] == 1 && $this->chains[$_chain_up]['SP'] == 'no' ) {
+        if( is_checkout() && $wc_veruspay_payment_method == $wc_veruspay_global['id'] && $this->chains[$_chain_up]['ST'] == 1 && $this->chains[$_chain_up]['ZC'] == 1 && $this->chains[$_chain_up]['SP'] == 'no' ) {
             if ( $this->chains[$_chain_up]['SD'] == 'no' ) {
                 $_sapling_checked = ' ';
             }
@@ -206,7 +206,7 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
             }
             $wc_veruspay_sapling_option = '<div class="wc_veruspay_sapling-option"><div class="wc_veruspay_sapling-checkbox wc_veruspay_sapling_tooltip"><label><input id="veruspay_sapling" type="checkbox" class="checkbox" name="wc_veruspay_sapling" value="yes"'.$_sapling_checked.'>' . $wc_veruspay_global['text_help']['msg_sapling_label'] . '</label><span class="wc_veruspay_sapling_tooltip-text">' . $wc_veruspay_global['text_help']['msg_sapling_tooltip'] . '</span></div></div>';
         }
-        else if ( is_checkout() && $wc_veruspay_payment_method == 'veruspay_verus_gateway' && $this->chains[$_chain_up]['ST'] == 1 && $this->chains[$_chain_up]['ZC'] == 1 && $this->chains[$_chain_up]['SP'] == 'yes' ) {
+        else if ( is_checkout() && $wc_veruspay_payment_method == $wc_veruspay_global['id'] && $this->chains[$_chain_up]['ST'] == 1 && $this->chains[$_chain_up]['ZC'] == 1 && $this->chains[$_chain_up]['SP'] == 'yes' ) {
             echo '<input id="veruspay_enforce_sapling" type="hidden" name="wc_veruspay_sapling" value="yes">';
         }
         require_once( $wc_veruspay_global['paths']['chkt_path'] );

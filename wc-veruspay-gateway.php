@@ -178,7 +178,7 @@ function wc_veruspay_order_total_update() {
 		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
 			return;
 		}
-		if( is_checkout() && $wc_veruspay_payment_method == 'veruspay_verus_gateway' && $wc_veruspay_settings['discount_fee'] == 'yes' ) {
+		if( is_checkout() && $wc_veruspay_payment_method == $wc_veruspay_global['id'] && $wc_veruspay_settings['discount_fee'] == 'yes' ) {
 			$_dis_amnt = ( $wc_veruspay_settings['disc_amt'] / 100 );
 			$wc_veruspay_discount = WC()->cart->subtotal * $_dis_amnt;
 			WC()->cart->add_fee( __( $wc_veruspay_settings['disc_title'], 'veruspay-verus-gateway' ) , $wc_veruspay_settings['disc_type'] . $wc_veruspay_discount );
@@ -199,15 +199,15 @@ function wc_veruspay_button_text( $available_gateways ) {
 	if ( ! is_checkout() ) return $available_gateways;
 	// Check if result from price API
 	if ( wc_veruspay_price( 'VRSC', get_woocommerce_currency() ) == 0 ) {
-		unset( $available_gateways['veruspay_verus_gateway'] );
+		unset( $available_gateways[$wc_veruspay_global['id']] );
 	}
 	// Otherwise set button text
-	else if ( array_key_exists( 'veruspay_verus_gateway', $available_gateways ) && $wc_veruspay_settings['test_mode'] == 'no' ) {
-		$available_gateways['veruspay_verus_gateway']->order_button_text = __( $wc_veruspay_global['text_help']['payment_button'], 'woocommerce' );
+	else if ( array_key_exists( $wc_veruspay_global['id'], $available_gateways ) && $wc_veruspay_settings['test_mode'] == 'no' ) {
+		$available_gateways[$wc_veruspay_global['id']]->order_button_text = __( $wc_veruspay_global['text_help']['payment_button'], 'woocommerce' );
 	}
 	// If test mode and not admint, disable gateway
 	else if ( $wc_veruspay_settings['test_mode'] == 'yes' && ! current_user_can( 'administrator' ) ) {
-		unset( $available_gateways['veruspay_verus_gateway'] );
+		unset( $available_gateways[$wc_veruspay_global['id']] );
 	}
 	return $available_gateways;
 }
@@ -216,9 +216,10 @@ function wc_veruspay_button_text( $available_gateways ) {
  * 
  * @param string[] $order_id
  */
-function wc_veruspay_save_custom_meta( $order_id ) { // call class??
+function wc_veruspay_save_custom_meta( $order_id ) {
+	global $wc_veruspay_global;
 	$wc_veruspay_payment_method = WC()->session->get('chosen_payment_method');
-	if ( $wc_veruspay_payment_method == 'veruspay_verus_gateway' ){
+	if ( $wc_veruspay_payment_method == $wc_veruspay_global['id'] ){
 		if ( ! empty( $_POST['wc_veruspay_coin'] ) ) {
 			update_post_meta( $order_id, '_wc_veruspay_coin', strtoupper( sanitize_text_field( $_POST['wc_veruspay_coin'] ) ) );
 		}
@@ -370,7 +371,7 @@ function wc_veruspay_order_received_body( $order ) {
 	$wc_veruspay_order_status = get_post_meta( $order_id, '_wc_veruspay_status', TRUE );
 	$_chain_up = strtoupper( get_post_meta( $order_id, '_wc_veruspay_coin', TRUE ) );
 	$_chain_lo = strtolower( $_chain_up );
-	if ( function_exists( 'is_order_received_page' ) && $wc_veruspay_payment_method == 'veruspay_verus_gateway' && is_order_received_page() ) {
+	if ( function_exists( 'is_order_received_page' ) && $wc_veruspay_payment_method == $wc_veruspay_global['id'] && is_order_received_page() ) {
 		//
 		// On order placed, on-hold while waiting for payment - Check for payment received on page (also in cron)
 		if ( $order->has_status( 'on-hold' ) ) {
@@ -569,16 +570,16 @@ function wc_veruspay_title_order_received( $title, $id ) {
 		global $wp;
 		$order_id  = apply_filters( 'woocommerce_thankyou_order_id', absint( $wp->query_vars['order-received'] ) );
 		$order = wc_get_order( $order_id );
-		if ( $order->get_payment_method() == 'veruspay_verus_gateway' && get_post_meta( $order_id, '_wc_veruspay_status', TRUE ) == 'order' ) {
+		if ( $order->get_payment_method() == $wc_veruspay_global['id'] && get_post_meta( $order_id, '_wc_veruspay_status', TRUE ) == 'order' ) {
 			$title = $wc_veruspay_global['text_help']['title_ordered'];
 		}
-		else if ( $order->get_payment_method() == 'veruspay_verus_gateway' && get_post_meta( $order_id, '_wc_veruspay_status', TRUE ) == 'paid' ) {
+		else if ( $order->get_payment_method() == $wc_veruspay_global['id'] && get_post_meta( $order_id, '_wc_veruspay_status', TRUE ) == 'paid' ) {
 			$title = $wc_veruspay_global['text_help']['title_pending'];
 		}
-		else if ( $order->get_payment_method() == 'veruspay_verus_gateway' && $order->has_status( 'completed' ) ) {
+		else if ( $order->get_payment_method() == $wc_veruspay_global['id'] && $order->has_status( 'completed' ) ) {
 			$title = $wc_veruspay_global['text_help']['title_completed'];
 		}
-		else if ( $order->get_payment_method() == 'veruspay_verus_gateway' && $order->has_status( 'cancelled' ) ) {
+		else if ( $order->get_payment_method() == $wc_veruspay_global['id'] && $order->has_status( 'cancelled' ) ) {
 			$title = $wc_veruspay_global['text_help']['title_cancelled'];
 		}
 	}
@@ -594,7 +595,7 @@ function wc_veruspay_title_order_received( $title, $id ) {
 
 function wc_veruspay_add_total( $total_rows, $order, $tax_display ) {
 	global $wc_veruspay_global;
-	if ( $order->get_payment_method() == 'veruspay_verus_gateway' ) {
+	if ( $order->get_payment_method() == $wc_veruspay_global['id'] ) {
 		$order_id = $order->get_id();
 		$wc_veruspay_price = get_post_meta( $order_id, '_wc_veruspay_price', TRUE );
 		$_chain_up = strtoupper( get_post_meta( $order_id, '_wc_veruspay_coin', TRUE ) );
