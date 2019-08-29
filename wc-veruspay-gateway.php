@@ -556,6 +556,7 @@ function wc_veruspay_order_received_body( $order ) {
 		}
 	}
 }
+
 /** 
  * Change Title for Order Status
  * 
