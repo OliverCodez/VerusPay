@@ -148,9 +148,9 @@
     font-size: 1rem!important;
 }
 #wc_veruspay_admin_menu {
-    display: block;
+    display: inline-block;
     position: relative;
-    margin: 0 auto;
+    margin: 0 1.5em;
     min-width: 1200px;
     height: 95px;
     border-bottom: 1px solid #264893;
@@ -162,10 +162,11 @@
     position: relative;
     display: block;
     float: left;
-    width: 200px;
+    width:20%;
+    min-width: 200px;
 }
 .wc_veruspay_tab-title {
-    padding: 10px;
+    padding: 10px 0;
     height:30px;
     font-size: 1rem !important;
     background-color: #264893;
@@ -173,16 +174,14 @@
     text-transform: uppercase;
     border: solid 1px #264893;
     border-radius: 1rem 1rem 0 0;
-    padding-left: 22px;
     position: absolute;
     display: block;
-    margin: 0 1px 0 0;
     overflow: hidden;
     text-align: center;
     transition: height 0.6s ease;
     bottom: 0;
     left:0;
-    width: 160px;
+    width: 99%;
 }
 .wc_veruspay_tab-container:hover > .wc_veruspay_tab-title {
     height:60px;
