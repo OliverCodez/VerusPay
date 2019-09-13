@@ -216,7 +216,7 @@
     margin:0 auto;
     margin-top: 20px;
 }
-#mainform > .wc_veruspay_title-sub:first-child {
+#woocommerce_veruspay_verus_gateway_mode_heading {
     margin-top: 40px!important;
 }
 .wc_veruspay_title-sub img {
