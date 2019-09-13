@@ -215,9 +215,10 @@
     margin:0 auto;
     margin-top: 20px;
 }
+/* Only used if Coin Management is enabled (TODO future) 
 #woocommerce_veruspay_verus_gateway_mode_heading {
     margin-top: 35px!important;
-}
+} */
 .wc_veruspay_title-sub img {
     margin: 0px 10px 0 0;
     max-height: 30px;
