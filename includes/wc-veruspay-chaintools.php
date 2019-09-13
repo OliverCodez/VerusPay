@@ -59,6 +59,7 @@ function wc_veruspay_go( $chaindc, $url, $chain, $method, $params = NULL ) {
         'c' => $chain,
         'm' => $method,
         'p' => $params, // Passed as json_encode string of correct array layout of parameters in question
+        'o' => null, // TODO: Usage?
     );
     // Pass method and params to VCT API and get return
     $response = wp_remote_post( $url, array(
@@ -87,7 +88,7 @@ function wc_veruspay_go( $chaindc, $url, $chain, $method, $params = NULL ) {
 	        return $data['error']['code'];
         }
         else if ( ! isset( $data['result'] ) ) {
-            return 'ERR: ' . $wc_veruspay_global['text_help']['vct_0'];
+            return 'ERR: ' . $response['body'];//json_encode($response,true);//$wc_veruspay_global['text_help']['vct_0'];
         }
         else if ( $data['result'] == 'error' ) {
             return 'ERR: ' . $data['return'];
@@ -96,7 +97,7 @@ function wc_veruspay_go( $chaindc, $url, $chain, $method, $params = NULL ) {
             return $data['return'];
         }
 		else {
-			return 'ERR: ' . $wc_veruspay_global['text_help']['vct_0'];
+			return 'ERR: ' . $wc_veruspay_global['text_help']['vct_1'];
 		}
     }
 }

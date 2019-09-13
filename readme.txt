@@ -12,6 +12,7 @@ Tested WooCommerce up to: 3.6.3
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
+
 === Description ===
 
 = Requires: WooCommerce 3.5.6+ =

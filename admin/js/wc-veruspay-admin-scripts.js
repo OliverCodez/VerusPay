@@ -22,19 +22,19 @@ jQuery( function( $ ) {
 		$( '.wc_veruspay_section_heading' ).next().find( 'tbody' ).addClass( 'wc_veruspay_section_body' );
 		$( '.wc_veruspay_tab-container' ).next( 'table' ).remove();
 		if ( $('.wc_veruspay_toggledaemon').length == 0 && $('.wc_veruspay_togglecoins').length == 0 ) {
-			alert('setup');
+			//alert('setup');
 			$( '#wc_veruspay_admin_menu' ).remove();
 			$( '.woocommerce-save-button' ).text( 'Continue' );
 		}
 		if ( $('.wc_veruspay_toggledaemon').length == 1 ) {
-			alert('daemons');
+			//alert('daemons');
 			$( '.wc_veruspay_coinsettings-toggle' ).closest('tbody').addClass('wc_veruspay_set_css');
 			$( '.wc_veruspay_coinsettings-toggle' ).addClass('wc_veruspay_set_css');
 			$( '#wc_veruspay_admin_menu' ).removeClass( 'wc_veruspay_noheight' ).insertBefore( '.wc_veruspay_toggledaemon' );
 			$( '.wc_veruspay_tab-container' ).appendTo( '#wc_veruspay_admin_menu' );
 		}
 		if ( $('.wc_veruspay_toggledaemon').length == 0 && $('.wc_veruspay_togglecoins').length == 1 ) {
-			alert('coin only');
+			//alert('coin only');
 			$( '#wc_veruspay_admin_menu' ).removeClass( 'wc_veruspay_noheight' ).insertBefore( '.wc_veruspay_togglecoins' );
 			$( '.wc_veruspay_tab-container' ).appendTo( '#wc_veruspay_admin_menu' );
 		}

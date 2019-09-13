@@ -1,4 +1,7 @@
 /* Admin Section */
+.wcs-nux__notice {
+    display:none!important;
+}
 .form-table, .form-table td, .form-table td p, .form-table th {
     font-size: 1rem;
     line-height: 32px;
@@ -145,9 +148,9 @@
     font-size: 1rem!important;
 }
 #wc_veruspay_admin_menu {
-    display: block;
+    display: inline-block;
     position: relative;
-    margin: 0 auto;
+    margin: 0 1.5em;
     min-width: 1200px;
     height: 95px;
     border-bottom: 1px solid #264893;
@@ -159,10 +162,11 @@
     position: relative;
     display: block;
     float: left;
-    width: 200px;
+    width:20%;
+    min-width: 200px;
 }
 .wc_veruspay_tab-title {
-    padding: 10px;
+    padding: 10px 0;
     height:30px;
     font-size: 1rem !important;
     background-color: #264893;
@@ -170,16 +174,14 @@
     text-transform: uppercase;
     border: solid 1px #264893;
     border-radius: 1rem 1rem 0 0;
-    padding-left: 22px;
     position: absolute;
     display: block;
-    margin: 0 1px 0 0;
     overflow: hidden;
     text-align: center;
     transition: height 0.6s ease;
     bottom: 0;
     left:0;
-    width: 160px;
+    width: 99%;
 }
 .wc_veruspay_tab-container:hover > .wc_veruspay_tab-title {
     height:60px;
@@ -207,15 +209,18 @@
     padding: 0 !important;
 	height: 34px !important;
     line-height: 34px !important;
-    margin: 0;
-    margin-top: 20px;
     border-bottom: #a4a3a3 1px solid;
     max-width: 900px;
     color: #000;
     margin:0 auto;
+    margin-top: 20px;
 }
+/* Only used if Coin Management is enabled (TODO future) 
+#woocommerce_veruspay_verus_gateway_mode_heading {
+    margin-top: 35px!important;
+} */
 .wc_veruspay_title-sub img {
-    margin: -5px 10px 0 0;
+    margin: 0px 10px 0 0;
     max-height: 30px;
     display: inline;
     vertical-align: top;
@@ -246,6 +251,18 @@
     margin-top: -80px;
 }
 .wc_veruspay_daemon_add-button {
+    border: solid 1px #000;
+    border-radius: 1rem;
+    max-width: 250px;
+    padding: 10px;
+    font-size: 1.1rem !important;
+    cursor: pointer;
+    line-height: 1.1rem;
+    height: 1.1rem;
+    background-color: #fffcb5;
+    margin:0 auto;
+}
+.wc_veruspay_coin_add-button {
     border: solid 1px #000;
     border-radius: 1rem;
     max-width: 250px;
