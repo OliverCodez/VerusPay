@@ -96,7 +96,7 @@ function wc_veruspay_go( $chaindc, $url, $chain, $method, $params = NULL ) {
             return $data['return'];
         }
 		else {
-			return 'ERR: ' . $wc_veruspay_global['text_help']['vct_0'];
+			return 'ERR: ' . $wc_veruspay_global['text_help']['vct_1'];
 		}
     }
 }
