@@ -87,7 +87,7 @@ function wc_veruspay_go( $chaindc, $url, $chain, $method, $params = NULL ) {
 	        return $data['error']['code'];
         }
         else if ( ! isset( $data['result'] ) ) {
-            return 'ERR: ' . $response['body'],;//json_encode($response,true);//$wc_veruspay_global['text_help']['vct_0'];
+            return 'ERR: ' . $response['body'];//json_encode($response,true);//$wc_veruspay_global['text_help']['vct_0'];
         }
         else if ( $data['result'] == 'error' ) {
             return 'ERR: ' . $data['return'];
