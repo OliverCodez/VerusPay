@@ -829,11 +829,13 @@ $wc_veruspay_init_options = array(
 );
 // Merge arrays before processing wallet data
 if ( $this->mode == 'manual' ) {
-    $wc_veruspay_init_mode = $wc_veruspay_coins;
+    $wc_veruspay_init_mode = array(); // TODO: Coin managmeent: $wc_veruspay_coins;
 }
-else {
-    $wc_veruspay_init_mode = array_merge( $wc_veruspay_init_mode, $wc_veruspay_coins );
-}
+/** TODO: Coin management future work
+ * else {
+ *    $wc_veruspay_init_mode = array_merge( $wc_veruspay_init_mode, $wc_veruspay_coins );
+ * }
+ */
 $this->form_fields = apply_filters( 'wc_veruspay_form_fields', array_merge( $wc_veruspay_init_top, $wc_veruspay_init_tabs, $wc_veruspay_init_mode, $wc_veruspay_init_inserts, $wc_veruspay_init_content, $wc_veruspay_init_options ) );
 /**********************
  * Build Wallet Data
