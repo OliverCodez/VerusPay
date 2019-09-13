@@ -81,70 +81,69 @@ if ( $this->mode == 'daemon' ) {
             }
             $_statsArray['1'][1] = $_statsArray['1'][1] . '<span title="' . $_tooltip . '" class="wc_veruspay_coinlist" style="background-image: url(' . $wc_veruspay_global['coinimg'] . $_chain_up .'.png);'.$_stat.'"></span>';
         }
-    }
-    
-    $_statsArray['1'][1] = '<span>' . $_statsArray['1'][1] . '</span>';
-    // Iterate through any other live daemons and add to global array and set classes        
-    foreach ( $_daemonsArray as $key => $item ) {
-        if ( empty( $item ) ) {
-            $_classArray[$key] = 'wc_veruspay_daemon_add';
-        }
-        else {
-            if ( $item == $wc_veruspay_daemon_ip_1 ) {
-                $this->update_option( 'daemon_ip_' . $key, 'duplicate daemon' );
-                header("Refresh: 0");
-            }
-            $_code = $this->get_option( 'daemon_code_' . $key );
-            $_proto = 'http://';
-            if ( $this->get_option( 'daemon_ssl_' . $key ) == 'yes' ) {
-                $_proto = 'https://';
-            }
-            $_ip = $_proto . $item;
-            if ( empty( $_code ) ) {
-                $_statsArray[$key][0] = '<span class="wc_veruspay_red">Access Code Required</span>';
+        $_statsArray['1'][1] = '<span>' . $_statsArray['1'][1] . '</span>';
+        // Iterate through any other live daemons and add to global array and set classes
+        foreach ( $_daemonsArray as $key => $item ) {
+            if ( empty( $item ) ) {
+                $_classArray[$key] = 'wc_veruspay_daemon_add';
             }
             else {
-                $_list = wc_veruspay_go( $_code, $_ip, '_stat_', 'chainlist' );
-                if ( empty( $_list ) || is_string( $_list ) || $item == 'duplicate daemon' ) {
-                    $_statsArray[$key][0] = ' - Status: <span class="wc_veruspay_stat wc_veruspay_white_on_red">UNREACHABLE</span>';
+                if ( $item == $wc_veruspay_daemon_ip_1 ) {
+                    $this->update_option( 'daemon_ip_' . $key, 'duplicate daemon' );
+                    header("Refresh: 0");
                 }
-                else if ( $_list == '_no_chains_found_' ) {
-                    $_vctversion = wc_veruspay_go( $_code, $_ip, '_stat_', 'vct_version' );
-                    $_statsArray[$key][0] = ' - Status: <span class="wc_veruspay_stat wc_veruspay_white_on_orange">OFFLINE</span><span class="wc_veruspay_version">v' . $_vctversion . '</span>';
+                $_code = $this->get_option( 'daemon_code_' . $key );
+                $_proto = 'http://';
+                if ( $this->get_option( 'daemon_ssl_' . $key ) == 'yes' ) {
+                    $_proto = 'https://';
+                }
+                $_ip = $_proto . $item;
+                if ( empty( $_code ) ) {
+                    $_statsArray[$key][0] = '<span class="wc_veruspay_red">Access Code Required</span>';
                 }
                 else {
-                    $_vctversion = wc_veruspay_go( $_code, $_ip, '_stat_', 'vct_version' );
-                    $_statsArray[$key][0] = ' - Status: <span class="wc_veruspay_stat wc_veruspay_white_on_green">ONLINE</span><span class="wc_veruspay_version">v' . $_vctversion . '</span>';
-                    foreach ( $_list as $_key => $_item ) {
-                        $_chain_up = strtoupper( $_key );
-                        $_chain_lo = strtolower( $_key );
-                        $_list[$_chain_up]['S'] = $this->get_option( 'daemon_fn_' . $key );
-                        $_list[$_chain_up]['IP'] = $_ip;
-                        $_list[$_chain_up]['DC'] = $_code;
-                        $_list[$_chain_up]['ST'] = json_decode( wc_veruspay_go( $_code, $_ip, $_chain_up, 'test' ), TRUE )['stat'];
-                        if ( $_list[$_chain_up]['ST'] == 1 ) {
-                            $_stat = 'border-color: #13f413';
-                            $_tooltip = $_chain_up . ': ONLINE';
-                            if ( $this->get_option( $_chain_lo . '_enable' ) == 'yes' ) {
-                                $wc_veruspay_store_stat_array[] = 'online';
-                            }
-                        }
-                        else {
-                            $_list[$_chain_up]['ST'] = 0;
-                            $_stat = 'border-color:#f92a2a;opacity:0.6;';
-                            $_tooltip = $_chain_up . ': OFFLINE';
-                            if ( $this->get_option( $_chain_lo . '_enable' ) == 'yes' && strlen( $this->get_option( $_chain_lo . '_storeaddresses' ) ) > 30 ) {
-                                $wc_veruspay_store_stat_array[] = 'online';
-                                $_tooltip = $_chain_up . ': OFFLINE/MANUAL';
+                    $_list = wc_veruspay_go( $_code, $_ip, '_stat_', 'chainlist' );
+                    if ( empty( $_list ) || is_string( $_list ) || $item == 'duplicate daemon' ) {
+                        $_statsArray[$key][0] = ' - Status: <span class="wc_veruspay_stat wc_veruspay_white_on_red">UNREACHABLE</span>';
+                    }
+                    else if ( $_list == '_no_chains_found_' ) {
+                        $_vctversion = wc_veruspay_go( $_code, $_ip, '_stat_', 'vct_version' );
+                        $_statsArray[$key][0] = ' - Status: <span class="wc_veruspay_stat wc_veruspay_white_on_orange">OFFLINE</span><span class="wc_veruspay_version">v' . $_vctversion . '</span>';
+                    }
+                    else {
+                        $_vctversion = wc_veruspay_go( $_code, $_ip, '_stat_', 'vct_version' );
+                        $_statsArray[$key][0] = ' - Status: <span class="wc_veruspay_stat wc_veruspay_white_on_green">ONLINE</span><span class="wc_veruspay_version">v' . $_vctversion . '</span>';
+                        foreach ( $_list as $_key => $_item ) {
+                            $_chain_up = strtoupper( $_key );
+                            $_chain_lo = strtolower( $_key );
+                            $_list[$_chain_up]['S'] = $this->get_option( 'daemon_fn_' . $key );
+                            $_list[$_chain_up]['IP'] = $_ip;
+                            $_list[$_chain_up]['DC'] = $_code;
+                            $_list[$_chain_up]['ST'] = json_decode( wc_veruspay_go( $_code, $_ip, $_chain_up, 'test' ), TRUE )['stat'];
+                            if ( $_list[$_chain_up]['ST'] == 1 ) {
+                                $_stat = 'border-color: #13f413';
+                                $_tooltip = $_chain_up . ': ONLINE';
+                                if ( $this->get_option( $_chain_lo . '_enable' ) == 'yes' ) {
+                                    $wc_veruspay_store_stat_array[] = 'online';
+                                }
                             }
                             else {
-                                $this->update_option( $_chain_lo . '_enable', 'no' );
+                                $_list[$_chain_up]['ST'] = 0;
+                                $_stat = 'border-color:#f92a2a;opacity:0.6;';
+                                $_tooltip = $_chain_up . ': OFFLINE';
+                                if ( $this->get_option( $_chain_lo . '_enable' ) == 'yes' && strlen( $this->get_option( $_chain_lo . '_storeaddresses' ) ) > 30 ) {
+                                    $wc_veruspay_store_stat_array[] = 'online';
+                                    $_tooltip = $_chain_up . ': OFFLINE/MANUAL';
+                                }
+                                else {
+                                    $this->update_option( $_chain_lo . '_enable', 'no' );
+                                }
                             }
+                            $_statsArray[$key][1] = $_statsArray[$key][1] . '<span title="' . $_tooltip . '" class="wc_veruspay_coinlist" style="background-image: url(' . $wc_veruspay_global['coinimg'] . $_chain_up .'.png);'.$_stat.'"></span>';
                         }
-                        $_statsArray[$key][1] = $_statsArray[$key][1] . '<span title="' . $_tooltip . '" class="wc_veruspay_coinlist" style="background-image: url(' . $wc_veruspay_global['coinimg'] . $_chain_up .'.png);'.$_stat.'"></span>';
+                        $_statsArray[$key][1] = '<span>' . $_statsArray[$key][1] . '</span>';
+                        $wc_veruspay_global['chains']['daemon'] = array_merge( $wc_veruspay_global['chains']['daemon'], $_list );
                     }
-                    $_statsArray[$key][1] = '<span>' . $_statsArray[$key][1] . '</span>';
-                    $wc_veruspay_global['chains']['daemon'] = array_merge( $wc_veruspay_global['chains']['daemon'], $_list );
                 }
             }
         }
