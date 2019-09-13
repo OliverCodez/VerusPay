@@ -841,10 +841,6 @@ if ( is_array( $wc_veruspay_global['chains'][$this->mode] ) ) {
         $wc_veruspay_set_z = 0;
         // TODO : Fix the chain var building functionalities
         if ( $this->mode == 'daemon' ) {
-            // DEBUGGING
-            print_r($wc_veruspay_global['chains'][$this->mode][$_chain_up]);
-            echo 'TEST RESULT: ' . wc_veruspay_go( $wc_veruspay_global['chains'][$this->mode][$_chain_up]['DC'], $wc_veruspay_global['chains'][$this->mode][$_chain_up]['IP'], $_chain_up, 'version' );
-            // END
             if ( $wc_veruspay_global['chains'][$this->mode][$_chain_up]['ST'] == 1 ) {
                 $wc_veruspay_global['chains'][$this->mode][$_chain_up]['VV'] = wc_veruspay_go( $wc_veruspay_global['chains'][$this->mode][$_chain_up]['DC'], $wc_veruspay_global['chains'][$this->mode][$_chain_up]['IP'], '_stat_', 'vct_version' );
                 $wc_veruspay_global['chains'][$this->mode][$_chain_up]['BV'] = wc_veruspay_go( $wc_veruspay_global['chains'][$this->mode][$_chain_up]['DC'], $wc_veruspay_global['chains'][$this->mode][$_chain_up]['IP'], $_chain_up, 'version' );
