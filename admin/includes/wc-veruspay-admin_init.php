@@ -438,24 +438,28 @@ if ( $this->mode == 'daemon' ) {
             'description' => '',
             'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_toggledaemon wc_veruspay_pointer',
         ),
-        'coin_settings_show' => array(
-            'title' => __( '<span class="wc_veruspay_tab-title">Manage Coins</span>', 'veruspay-verus-gateway' ),
-            'type' => 'title',
-            'description' => '',
-            'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_togglecoins wc_veruspay_pointer',
-        ),
+/** TODO : Future coin manage section
+ *     'coin_settings_show' => array(
+ *            'title' => __( '<span class="wc_veruspay_tab-title">Manage Coins</span>', 'veruspay-verus-gateway' ),
+ *            'type' => 'title',
+ *            'description' => '',
+ *            'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_togglecoins wc_veruspay_pointer',
+ *        ),
+ */
     );
 }
 // If Manual Mode
 else if ( $this->mode == 'manual' ) {
     $_manualArray = array('','',);
     $wc_veruspay_init_firsttabs = array(
-        'coin_settings_show' => array(
-            'title' => __( '<span class="wc_veruspay_tab-title">Manage Coins</span>', 'veruspay-verus-gateway' ),
-            'type' => 'title',
-            'description' => '',
-            'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_togglecoins wc_veruspay_pointer',
-        ),
+/** TODO : Future coin manage section
+ *        'coin_settings_show' => array(
+ *            'title' => __( '<span class="wc_veruspay_tab-title">Manage Coins</span>', 'veruspay-verus-gateway' ),
+ *            'type' => 'title',
+ *            'description' => '',
+ *            'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_togglecoins wc_veruspay_pointer',
+ *        ),
+ */
     );
 }
 // If Hosted Mode
@@ -491,12 +495,14 @@ else if ( $this->mode == 'hosted' ) {
             'description' => '',
             'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_toggledaemon wc_veruspay_pointer',
         ),
-        'coin_settings_show' => array(
-            'title' => __( '<span class="wc_veruspay_tab-title">Manage Coins</span>', 'veruspay-verus-gateway' ),
-            'type' => 'title',
-            'description' => '',
-            'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_togglecoins wc_veruspay_pointer',
-        ),
+/** TODO : Future coin manage section
+ *       'coin_settings_show' => array(
+ *            'title' => __( '<span class="wc_veruspay_tab-title">Manage Coins</span>', 'veruspay-verus-gateway' ),
+ *            'type' => 'title',
+ *            'description' => '',
+ *            'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_togglecoins wc_veruspay_pointer',
+ *        ),
+ */        
     );
 }
 // TODO : Create error management for this else
@@ -565,52 +571,54 @@ $wc_veruspay_init_tabs = array_merge( $wc_veruspay_init_firsttabs, array(
         'class' => 'wc_veruspay_tab-container wc_veruspay_admin_section wc_veruspay_toggleoptions wc_veruspay_pointer',
     ),
 ) );
-// TODO : Define this field section and how to add dynamically more
-$wc_veruspay_coins = array(
-    'coin_heading' => array(
-        'title' => __( 'Manage Coins', 'veruspay-verus-gateway' ),
-        'type' => 'title',
-        'description' => '',
-        'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_coinsettings-toggle',
-    ),
-    'coin_stat' => array(
-        'title' => __( 'Manually Configured Coins: ECHOADDEDCOINS', 'veruspay-verus-gateway' ),
-        'type' => 'title',
-        'description' => '',
-        'class' => 'wc_veruspay_section_heading wc_veruspay_title-sub wc_veruspay_title-sub-toggle-under wc_veruspay_coinsettings-toggle',
-    ),
-    'coin_fn_1' => array(
-        'title' => __( 'Custom Name', 'veruspay-verus-gateway' ),
-        'type' => 'text',
-        'default' => 'My Primary Daemon Server',
-        'class' => 'wc_veruspay_coinsettings-toggle',
-    ),
-    'coin_ip_1' => array(
-        'title' => __( 'Server IP/Path', 'veruspay-verus-gateway' ),
-        'type' => 'text',
-        'default' => 'IP or local folder name (e.g. enter just verustools if at /var/www/html/verustools)',
-        'class' => 'wc_veruspay_coinsettings-toggle',
-    ),
-    'coin_ssl_1' => array(
-        'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
-        'type' => 'checkbox',
-        'label' => ' ',
-        'default' => 'yes',
-        'class' => 'wc_veruspay_checkbox_option wc_veruspay_coinsettings-toggle',
-    ),
-    'coin_code_1' => array(
-        'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
-        'type' => 'text',
-        'label' => __( 'Access Code', 'veruspay-verus-gateway' ),
-        'class' => 'wc_veruspay_coinsettings-toggle',
-    ),
-    // Add Coin Button
-    'add_coin' => array(
-        'title' => __( '+ Add Coin Manually', 'veruspay-verus-gateway' ),
-        'type' => 'title',
-        'class' => 'wc_veruspay_coinsettings-toggle wc_veruspay_coin_add-button',
-    ),
-);
+// TODO : Future work with manage coin section
+/** 
+ * $wc_veruspay_coins = array(
+ *    'coin_heading' => array(
+ *        'title' => __( 'Manage Coins', 'veruspay-verus-gateway' ),
+ *        'type' => 'title',
+ *        'description' => '',
+ *        'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_coinsettings-toggle',
+ *    ),
+ *    'coin_stat' => array(
+ *        'title' => __( 'Manually Configured Coins: ECHOADDEDCOINS', 'veruspay-verus-gateway' ),
+ *        'type' => 'title',
+ *        'description' => '',
+ *        'class' => 'wc_veruspay_section_heading wc_veruspay_title-sub wc_veruspay_title-sub-toggle-under wc_veruspay_coinsettings-toggle',
+ *    ),
+ *    'coin_fn_1' => array(
+ *        'title' => __( 'Custom Name', 'veruspay-verus-gateway' ),
+ *        'type' => 'text',
+ *        'default' => 'My Primary Daemon Server',
+ *        'class' => 'wc_veruspay_coinsettings-toggle',
+ *    ),
+ *    'coin_ip_1' => array(
+ *        'title' => __( 'Server IP/Path', 'veruspay-verus-gateway' ),
+ *        'type' => 'text',
+ *        'default' => 'IP or local folder name (e.g. enter just verustools if at /var/www/html/verustools)',
+ *        'class' => 'wc_veruspay_coinsettings-toggle',
+ *    ),
+ *    'coin_ssl_1' => array(
+ *        'title' => __( 'Enable SSL?', 'veruspay-verus-gateway' ),
+ *        'type' => 'checkbox',
+ *        'label' => ' ',
+ *        'default' => 'yes',
+ *        'class' => 'wc_veruspay_checkbox_option wc_veruspay_coinsettings-toggle',
+ *    ),
+ *    'coin_code_1' => array(
+ *        'title' => __( 'Access Code', 'veruspay-verus-gateway' ),
+ *        'type' => 'text',
+ *        'label' => __( 'Access Code', 'veruspay-verus-gateway' ),
+ *        'class' => 'wc_veruspay_coinsettings-toggle',
+ *    ),
+ *    // Add Coin Button
+ *    'add_coin' => array(
+ *        'title' => __( '+ Add Coin Manually', 'veruspay-verus-gateway' ),
+ *        'type' => 'title',
+ *        'class' => 'wc_veruspay_coinsettings-toggle wc_veruspay_coin_add-button',
+ *    ),
+ *);
+ */
 // Splice-in placeholder array
 $wc_veruspay_init_inserts = array(
     // ***************************
