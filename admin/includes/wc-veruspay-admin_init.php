@@ -43,6 +43,7 @@ if ( $this->mode == 'daemon' ) {
             $this->update_option( 'enabled', 'no' );
         }
         $this->update_option( 'wc_veruspay_dchains', $wc_veruspay_global['chains']['daemon'] );
+        die();
     }
     else if ( $wc_veruspay_global['chains']['daemon'] == '_no_chains_found_' ) {
         $_vctversion = wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_daemon_fullip_1, '_stat_', 'vct_version' );
