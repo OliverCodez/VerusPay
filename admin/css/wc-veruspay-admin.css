@@ -216,7 +216,7 @@
     margin:0 auto;
     margin-top: 20px;
 }
-.wc_veruspay_title-sub:first-child {
+.wc_veruspay_wrapper .wc_veruspay_title-sub:first-child {
     margin-top: 40px;
 }
 .wc_veruspay_title-sub img {
