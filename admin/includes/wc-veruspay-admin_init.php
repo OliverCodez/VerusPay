@@ -34,9 +34,9 @@ if ( $this->mode == 'daemon' ) {
     $wc_veruspay_global['chains']['daemon'] = wc_veruspay_go( $wc_veruspay_daemon_code_1, $wc_veruspay_daemon_fullip_1, '_stat_', 'chainlist' );
     // Begin checking deamon 1
     // DEBUGGING
-    echo $wc_veruspay_global['chains']['daemon'];die();
+    //echo $wc_veruspay_global['chains']['daemon'];die();
     // END
-    if ( empty( $wc_veruspay_global['chains']['daemon'] ) || is_string( $wc_veruspay_global['chains']['daemon'] ) ) {
+    if ( empty( $wc_veruspay_global['chains']['daemon'] ) || ! is_array( $wc_veruspay_global['chains']['daemon'] ) ) {
         $_statsArray['1'][0] = ' - Status: <span class="wc_veruspay_stat wc_veruspay_white_on_orange">UNREACHABLE</span>';
         if ( ! array_filter( $_daemonsArray ) ) {
             $this->form_fields = apply_filters( 'wc_veruspay_form_fields', wc_veruspay_setup() );
