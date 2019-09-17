@@ -248,7 +248,7 @@
     float: right;
     margin: 5px 20px 5px 0;
 }
-.wc_veruspay_update_modal {
+#wc_veruspay_update_modal {
     display:none;
     width: 90%;
     position:fixed;
