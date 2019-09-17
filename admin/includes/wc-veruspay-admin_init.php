@@ -165,7 +165,7 @@ if ( $this->mode == 'daemon' ) {
             'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle',
         ),
         'mode_stat' => array(
-            'title' => __( 'Configured Coins: ' . $_statsArray['1'][1] .'<span class="wc_veruspay_edit_coins" style="color: #0bf;cursor: pointer;display: inline-block;width: 25px;text-align: center;border-radius: 50%;border: 1px solid #6c6c6c;height: 25px;position: relative;line-height: 22px;font-weight: lighter;">+</span>', 'veruspay-verus-gateway' ),
+            'title' => __( 'Configured Coins: ' . $_statsArray['1'][1] .'<span class="wc_veruspay_edit_daemon" style="color: #0bf;cursor: pointer;display: inline-block;width: 25px;text-align: center;border-radius: 50%;border: 1px solid #6c6c6c;height: 25px;position: relative;line-height: 22px;font-weight: lighter;">+</span>', 'veruspay-verus-gateway' ),
             'type' => 'title',
             'description' => '',
             'class' => 'wc_veruspay_section_heading wc_veruspay_title-sub wc_veruspay_title-sub-toggle-under wc_veruspay_daemonsettings-toggle',
