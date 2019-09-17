@@ -234,6 +234,20 @@
     font-size: 1.6rem;
     font-weight: 300;
 }
+.wc_veruspay_edit_daemon {
+    color: #0bf;
+    cursor: pointer;
+    width: 25px;
+    text-align: center;
+    border: 1px solid #6c6c6c;
+    height: 25px;
+    line-height: 22px;
+    font-weight: lighter;
+    border-radius: 25px;
+    display: block;
+    float: right;
+    margin: 5px 20px 5px 0;
+}
 .wc_veruspay_version {
     font-size: 0.75rem !important;
     font-style: italic;
