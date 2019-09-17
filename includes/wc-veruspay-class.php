@@ -62,6 +62,7 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
             // Load admin-only content
             echo '<div id="wc_veruspay_loading"></div><div id="wc_veruspay_setup_modal" style="display:none;"><p id="wc_veruspay_mode-full">Full Mode Selected: Provide your first (primary) Daemon Server details then click Continue.</p><p id="wc_veruspay_mode-manual">Manual Mode Selected, click Continue.</p><p id="wc_veruspay_mode-hosted">Not Yet Available (coming soon)</p></div><div id="wc_veruspay_gen_modal" style="display:none;"><p id="wc_veruspay-activatingstake">Activating Staking</p><p id="wc_veruspay-deactivatingstake">Deactivating Staking</p><p id="wc_veruspay-activatingmine">Activating Mining</p><p id="wc_veruspay-deactivatingmine">Deactivating Mining</p></div><style>#mainform{opacity:0;}</style>';
             require_once( $wc_veruspay_global['paths']['admin_modal-3'] );
+            require_once( $wc_veruspay_global['paths']['admin_modal-4'] );
             // Enqueue Admin JS and CSS; Initialize form
             wp_register_script( 'wc_veruspay_admin_scripts', $wc_veruspay_global['paths']['admin']['js'] . 'wc-veruspay-admin-scripts.js' );
             wp_localize_script( 'wc_veruspay_admin_scripts', 'veruspay_admin_params', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'storecurrency' => get_woocommerce_currency() ) );

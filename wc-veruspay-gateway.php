@@ -69,6 +69,7 @@ $wc_veruspay_global = array(
 		'admin_modal-1' => $wc_veruspay_root . 'admin/includes/wc-veruspay-admin_modal-1.php',
 		'admin_modal-2' => $wc_veruspay_root . 'admin/includes/wc-veruspay-admin_modal-2.php',
 		'admin_modal-3' => $wc_veruspay_root . 'admin/includes/wc-veruspay-admin_modal-3.php',
+		'admin_modal-4' => $wc_veruspay_root . 'admin/includes/wc-veruspay-admin_modal-4.php',
 		'public' => array(
 			'css' => $wc_veruspay_extroot . 'public/css/',
 			'js' => $wc_veruspay_extroot . 'public/js/',

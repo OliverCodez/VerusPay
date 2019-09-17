@@ -132,7 +132,9 @@ jQuery( function( $ ) {
 		});
 
 		// Click actions  wc_veruspay_customization-toggle
-		
+		$('.wc_veruspay_edit_daemon').click(function(e) {
+			
+		});
 		$('.wc_veruspay_toggledaemon').click(function(e) {
 			if ( ! ( $( this ).hasClass( 'wc_veruspay_active_tab' ) ) ) {
 				$( '.wc_veruspay_active_tab' ).removeClass( 'wc_veruspay_active_tab' );

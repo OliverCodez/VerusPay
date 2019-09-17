@@ -248,6 +248,14 @@
     float: right;
     margin: 5px 20px 5px 0;
 }
+.wc_veruspay_update_modal {
+    display:none;
+    width: 90%;
+    position:fixed;
+    top:10px;
+    left:50%;
+    right:50%;
+}
 .wc_veruspay_version {
     font-size: 0.75rem !important;
     font-style: italic;
