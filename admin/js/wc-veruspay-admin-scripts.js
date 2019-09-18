@@ -140,6 +140,7 @@ jQuery( function( $ ) {
 			$( '#wc_veruspay_update_modal' ).fadeIn();
 		});
 		$('#wc_veruspay_update_modal-container_close').click(function(e) {
+			console.log('close-click');
 			$( '#wc_veruspay_update_modal' ).fadeOut();
 			$( '#wc_veruspay_update_code').val('');
 			$( '#wc_veruspay_update_modal-go' ).data('url', '');
