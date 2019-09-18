@@ -56,6 +56,7 @@ $wc_veruspay_global = array(
 	'wc' => $wc_veruspay_pre . $wc_veruspay_id . $wc_veruspay_apd,
 	'paths' => array(
 		'root' => $wc_veruspay_root,
+		'site' => get_site_url(),
 		'class_path' => $wc_veruspay_root . 'includes/wc-veruspay-class.php',
 		'chkt_path' => $wc_veruspay_root . 'includes/wc-veruspay-checkout.php',
 		'conf_path' => $wc_veruspay_root . 'includes/wc-veruspay-confirming.php',

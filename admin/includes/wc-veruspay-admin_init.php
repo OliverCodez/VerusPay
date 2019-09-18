@@ -165,7 +165,7 @@ if ( $this->mode == 'daemon' ) {
             'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle',
         ),
         'mode_stat' => array(
-            'title' => __( 'Configured Coins: ' . $_statsArray['1'][1] .'<span class="wc_veruspay_edit_daemon" data-root="' . $wc_veruspay_global['paths']['root'] . '" data-url="https://' . $this->get_option( 'daemon_ip_1' ) . '">+</span>', 'veruspay-verus-gateway' ),
+            'title' => __( 'Configured Coins: ' . $_statsArray['1'][1] .'<span class="wc_veruspay_edit_daemon" data-root="' . $wc_veruspay_global['paths']['site'] . '" data-url="https://' . $this->get_option( 'daemon_ip_1' ) . '">+</span>', 'veruspay-verus-gateway' ),
             'type' => 'title',
             'description' => '',
             'class' => 'wc_veruspay_section_heading wc_veruspay_title-sub wc_veruspay_title-sub-toggle-under wc_veruspay_daemonsettings-toggle',
@@ -203,7 +203,7 @@ if ( $this->mode == 'daemon' ) {
             'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray['2'] . '-title',
         ),
         'daemon_stat_2' => array(
-            'title' => __( 'Configured Coins: ' . $_statsArray['2'][1] .'<span class="wc_veruspay_edit_daemon" data-root="' . $wc_veruspay_global['paths']['root'] . '" data-url="https://' . $this->get_option( 'daemon_ip_2' ) . '">+</span>', 'veruspay-verus-gateway' ),
+            'title' => __( 'Configured Coins: ' . $_statsArray['2'][1] .'<span class="wc_veruspay_edit_daemon" data-root="' . $wc_veruspay_global['paths']['site'] . '" data-url="https://' . $this->get_option( 'daemon_ip_2' ) . '">+</span>', 'veruspay-verus-gateway' ),
             'type' => 'title',
             'description' => '',
             'class' => 'wc_veruspay_section_heading wc_veruspay_title-sub wc_veruspay_title-sub-toggle-under wc_veruspay_daemonsettings-toggle ' . $_classArray['2'] . '-status',
@@ -241,7 +241,7 @@ if ( $this->mode == 'daemon' ) {
             'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray['3'] . '-title',
         ),
         'daemon_stat_3' => array(
-            'title' => __( 'Configured Coins: ' . $_statsArray['3'][1] .'<span class="wc_veruspay_edit_daemon" data-root="' . $wc_veruspay_global['paths']['root'] . '" data-url="https://' . $this->get_option( 'daemon_ip_3' ) . '">+</span>', 'veruspay-verus-gateway' ),
+            'title' => __( 'Configured Coins: ' . $_statsArray['3'][1] .'<span class="wc_veruspay_edit_daemon" data-root="' . $wc_veruspay_global['paths']['site'] . '" data-url="https://' . $this->get_option( 'daemon_ip_3' ) . '">+</span>', 'veruspay-verus-gateway' ),
             'type' => 'title',
             'description' => '',
             'class' => 'wc_veruspay_section_heading wc_veruspay_title-sub wc_veruspay_title-sub-toggle-under wc_veruspay_daemonsettings-toggle ' . $_classArray['3'] . '-status',
@@ -279,7 +279,7 @@ if ( $this->mode == 'daemon' ) {
             'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray['4'] . '-title',
         ),
         'daemon_stat_4' => array(
-            'title' => __( 'Configured Coins: ' . $_statsArray['4'][1] .'<span class="wc_veruspay_edit_daemon" data-root="' . $wc_veruspay_global['paths']['root'] . '" data-url="https://' . $this->get_option( 'daemon_ip_4' ) . '">+</span>', 'veruspay-verus-gateway' ),
+            'title' => __( 'Configured Coins: ' . $_statsArray['4'][1] .'<span class="wc_veruspay_edit_daemon" data-root="' . $wc_veruspay_global['paths']['site'] . '" data-url="https://' . $this->get_option( 'daemon_ip_4' ) . '">+</span>', 'veruspay-verus-gateway' ),
             'type' => 'title',
             'description' => '',
             'class' => 'wc_veruspay_section_heading wc_veruspay_title-sub wc_veruspay_title-sub-toggle-under wc_veruspay_daemonsettings-toggle ' . $_classArray['4'] . '-status',
@@ -317,7 +317,7 @@ if ( $this->mode == 'daemon' ) {
             'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray['5'] . '-title',
         ),
         'daemon_stat_5' => array(
-            'title' => __( 'Configured Coins: ' . $_statsArray['5'][1] .'<span class="wc_veruspay_edit_daemon" data-root="' . $wc_veruspay_global['paths']['root'] . '" data-url="https://' . $this->get_option( 'daemon_ip_5' ) . '">+</span>', 'veruspay-verus-gateway' ),
+            'title' => __( 'Configured Coins: ' . $_statsArray['5'][1] .'<span class="wc_veruspay_edit_daemon" data-root="' . $wc_veruspay_global['paths']['site'] . '" data-url="https://' . $this->get_option( 'daemon_ip_5' ) . '">+</span>', 'veruspay-verus-gateway' ),
             'type' => 'title',
             'description' => '',
             'class' => 'wc_veruspay_section_heading wc_veruspay_title-sub wc_veruspay_title-sub-toggle-under wc_veruspay_daemonsettings-toggle ' . $_classArray['5'] . '-status',
@@ -355,7 +355,7 @@ if ( $this->mode == 'daemon' ) {
             'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray['6'] . '-title',
         ),
         'daemon_stat_6' => array(
-            'title' => __( 'Configured Coins: ' . $_statsArray['6'][1] .'<span class="wc_veruspay_edit_daemon" data-root="' . $wc_veruspay_global['paths']['root'] . '" data-url="https://' . $this->get_option( 'daemon_ip_6' ) . '">+</span>', 'veruspay-verus-gateway' ),
+            'title' => __( 'Configured Coins: ' . $_statsArray['6'][1] .'<span class="wc_veruspay_edit_daemon" data-root="' . $wc_veruspay_global['paths']['site'] . '" data-url="https://' . $this->get_option( 'daemon_ip_6' ) . '">+</span>', 'veruspay-verus-gateway' ),
             'type' => 'title',
             'description' => '',
             'class' => 'wc_veruspay_section_heading wc_veruspay_title-sub wc_veruspay_title-sub-toggle-under wc_veruspay_daemonsettings-toggle ' . $_classArray['6'] . '-status',
@@ -393,7 +393,7 @@ if ( $this->mode == 'daemon' ) {
             'class' => 'wc_veruspay_title-sub wc_veruspay_title-sub-toggle-heading wc_veruspay_daemonsettings-toggle ' . $_classArray['7'] . '-title',
         ),
         'daemon_stat_7' => array(
-            'title' => __( 'Configured Coins: ' . $_statsArray['7'][1] .'<span class="wc_veruspay_edit_daemon" data-root="' . $wc_veruspay_global['paths']['root'] . '" data-url="https://' . $this->get_option( 'daemon_ip_7' ) . '">+</span>', 'veruspay-verus-gateway' ),
+            'title' => __( 'Configured Coins: ' . $_statsArray['7'][1] .'<span class="wc_veruspay_edit_daemon" data-root="' . $wc_veruspay_global['paths']['site'] . '" data-url="https://' . $this->get_option( 'daemon_ip_7' ) . '">+</span>', 'veruspay-verus-gateway' ),
             'type' => 'title',
             'description' => '',
             'class' => 'wc_veruspay_section_heading wc_veruspay_title-sub wc_veruspay_title-sub-toggle-under wc_veruspay_daemonsettings-toggle ' . $_classArray['7'] . '-status',
