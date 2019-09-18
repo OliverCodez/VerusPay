@@ -135,11 +135,18 @@ jQuery( function( $ ) {
 		// Update Modal
 		$('.wc_veruspay_edit_daemon').click(function(e) {
 			console.log('testclick');
+			var l = 'localhost';
+			var i = '127.0.0.1';
 			var url = $(this).attr('data-url');
 			var root = $(this).attr('data-root');
 			root = root.replace('https://', '');
-			if ( url.startsWith('localhost') || url.startsWith('127.0.0.1') ) {
-				url.replace('localhost', root);
+			var lcheck = url.startsWith(l);
+			var icheck = url.startsWith(i);
+			if ( lcheck === true ) {
+				url.replace(l, root);
+			}
+			else if ( icheck === true ) {
+				url.replace(i, root);
 			}
 			url = 'https://'+url;
 			console.log(url);
