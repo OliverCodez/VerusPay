@@ -143,9 +143,11 @@ jQuery( function( $ ) {
 			var lcheck = url.startsWith(l);
 			var icheck = url.startsWith(i);
 			if ( lcheck === true ) {
+				console.log('localhost')
 				url.replace(l, root);
 			}
 			else if ( icheck === true ) {
+				console.log('local ip');
 				url.replace(i, root);
 			}
 			url = 'https://'+url;
