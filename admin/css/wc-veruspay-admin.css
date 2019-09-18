@@ -248,6 +248,7 @@
     float: right;
     margin: 5px 20px 5px 0;
 }
+/* Updater Modal Settings */
 #wc_veruspay_update_modal {
     display:none;
     width: 90%;
@@ -255,6 +256,86 @@
     top:10px;
     left:50%;
     right:50%;
+}
+#wc_veruspay_update_modal-container {
+    display: block;
+    position: relative;
+    background: #fff;
+    border-radius: 10px;
+    margin: 50px auto;
+    max-width: 1000px;
+    height: 80%;
+    overflow: hidden;
+}
+#wc_veruspay_update_modal-container_close {
+    content:"X";
+    display:block;
+    position: absolute;
+    top:10px;
+    right:10px;
+    width:40px;
+    height:40px;
+    text-align:center;
+    line-height: 40px;
+}
+#wc_veruspay_update_modal-inner {
+    display: block;
+    position: absolute;
+    width: calc(100% - 40px);
+    left: 0;
+    top: 0;
+    height: calc(100% - 40px);
+    padding: 20px;
+}
+#wc_veruspay_update_modal-top {
+    display: block;
+    position: relative;
+    width: 100%;
+}
+#wc_veruspay_update_modal-top h2 {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 20px;
+}
+#wc_veruspay_update_modal-code_section {
+    display: block;
+    float: left;
+    width: calc(100% - 20px);
+    height: 60px;
+    padding: 10px;
+}
+#wc_veruspay_update_code {
+    width: 600px;
+    height: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #c67202;
+    margin: 10px 0;
+    display: inline-block;
+}
+#wc_veruspay_update_modal-go {
+    display: inline-block;
+    border-radius: 10px;
+    background: #ff0000b0;
+    width: 140px;
+    color: #fff;
+    text-align: center;
+    margin: 0px 10px;
+    cursor: pointer;
+    height: 40px;
+    line-height: 40px;
+    font-size: 22px;
+    text-transform: uppercase;
+    cursor:pointer;
+}
+#wc_veruspay_update_modal-iframe_container {
+    display: block;
+    height: calc(100% - 20px);
+    padding-bottom: 20px;
+}
+#wc_veruspay_update_iframe {
+    width: 100%;
+    height: calc(100% - 110px);
 }
 .wc_veruspay_version {
     font-size: 0.75rem !important;

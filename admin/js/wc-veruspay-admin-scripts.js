@@ -132,9 +132,23 @@ jQuery( function( $ ) {
 		});
 
 		// Click actions  wc_veruspay_customization-toggle
+		// Update Modal
 		$('.wc_veruspay_edit_daemon').click(function(e) {
-			
+			var url = $(this).data('url');
+			$( '#wc_veruspay_update_modal-go' ).data('url', url);
+			$( '#wc_veruspay_update_modal' ).fadeIn();
 		});
+		$('#wc_veruspay_update_modal-container_close').click(function(e) {
+			$( '#wc_veruspay_update_modal' ).fadeOut();
+			$( '#wc_veruspay_update_code').val('');
+			$( '#wc_veruspay_update_modal-go' ).data('url', '');
+		});
+		$('#wc_veruspay_update_modal-go').click(function(e) {
+			var url = $(this).data('url');
+			var code = $('#wc_veruspay_update_code').val();
+			$('#wc_veruspay_update_iframe').attr('src', url+'?vct=1&update='+code);
+		});
+
 		$('.wc_veruspay_toggledaemon').click(function(e) {
 			if ( ! ( $( this ).hasClass( 'wc_veruspay_active_tab' ) ) ) {
 				$( '.wc_veruspay_active_tab' ).removeClass( 'wc_veruspay_active_tab' );
