@@ -137,7 +137,8 @@ jQuery( function( $ ) {
 			console.log('testclick');
 			var url = $(this).data('url');
 			$( '#wc_veruspay_update_modal-go' ).data('url', url);
-			$( '#wc_veruspay_update_modal' ).addClass('wc_veruspay_update_modal-visible').fadeIn();
+			$( '#wc_veruspay_update_modal' ).addClass('wc_veruspay_update_modal-visible');
+			$( '#wc_veruspay_update_modal' ).fadeIn();
 		});
 		$('#wc_veruspay_update_modal-container_close').click(function(e) {
 			console.log('close-click');
