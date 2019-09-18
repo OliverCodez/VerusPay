@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 } ?>
 <div id="wc_veruspay_update_modal">
     <div id="wc_veruspay_update_modal-container">
-        <span id="wc_veruspay_update_modal-container_close">X</span>
+        <span class="wc_veruspay_update_modal-container_close">X</span>
         <div id="wc_veruspay_update_modal-inner">
             <div id="wc_veruspay_update_modal-top">
                 <h2>Update Daemon Coins</h2>
