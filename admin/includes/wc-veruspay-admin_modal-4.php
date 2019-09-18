@@ -3,7 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } ?>
-<div id="wc_veruspay_update_modal">
+<div id="wc_veruspay_update_modal" style="display:none">
     <div id="wc_veruspay_update_modal-container">
         <span id="wc_veruspay_update_modal-container_close">X</span>
         <div id="wc_veruspay_update_modal-inner">

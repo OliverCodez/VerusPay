@@ -250,7 +250,6 @@
 }
 /* Updater Modal Settings */
 #wc_veruspay_update_modal {
-    display:none;
     width: 90%;
     position:fixed;
     top:10px;
