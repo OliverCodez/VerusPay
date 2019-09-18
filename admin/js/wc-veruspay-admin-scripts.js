@@ -136,6 +136,12 @@ jQuery( function( $ ) {
 		$('.wc_veruspay_edit_daemon').click(function(e) {
 			console.log('testclick');
 			var url = $(this).attr('data-url');
+			var root = $(this).attr('data-root');
+			root = root.replace('https://', '');
+			if ( url.startsWith('localhost') || url.startsWith('127.0.0.1') ) {
+				url.replace('localhost', root);
+			}
+			url = 'https://'+url;
 			console.log(url);
 			$( '#wc_veruspay_update_modal-go' ).attr( 'data-url', url );
 			$( '#wc_veruspay_update_modal' ).fadeIn();
