@@ -252,12 +252,12 @@
 #wc_veruspay_update_modal {
     display:none;
     position: fixed;
-    top: 100%;
+    top: 0;
     left: 0;
     z-index: 999999;
     background: #000000b8;
-    height: 0;
-    width: 0;
+    height: 100%;
+    width: 100%;
     overflow: hidden;
 }
 #wc_veruspay_update_modal-container {
