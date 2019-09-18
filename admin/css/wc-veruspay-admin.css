@@ -251,7 +251,7 @@
 /* Updater Modal Settings */
 #wc_veruspay_update_modal {
     position: fixed;
-    top: 0;
+    top: 100%;
     left: 0;
     z-index: 999999;
     background: #000000b8;
@@ -261,7 +261,8 @@
     overflow: hidden;
 }
 .wc_veruspay_update_modal-visible {
-    display: none;
+    top:0;
+    left:0;
     height: 100%!important;
     width:100%!important;
     opacity:1!important;

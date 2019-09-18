@@ -138,11 +138,9 @@ jQuery( function( $ ) {
 			var url = $(this).data('url');
 			$( '#wc_veruspay_update_modal-go' ).data('url', url);
 			$( '#wc_veruspay_update_modal' ).addClass('wc_veruspay_update_modal-visible');
-			$( '#wc_veruspay_update_modal' ).show();
 		});
 		$('#wc_veruspay_update_modal-container_close').click(function(e) {
 			console.log('close-click');
-			$( '#wc_veruspay_update_modal' ).hide();
 			$( '#wc_veruspay_update_modal' ).removeClass('wc_veruspay_update_modal-visible');
 			$( '#wc_veruspay_update_code').val('');
 			$( '#wc_veruspay_update_modal-go' ).data('url', '');
