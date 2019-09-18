@@ -250,13 +250,22 @@
 }
 /* Updater Modal Settings */
 #wc_veruspay_update_modal {
-    width: 100%;
+    display:block;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 999999;
     background: #000000b8;
+    height: 0;
+    width: 0;
+    opacity:0;
+    overflow: hidden;
+}
+.wc_veruspay_update_modal-visible {
+    display: none;
     height: 100%;
+    width:100%;
+    opacity:1;
 }
 #wc_veruspay_update_modal-container {
     display: block;
