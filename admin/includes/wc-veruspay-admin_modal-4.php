@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 <h2>Update Daemon Coins</h2>
                 <div id="wc_veruspay_update_modal-code_section">                    
                     <input type="text" placeholder="Enter Daemon Update Code" id="wc_veruspay_update_code">
-                    <span id="wc_veruspay_update_modal-go" data-link="">Go</span>
+                    <span id="wc_veruspay_update_modal-go" data-url="">Go</span>
                 </div>
             </div>
             <div id="wc_veruspay_update_modal-iframe_container">
