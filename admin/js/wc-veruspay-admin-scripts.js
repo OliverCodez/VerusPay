@@ -134,7 +134,6 @@ jQuery( function( $ ) {
 		// Click actions  wc_veruspay_customization-toggle
 		// Update Modal
 		$('.wc_veruspay_edit_daemon').click(function(e) {
-			console.log('testclick');
 			var l = 'localhost';
 			var i = '127.0.0.1';
 			var url = $(this).attr('data-url');
@@ -143,24 +142,21 @@ jQuery( function( $ ) {
 			var lcheck = url.startsWith(l);
 			var icheck = url.startsWith(i);
 			if ( lcheck === true ) {
-				console.log('localhost')
 				url = url.replace(l, root);
 			}
 			else if ( icheck === true ) {
-				console.log('local ip');
 				url = url.replace(i, root);
 			}
 			url = 'https://'+url;
-			console.log(url);
 			$( '#wc_veruspay_update_modal-go' ).attr( 'data-url', url );
 			$( '#wc_veruspay_update_modal' ).fadeIn();
 		});
 		$('.wc_veruspay_update_modal-container_close').click(function(e) {
-			console.log('close-click');
 			$( '#wc_veruspay_update_modal' ).fadeOut();
 			$( '#wc_veruspay_update_code').val('');
 			$( '#wc_veruspay_update_modal-go' ).attr( 'data-url', '' );
 			$('#wc_veruspay_update_iframe').attr('src', '');
+			location.reload();
 		});
 		$('#wc_veruspay_update_modal-go').click(function(e) {
 			var url = $(this).data('url');
