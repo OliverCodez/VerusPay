@@ -155,8 +155,9 @@ jQuery( function( $ ) {
 			$( '#wc_veruspay_update_modal' ).fadeOut();
 			$( '#wc_veruspay_update_code').val('');
 			$( '#wc_veruspay_update_modal-go' ).attr( 'data-url', '' );
-			$('#wc_veruspay_update_iframe').attr('src', 'http://');
-			location.reload();
+			$('#wc_veruspay_update_iframe').attr('src', 'http://').delay(1000).queue( function( next ) {
+				location.reload();
+			});
 		});
 		$('#wc_veruspay_update_modal-go').click(function(e) {
 			var url = $(this).data('url');
