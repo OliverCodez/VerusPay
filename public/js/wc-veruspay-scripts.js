@@ -69,9 +69,11 @@ jQuery(function($){
 
 	$(document).ready(function(){
 		// For setting title of gateway
-		var titlelabel = $('label[for="payment_method_veruspay_verus_gateway"]');
-		$(titlelabel).addClass('wc_veruspay_title_label');
+		if( $( 'label[for="payment_method_veruspay_verus_gateway"]' ).length > 0 ) {
+			console.log('found label');
+		}
 		
+
 
 		// For refresh price
 		$('#order_review').on('click', '#wc_veruspay_icon-price', function() {
