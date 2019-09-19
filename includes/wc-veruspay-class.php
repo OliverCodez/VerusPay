@@ -27,11 +27,11 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         $this->enabled = $this->get_option( 'enabled' );
         $this->test_mode = 'yes' == $this->get_option( 'test_mode' );
         if ( $this->test_mode ) {
-            $this->title = __( 'TEST MODE<span class=wc_veruspay_title_sub>'.$this->get_option( 'title_sub').'</span>', 'veruspay-verus-gateway' );
+            $this->title = __( 'TEST MODE<span id=wc_veruspay_title_sub>'.$this->get_option( 'title_sub').'</span>', 'veruspay-verus-gateway' );
             $this->testmsg = '<span sclass="wc_veruspay_red">TEST MODE ENABLED</span>';
         }
         else {
-            $this->title = __( 'VerusPay<span class=wc_veruspay_title_sub>'.$this->get_option( 'title_sub').'</span>', 'veruspay-verus-gateway' );
+            $this->title = __( 'VerusPay<span id=wc_veruspay_title_sub>'.$this->get_option( 'title_sub').'</span>', 'veruspay-verus-gateway' );
             $this->testmsg = 'TEST MODE';
         }
         $this->verusQR = $this->get_option( 'vrscqrver'); // For Invoice QR codes
