@@ -143,7 +143,7 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         else {
             // TODO: DEBUGGING
             echo 'TEST DATA: <pre>';
-            print_r($this->chains);
+            print_r($this->coin);
             echo '</pre>';die();
             // END
             // Try to default to Verus if no post data
