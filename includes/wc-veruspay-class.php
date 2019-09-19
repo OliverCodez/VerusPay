@@ -70,8 +70,8 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
             wp_enqueue_script( 'wc_veruspay_admin_scripts' );
             echo '<div id="wc_veruspay_admin_menu" class="wc_veruspay_noheight"></div>';
             $this->init_form_fields();
-            echo 'icon: <pre>';print_r($this);echo '</pre>';die();
         }
+        echo 'icon: <pre>';print_r($this);echo '</pre>';die();
         // Add actions for payment gateway, scripts, thank you page, and emails
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
         add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
