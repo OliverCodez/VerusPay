@@ -4,11 +4,11 @@
 - Donate link: https://veruspay.io/donate/
 - Tags: woocommerce, payment gateway, gateway, cryptocurrency, blockchain, verus, verus coin, vrsc, pirate, arrr, komodo, kmd
 - Requires at least: 5.0.0
-- Tested up to: 5.2.1
+- Tested up to: 5.2.3
 - Requires PHP: 7.0
-- Stable tag: 0.4.0-beta
+- Stable tag: 0.5.0
 - Requires WooCommerce at least: 3.5.6
-- Tested WooCommerce up to: 3.6.3
+- Tested WooCommerce up to: 3.7.0
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
 

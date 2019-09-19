@@ -182,12 +182,6 @@ function wc_veruspay_price( $chain, $currency ) {
     if ( ! isset( $_chain_up ) ) {
         $_chain_up = 'VRSC';
     }
-    // TODO : VRSCTEST & BTC added for testing and debugging
-    if ( $chain == 'VRSCTEST' ) {
-        $_chain_up = 'VRSC';
-        $_chain_lo = 'vrsc';
-    }
-    // END TESTING 
     if ( in_array( $_chain_lo, $wc_veruspay_global['chain_list'] ) ) {
         $r = wc_veruspay_wp_get_curl( $wc_veruspay_global['chain_dtls']['fiat']['api'] . '?currency=' . $_cur_up . '&ticker=' . $_chain_up );
         if ( is_numeric( $r ) ) {
