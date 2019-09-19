@@ -141,7 +141,7 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
             $_chain_up = strtoupper( WC()->session->get( 'wc_veruspay_coin' ) );
         }
         else {
-            print_r($this->chains[$this->coin]);die();// TODO: Debugging
+            echo '<pre>';print_r($this->chains);echo '</pre>';die();// TODO: Debugging
             // Try to default to Verus if no post data
             if ( $this->chains[$this->coin]['EN'] == 'yes' ) {
                 $_chain_up = strtoupper( $this->coin );
