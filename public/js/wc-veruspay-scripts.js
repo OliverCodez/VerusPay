@@ -67,15 +67,7 @@ jQuery(function($){
 		);
 	});
 
-	$(document).ready(function(){
-		// For setting title of gateway
-		if( $( 'label[for="payment_method_veruspay_verus_gateway"]' ).length > 0 ) {
-			$( 'label[for="payment_method_veruspay_verus_gateway"]' ).addClass('test');
-			console.log('found label');
-		}
-		
-
-
+	$(document).ready(function(){		
 		// For refresh price
 		$('#order_review').on('click', '#wc_veruspay_icon-price', function() {
 			updateCheckout();
