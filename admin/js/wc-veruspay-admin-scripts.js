@@ -167,8 +167,7 @@ jQuery( function( $ ) {
 			$('#wc_veruspay_update_iframe').attr('src', 'http://').delay(1000).queue( function( next ) {
 			});
 			if ( urllen != '7' ) {
-				console.log('length');
-				//location.reload();
+				location.reload();
 			}
 		});
 
