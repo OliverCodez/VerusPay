@@ -165,10 +165,11 @@ jQuery( function( $ ) {
 			$( '#wc_veruspay_update_code').val('');
 			$( '#wc_veruspay_update_modal-go' ).attr( 'data-url', '' );
 			$('#wc_veruspay_update_iframe').attr('src', 'http://').delay(1000).queue( function( next ) {
-			if ( urllen != '7' ) {
-				location.reload();
-			}
 			});
+			if ( urllen != '7' ) {
+				console.log('length');
+				//location.reload();
+			}
 		});
 
 		$('.wc_veruspay_toggledaemon').click(function(e) {
