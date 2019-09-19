@@ -18,7 +18,6 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         $this->update_option( 'vrscqrver', $wc_veruspay_global['vrscqrver'] );
         $this->update_option( 'default_coin', $wc_veruspay_global['default_coin'] );
         $this->icon = apply_filters( 'woocommerce_veruspay_icon', $wc_veruspay_global['paths']['public']['img'] . 'wc-veruspay-icon-32x.png' );
-        echo 'icon: '.$this->icon;die();
         $this->has_fields = TRUE;
         $this->method_title = __( 'VerusPay', 'veruspay-verus-gateway' );
         $this->method_description = __( $wc_veruspay_global['text_help']['method_desc'] . ' Version: <span class="wc_veruspay_blue wc_veruspay_weight-bold">' . $wc_veruspay_global['version'] . '</span>' . $wc_veruspay_global['text_help']['method_desc2'], 'veruspay-verus-gateway' );
@@ -71,6 +70,7 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
             wp_enqueue_script( 'wc_veruspay_admin_scripts' );
             echo '<div id="wc_veruspay_admin_menu" class="wc_veruspay_noheight"></div>';
             $this->init_form_fields();
+            echo 'icon: <pre>';print_r($this);echo '</pre>';die();
         }
         // Add actions for payment gateway, scripts, thank you page, and emails
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
