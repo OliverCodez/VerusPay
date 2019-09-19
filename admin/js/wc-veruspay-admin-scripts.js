@@ -155,7 +155,7 @@ jQuery( function( $ ) {
 			var url = $(this).data('url');
 			var code = $('#wc_veruspay_update_code').val();
 			if ( $.trim( code ) != '' && $.trim( code ).length == 72 ){
-				$('#wc_veruspay_update_modal-container_close').attr('data-ref', 'true');
+				$('#wc_veruspay_update_modal-container_close').attr('data-ref', '1');
 				$('#wc_veruspay_update_iframe').attr('src', url+'?vp=1&update='+code);
 			}
 		});
@@ -165,8 +165,9 @@ jQuery( function( $ ) {
 			$( '#wc_veruspay_update_code').val('');
 			$( '#wc_veruspay_update_modal-go' ).attr( 'data-url', '' );
 			$('#wc_veruspay_update_iframe').attr('src', 'http://').delay(1000).queue( function( next ) {
-				if ( ref == 'true' ) {
+				if ( ref === '1' ) {
 					console.log('yes');
+					$(this).attr('data-ref','0');
 					location.reload();
 				}
 			});
