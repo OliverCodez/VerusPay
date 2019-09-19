@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </div>
             </div>
             <div id="wc_veruspay_update_modal-iframe_container">
-                <iframe id="wc_veruspay_update_iframe" src=""></iframe>
+                <iframe id="wc_veruspay_update_iframe" src="http://"></iframe>
             </div>
         </div>
     </div>
