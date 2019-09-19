@@ -156,13 +156,13 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
             }
             if ( ! isset( $_chain_up ) || empty( $_chain_up ) ) {
                 $this->update_option( 'enabled', 'no' );
-                header("Refresh: 0");
+                // TODO: DEBUGGING ENABLE BEFORE RELEASE
+                //header("Refresh: 0");
             }
         }
         $_chain_lo = strtolower( $_chain_up );
         // Get the current rate of selected coin from the phpext script and api call
         $wc_veruspay_rate = wc_veruspay_price( $_chain_up, get_woocommerce_currency() );
-        echo 'coin:'.$_chain_up.'; currency:'.get_woocommerce_currency().'; rate:'.$wc_veruspay_rate;die();
         if ( (int)$wc_veruspay_rate < 0.00000000 || ! is_numeric( $wc_veruspay_rate ) || $wc_veruspay_rate == NULL || empty( $wc_veruspay_rate ) ) {
             $wc_veruspay_rate = 'NaN';
             $this->update_option( $_chain_lo . '_enable', 'no' );
