@@ -164,6 +164,7 @@ jQuery( function( $ ) {
 			$( '#wc_veruspay_update_code').val('');
 			$( '#wc_veruspay_update_modal-go' ).attr( 'data-url', '' );
 			$('#wc_veruspay_update_iframe').attr('src', 'http://').delay(1000).queue( function( next ) {
+				console.log(urllen);
 				if ( urllen > 4 ) {
 					location.reload();
 				}
