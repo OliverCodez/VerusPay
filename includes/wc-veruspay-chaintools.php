@@ -180,6 +180,7 @@ function wc_veruspay_price( $chain, $currency ) {
     $_chain_lo = strtolower( $chain );
     // Default to VerusCoin
     if ( ! isset( $_chain_up ) ) {
+        // TODO : Change to VRSC before release
         $_chain_up = 'VRSCTEST';
     }
     if ( in_array( $_chain_lo, $wc_veruspay_global['chain_list'] ) ) {
