@@ -270,7 +270,7 @@
     height: 80%;
     overflow: hidden;
 }
-.wc_veruspay_update_modal-container_close {
+#wc_veruspay_update_modal-container_close {
     content:"X";
     display:block;
     position: absolute;

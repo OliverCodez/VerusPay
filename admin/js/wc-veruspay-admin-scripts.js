@@ -151,18 +151,21 @@ jQuery( function( $ ) {
 			$( '#wc_veruspay_update_modal-go' ).attr( 'data-url', url );
 			$( '#wc_veruspay_update_modal' ).fadeIn();
 		});
-		$('.wc_veruspay_update_modal-container_close').click(function(e) {
+		$('#wc_veruspay_update_modal-go').click(function(e) {
+			var url = $(this).data('url');
+			var code = $('#wc_veruspay_update_code').val();
+			if($.trim(code) != ''){
+				$('#wc_veruspay_update_modal-container_close').attr('data-ref', 'true');
+			}
+			$('#wc_veruspay_update_iframe').attr('src', url+'?vp=1&update='+code);
+		});
+		$('#wc_veruspay_update_modal-container_close').click(function(e) {
 			$( '#wc_veruspay_update_modal' ).fadeOut();
 			$( '#wc_veruspay_update_code').val('');
 			$( '#wc_veruspay_update_modal-go' ).attr( 'data-url', '' );
 			$('#wc_veruspay_update_iframe').attr('src', 'http://').delay(1000).queue( function( next ) {
 				location.reload();
 			});
-		});
-		$('#wc_veruspay_update_modal-go').click(function(e) {
-			var url = $(this).data('url');
-			var code = $('#wc_veruspay_update_code').val();
-			$('#wc_veruspay_update_iframe').attr('src', url+'?vp=1&update='+code);
 		});
 
 		$('.wc_veruspay_toggledaemon').click(function(e) {
