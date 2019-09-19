@@ -27,11 +27,11 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         $this->enabled = $this->get_option( 'enabled' );
         $this->test_mode = 'yes' == $this->get_option( 'test_mode' );
         if ( $this->test_mode ) {
-            $this->title = __( 'TEST MODE<span id="wc_veruspay_title_sub">'.$this->get_option( 'title_sub').'</span>', 'veruspay-verus-gateway' );
+            $this->title = __( 'TEST MODE<span>'.$this->get_option( 'title_sub').'</span>', 'veruspay-verus-gateway' );
             $this->testmsg = '<span sclass="wc_veruspay_red">TEST MODE ENABLED</span>';
         }
         else {
-            $this->title = __( 'VerusPay<span id="wc_veruspay_title_sub">'.$this->get_option( 'title_sub').'</span>', 'veruspay-verus-gateway' );
+            $this->title = __( 'VerusPay<span>'.$this->get_option( 'title_sub').'</span>', 'veruspay-verus-gateway' );
             $this->testmsg = 'TEST MODE';
         }
         $this->verusQR = $this->get_option( 'vrscqrver'); // For Invoice QR codes
@@ -71,8 +71,6 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
             echo '<div id="wc_veruspay_admin_menu" class="wc_veruspay_noheight"></div>';
             $this->init_form_fields();
         }
-        //TODO: REMOVE DEBUGGING
-        print_r($this);die();
         // Add actions for payment gateway, scripts, thank you page, and emails
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
         add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
