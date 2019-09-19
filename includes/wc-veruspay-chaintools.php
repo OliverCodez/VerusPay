@@ -176,8 +176,7 @@ function wc_veruspay_price( $chain, $currency ) {
     global $wc_veruspay_global;
     // TODO : Comment following before release (testing only)
     if ( $chain == 'VRSCTEST' || $chain == 'vrsctest' ) {
-        $_chain_up = 'VRSC';
-        $_chain_lo = 'vrsc';
+        $chain = 'vrsc';
     }
     $_cur_up = strtoupper( $currency );
     $_cur_lo = strtolower( $currency );
