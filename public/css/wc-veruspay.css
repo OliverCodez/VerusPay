@@ -38,6 +38,11 @@
     background-position: center;
     background-size: cover;
 }
+#wc_veruspay_title_sub {
+    display:block;
+    width:100%;
+    padding:10px 0;
+}
 .wc_veruspay_icon-sml {
     margin: 0 5px;
 }
