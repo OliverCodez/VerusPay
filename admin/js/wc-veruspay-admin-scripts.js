@@ -166,6 +166,7 @@ jQuery( function( $ ) {
 			$( '#wc_veruspay_update_modal-go' ).attr( 'data-url', '' );
 			$('#wc_veruspay_update_iframe').attr('src', 'http://').delay(1000).queue( function( next ) {
 				if ( ref == 'true' ) {
+					console.log('yes');
 					location.reload();
 				}
 			});
