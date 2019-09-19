@@ -180,7 +180,7 @@ function wc_veruspay_price( $chain, $currency ) {
     $_chain_lo = strtolower( $chain );
     // Default to VerusCoin
     if ( ! isset( $_chain_up ) ) {
-        $_chain_up = 'VRSC';
+        $_chain_up = 'VRSCTEST';
     }
     if ( in_array( $_chain_lo, $wc_veruspay_global['chain_list'] ) ) {
         $r = wc_veruspay_wp_get_curl( $wc_veruspay_global['chain_dtls']['fiat']['api'] . '?currency=' . $_cur_up . '&ticker=' . $_chain_up );
