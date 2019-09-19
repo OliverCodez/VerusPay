@@ -71,6 +71,7 @@ jQuery(function($){
 		// For setting title of gateway
 		if( $( 'label[for="payment_method_veruspay_verus_gateway"]' ).length > 0 ) {
 			console.log('found label');
+			$(this).addClass('wc_veruspay_title_label');
 		}
 		
 
