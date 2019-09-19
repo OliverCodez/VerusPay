@@ -16,6 +16,14 @@
 
 ### Requires: WooCommerce 3.5.6+
 
+### Supporting Repos:
+
+>> Verus Chain Tools - https://github.com/joliverwestbrook/VerusChainTools
+
+and 
+
+>> VerusPay Install Scripts - https://github.com/joliverwestbrook/VerusPayInstallScripts
+
 This plugin extends WooCommerce and integrates with the Verus blockchain, adding the ability to accept cryptocurrency payments in Verus Coin (VRSC) using either an on-store wallet daemon (not recommended) or in conjunction with a remote wallet server (recommended).
 
 When an order is submitted via the VerusPay gateway, the order will be placed "on-hold" while awaiting payment from the customer. The customer has a limited time wherein to send the payment and the store monitors the wallet/address to confirm payment received before releasing the order and redirecting the customer to the Thank You page.
@@ -136,8 +144,15 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 
 ## Changelog
 
+= 2019.09.19 - version 0.5.0 =
+Major release
+
 = 2019.08.03 - version 0.4.0-beta =
 *** Beta Testing ONLY release for upcoming version 0.4.0 ***
+
+= 2019.06.08 - version 0.3.6 =
+
+- Minor bug fixes
 
 = 2019.05.25 - version 0.3.5 =
 
@@ -226,6 +241,10 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 - Test mode to allow enabling the plugin only for logged in Admins
 
 ## Upgrade Notice
+
+= 2019.06.08 - version 0.3.6 =
+
+Bug Fixes
 
 = 2019.05.25 - version 0.3.5 =
 
