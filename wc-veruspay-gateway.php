@@ -30,8 +30,7 @@ $wc_veruspay_pre = 'woocommerce_';
 $wc_veruspay_apd = '_settings';
 $wc_veruspay_woo = 'woocommerce/woocommerce.php';
 $wc_veruspay_ver = '0.5.0';
-// TODO : Change to VRSC before release
-$wc_veruspay_default_coin = 'VRSCTEST';
+$wc_veruspay_default_coin = 'VRSC';
 $wc_veruspay_vrsc_qr_version = '0.1.0';
 $wc_veruspay_io = 'https://veruspay.io/ext/';
 $wc_veruspay_coingeckoapi = 'https://api.coingecko.com/api/v3/';
