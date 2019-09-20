@@ -281,9 +281,6 @@ function wc_veruspay_set_address( $order_id ) {
 		$_chain_lo = strtolower( $_chain_up );
 		if ( $wc_veruspay_chains['daemon'][$_chain_up]['EN'] == 'yes' ) {
 			if ( $wc_veruspay_chains['daemon'][$_chain_up]['ST'] == 1 ) {
-				// TODO: Debugging
-				echo 'TEST';die();
-				// END
 				if ( get_post_meta( $order_id, '_wc_veruspay_sapling', TRUE ) == 'yes' ) { // If Sapling is enabled, get a sapling address
 					$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'z_getnewaddress' );
 					while ( wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'z_getbalance', json_encode( $wc_veruspay_address, TRUE ) ) > 0 ) {
@@ -296,6 +293,9 @@ function wc_veruspay_set_address( $order_id ) {
 				}
 				else { // If Not Sapling, get Transparent
 					$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'getnewaddress' );
+					//TODO Debug
+					echo $wc_veruspay_address;die();
+					//END
 					while ( wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'z_getbalance', json_encode( $wc_veruspay_address, TRUE ) ) > 0 ) {
 						$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'getnewaddress' );
 					}
