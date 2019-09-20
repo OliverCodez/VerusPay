@@ -4,11 +4,11 @@ Contributors: veruspay, joliverwestbrook
 Donate link: https://veruspay.io/donate/
 Tags: woocommerce, payment gateway, gateway, cryptocurrency, blockchain, verus, verus coin, vrsc, pirate, arrr, komodo, kmd
 Requires at least: 5.0.0
-Tested up to: 5.2.1
+Tested up to: 5.2.3
 Requires PHP: 7.0
-Stable tag: 0.4.0-beta
+Stable tag: 0.5.0
 Requires WooCommerce at least: 3.5.6
-Tested WooCommerce up to: 3.6.3
+Tested WooCommerce up to: 3.7.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -147,6 +147,11 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 9. After payment is detected on the blockchain, the purchase waits for the store-set minimum confirmations and delivers the digital product or completes the sale when it's reached.
 
 === Changelog ===
+
+= 2019.09.19 - version 0.5.0 =
+
+- Major release, change entire codebase and layout, function, with new functions for next release configured
+- PBaaS Support
 
 = 2019.08.03 - version 0.4.0-beta =
 

@@ -132,7 +132,44 @@ jQuery( function( $ ) {
 		});
 
 		// Click actions  wc_veruspay_customization-toggle
-		
+		// Update Modal
+		$('.wc_veruspay_edit_daemon').click(function(e) {
+			var l = 'localhost';
+			var i = '127.0.0.1';
+			var url = $(this).attr('data-url');
+			var root = $(this).attr('data-root');
+			root = root.replace('https://', '');
+			var lcheck = url.startsWith(l);
+			var icheck = url.startsWith(i);
+			if ( lcheck === true ) {
+				url = url.replace(l, root);
+			}
+			else if ( icheck === true ) {
+				url = url.replace(i, root);
+			}
+			url = 'https://'+url;
+			$( '#wc_veruspay_update_modal-go' ).attr( 'data-url', url );
+			$( '#wc_veruspay_update_modal' ).fadeIn();
+		});
+		$('#wc_veruspay_update_modal-go').click(function(e) {
+			var url = $(this).data('url');
+			var code = $('#wc_veruspay_update_code').val();
+			if ( $.trim( code ) != '' && $.trim( code ).length == 72 ){
+				$('#wc_veruspay_update_iframe').attr('src', url+'?update=1&code='+code);
+			}
+		});
+		$('#wc_veruspay_update_modal-container_close').on( 'click', function(e) {
+			var urllen = $('#wc_veruspay_update_iframe').attr('src').length;
+			$( '#wc_veruspay_update_modal' ).fadeOut();
+			$( '#wc_veruspay_update_code').val('');
+			$( '#wc_veruspay_update_modal-go' ).attr( 'data-url', '' );
+			if ( urllen != '7' ) {
+				$('#wc_veruspay_update_iframe').attr('src', 'http://').delay(1000).queue( function( next ) {
+					location.reload();
+				});
+			}
+		});
+
 		$('.wc_veruspay_toggledaemon').click(function(e) {
 			if ( ! ( $( this ).hasClass( 'wc_veruspay_active_tab' ) ) ) {
 				$( '.wc_veruspay_active_tab' ).removeClass( 'wc_veruspay_active_tab' );

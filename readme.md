@@ -4,17 +4,25 @@
 - Donate link: https://veruspay.io/donate/
 - Tags: woocommerce, payment gateway, gateway, cryptocurrency, blockchain, verus, verus coin, vrsc, pirate, arrr, komodo, kmd
 - Requires at least: 5.0.0
-- Tested up to: 5.2.1
+- Tested up to: 5.2.3
 - Requires PHP: 7.0
-- Stable tag: 0.4.0-beta
+- Stable tag: 0.5.0
 - Requires WooCommerce at least: 3.5.6
-- Tested WooCommerce up to: 3.6.3
+- Tested WooCommerce up to: 3.7.0
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
 
 ## Description
 
 ### Requires: WooCommerce 3.5.6+
+
+### Supporting Repos:
+
+>> Verus Chain Tools - https://github.com/joliverwestbrook/VerusChainTools
+
+and 
+
+>> VerusPay Install Scripts - https://github.com/joliverwestbrook/VerusPayInstallScripts
 
 This plugin extends WooCommerce and integrates with the Verus blockchain, adding the ability to accept cryptocurrency payments in Verus Coin (VRSC) using either an on-store wallet daemon (not recommended) or in conjunction with a remote wallet server (recommended).
 
@@ -136,8 +144,17 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 
 ## Changelog
 
+= 2019.09.19 - version 0.5.0 =
+
+- Major release, change entire codebase and layout, function, with new functions for next release configured
+- PBaaS Support
+
 = 2019.08.03 - version 0.4.0-beta =
 *** Beta Testing ONLY release for upcoming version 0.4.0 ***
+
+= 2019.06.08 - version 0.3.6 =
+
+- Minor bug fixes
 
 = 2019.05.25 - version 0.3.5 =
 
@@ -226,6 +243,10 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 - Test mode to allow enabling the plugin only for logged in Admins
 
 ## Upgrade Notice
+
+= 2019.06.08 - version 0.3.6 =
+
+Bug Fixes
 
 = 2019.05.25 - version 0.3.5 =
 

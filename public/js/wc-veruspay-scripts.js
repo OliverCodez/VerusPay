@@ -67,7 +67,7 @@ jQuery(function($){
 		);
 	});
 
-	$(document).ready(function(){
+	$(document).ready(function(){		
 		// For refresh price
 		$('#order_review').on('click', '#wc_veruspay_icon-price', function() {
 			updateCheckout();

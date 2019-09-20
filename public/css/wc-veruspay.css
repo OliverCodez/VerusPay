@@ -13,7 +13,7 @@
 }
 .wc_veruspay_poweredby {
     display: inline;
-    float:left;
+    float: left;
 }
 .wc_veruspay_coin_select {
     display: block;
@@ -27,7 +27,6 @@
     display: block;
     float: left;
 }
-
 .wc_veruspay_logo {
     display:block;
     float:left;
@@ -38,6 +37,18 @@
     background-position: center;
     background-size: cover;
 }
+/* Settings for Title at Checkout */
+label[for=payment_method_veruspay_verus_gateway] img {
+    margin-top: -65px;
+}
+#wc_veruspay_title_sub {
+    display:block;
+    width:100%;
+    padding:10px 0;
+    height:40px;
+    text-align:right;
+}
+/* == */
 .wc_veruspay_icon-sml {
     margin: 0 5px;
 }
