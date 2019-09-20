@@ -46,6 +46,7 @@ label[for=payment_method_veruspay_verus_gateway] img {
     width:100%;
     padding:10px 0;
     height:40px;
+    text-align:right;
 }
 /* == */
 .wc_veruspay_icon-sml {
