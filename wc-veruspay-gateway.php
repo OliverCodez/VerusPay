@@ -308,6 +308,7 @@ function wc_veruspay_set_address( $order_id ) {
 				$wc_veruspay_address = reset( $wc_veruspay_chains['daemon'][$_chain_up]['AD'] );
 				// Check if chain is supported in VerusPay API, if not manual approval by store owner
 				if ( isset( $wc_veruspay_global['chain_dtls'][$_chain_lo] ) ) {
+					// TODO: Future work, manual mode should not be set inside ['daemon'], this is a temporary configuration
 					while ( is_numeric( wc_veruspay_get( $_chain_up, 'getbalance', $wc_veruspay_address ) ) && wc_veruspay_get( $_chain_up, 'getbalance', $wc_veruspay_address ) > 0 ) {
 						if ( ( $wc_veruspay_key = array_search( $wc_veruspay_address, $wc_veruspay_chains['daemon'][$_chain_up]['AD'] ) ) !== FALSE ) {
 							unset( $wc_veruspay_chains['daemon'][$_chain_up]['AD'][$wc_veruspay_key] );
