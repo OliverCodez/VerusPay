@@ -9,8 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
             <span class="wc_veruspay_logo" style="background-image: url(<?php echo $wc_veruspay_global['coinimg'] . $_chain_up . '.png'; ?>);"></span>
             <select name="wc_veruspay_coin" id="wc_veruspay_coin" class="" aria-hidden="true" onchange="this.form.submit()">
             <?php
-            //TODO: Debugging
-            print_r($this->chains['daemon']);die();
                 // TODO: Future work, modes, for now use ['daemon']
                 foreach ( $this->chains['daemon'] as $key => $item ) {
                     if ( $item['EN'] == 'yes' ) {
