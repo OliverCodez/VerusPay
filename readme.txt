@@ -1,28 +1,21 @@
-# VerusPay Verus Gateway
+=== VerusPay Verus Gateway ===
 
-- Contributors: veruspay, joliverwestbrook
-- Donate link: https://veruspay.io/donate/
-- Tags: woocommerce, payment gateway, gateway, cryptocurrency, blockchain, verus, verus coin, vrsc, pirate, arrr, komodo, kmd
-- Requires at least: 5.0.0
-- Tested up to: 5.2.3
-- Requires PHP: 7.0
-- Stable tag: 0.5.0
-- Requires WooCommerce at least: 3.5.6
-- Tested WooCommerce up to: 3.7.0
-- License: MIT
-- License URI: https://opensource.org/licenses/MIT
+Contributors: veruspay, joliverwestbrook
+Donate link: https://veruspay.io/donate/
+Tags: woocommerce, payment gateway, gateway, cryptocurrency, blockchain, verus, verus coin, vrsc, pirate, arrr, komodo, kmd
+Requires at least: 5.0.0
+Tested up to: 5.2.3
+Requires PHP: 7.0
+Stable tag: 0.5.0
+Requires WooCommerce at least: 3.5.6
+Tested WooCommerce up to: 3.7.0
+License: MIT
+License URI: https://opensource.org/licenses/MIT
 
-## Description
 
-### Requires: WooCommerce 3.5.6+
+=== Description ===
 
-### Supporting Repos:
-
->> Verus Chain Tools - https://github.com/joliverwestbrook/VerusChainTools
-
-and 
-
->> VerusPay Install Scripts - https://github.com/joliverwestbrook/VerusPayInstallScripts
+= Requires: WooCommerce 3.5.6+ =
 
 This plugin extends WooCommerce and integrates with the Verus blockchain, adding the ability to accept cryptocurrency payments in Verus Coin (VRSC) using either an on-store wallet daemon (not recommended) or in conjunction with a remote wallet server (recommended).
 
@@ -32,13 +25,13 @@ VerusPay uses limited API functionality for Manual Mode, to communicate with the
 
 API's used periodically by VerusPay:
 
-1 - https://veruspay.io/api/
+1 - [VerusPay](https://veruspay.io/api/)
 
-2 - https://explorer.veruscoin.io
+2 - [VerusCoin Explorer](https://explorer.veruscoin.io)
 
-## Installation
+=== Installation ===
 
-### Requirements
+= Requirements =
 
 **WooCommerce Store**
 
@@ -48,61 +41,72 @@ If only acting as a store, with your crypto wallets on a remote server, virtuall
 
 This can be the same server as your web store (NOT RECOMMENDED) or a remote and dedicated wallet daemon server (RECOMMENDED).  It is recommended that the Wallet server have a minimum of 2GB of RAM only if it also has a 4GB SWAP.  Otherwise more RAM.
 
-Consider setting up a DigitalOcean server for this using this guide: [How to Setup a DigitalOcean $5 VerusCoin Server](http://bit.ly/2Ca6LIK) but choose a 2GB minimum server as your Wallet Server.
+My recommendation is Digital Ocean. [DigitalOcean VPS Server](https://m.do.co/c/13c092042583) - choose a 2GB minimum server as your Wallet Server.
 
 Follow this guide to setup your crypto wallet daemon server and the Verus Chain Tools, required for full blockchain integrated features of VerusPay:
 
-[Wallet Server & Verus Chain Tools Install Guide and Script](https://github.com/joliverwestbrook/VerusPayInstallScripts/blob/master/README.md)
+[Setup Crypto Wallets and Verus Chain Tools Guide and Script](https://veruspay.io/setup)
 
-After the install finishes, it will display IMPORTANT information for you to write down in a secure location. BE SURE TO WRITE THIS INFORMATION DOWN. 
+After the install finishes, it will display IMPORTANT information for you to write down in a secure location. BE SURE TO WRITE THIS INFORMATION DOWN.
 
-### Upgrade Steps
+= Upgrade Steps =
 
 To upgrade from any version below v0.3.0 you MUST first upgrade your VerusChainTools and wallet daemon server settings, following the steps found [here](https://github.com/joliverwestbrook/VerusPayInstallScripts)
 
-### Install & Configuration Steps
+= Install & Configuration Steps =
 
-**Configure Your Wallet Daemon Server:**
+**Configure Your Wallet Daemon Server with Verus Chain Tools**
+Verus Chain Tools is an open source toolset which acts as a limited-authority middleware, hosted by you, for your RPC daemons.  It is fully compatible with ANY Zcash forked coin.  VerusPay includes a script which is configured to properly interact with this API tool from within WordPress.
 
-1. Configure Wallet Settings
+= Step 1 - Configure Wallet Daemon Server =
 
-After you install VerusPay, configure each coin's Wallet Settings.  You must use the Verus Chain Tools installation script either on a remote Wallet Server (recommended) or on your store server, by following [this guide](https://github.com/joliverwestbrook/VerusPayInstallScripts/blob/master/README.md)
+You must use the Verus Chain Tools installation script either on a remote Wallet Server (recommended) or on your store server, by following [this guide](https://veruspay.io/setup/)
+
+= Step 2 - Configure Wallet Settings in VerusPay =
+
+After you install VerusPay, configure each coin's Wallet IP using the IP of the server you setup in Step 1.  If you opted to install the wallet daemons on this same server as your WooCommerce store, leave "localhost".
 
 If using a remote wallet server, it is recommended to enable SSL.  If your wallet deamons are local to your store server, https is disabled.
 
-2. As best practice for all Daemons with transparent addresses (e.g. Verus), it is required to generate and input a LOT of additional transaparent wallet addresses as a means of backup in case your Wallet Daemon server goes down.  
+= Step 3 - Get "Offline" Transparent Addresses for Any Applicable Coin's Address Settings =
 
-To do so, from a DIFFERENT server (not your new wallet daemon server...we'll call this your "offline" wallet), run the script to generate many additional transparent VRSC addresses.  Download the appropriate script for your OS to your "Offline" Verus wallet system from this link: [VerusPay Helper Scripts](https://veruspay.io/setup/scripts/)
+As best practice for all Daemons with transparent addresses (e.g. Verus), it is required to generate and input a LOT of additional transaparent wallet addresses as a means of backup in case your Wallet Daemon server goes down.
+
+To do so, from a DIFFERENT server (not your new wallet daemon server...we'll call this your "offline" wallet), run the script to generate many additional transparent VRSC addresses.  Download the appropriate script for your OS to your "Offline" Verus wallet system from this link: https://veruspay.io/setup/scripts/
 
 Place the script in your "offline" wallet's main folder (verus-cli) and execute it.  In Linux or Mac run with: `./getaddresses.sh 500` where "500" is the number of addresses to generate (I recommend a min of 500).  In Windows run it with `getaddresses.bat 500`
 
-The script will create a file in the same folder called VerusPayGeneratedAddresses.txt. You'll copy and paste these addresses in the VerusPay settings in a later step.
+The script will create a file in the same folder called VerusPayGeneratedAddresses.txt. 
 
-3. Lastly, customize store messages and any other settings and options to your liking.
+You'll copy and paste these addresses into the VerusPay settings under Address Settings.
 
-## Frequently Asked Questions
+= Step 4 - Customize Msgs and Options =
 
-**What is the text domain for translations?
+Lastly, customize store messages and any other settings and options to your liking.
+
+=== Frequently Asked Questions ===
+
+= What is the text domain for translations? =
 
 The text domain is "veruspay-verus-gateway".
 
-**How can I change the styling (CSS) of the checkout pages?
+= How can I change the styling (CSS) of the checkout pages? =
 
 CSS options are being added in a later release to the Admin section. For now, most themes come with a section where you can add your own CSS styling and you can add customizations this way.
 
-**Does this plugin work with a shared hosting plan or a host that does not have SSH access?
+= Does this plugin work with a shared hosting plan or a host that does not have SSH access? =
 
 Yes! Because it is recommended you setup a remotely dedicated wallet server, your store can be on any capable hosting plan.  You can also use "manual mode" for any transparent-capable wallet (e.g. Verus)
 
-**Can I "enforce" privacy Sapling payments?
+= Can I "enforce" privacy Sapling payments? =
 
-Yes, there is an option in the payment gateway settings within WooCommerce->Settings->Payments to enforce privacy "zs" payments.
+Yes, there is an option in the payment gateway settings within WooCommerce->Settings->Payments to enforce privacy "zs" payments.  This works in Live Mode only.
 
-**I'm running a Woocommerce shop on an Azure hosted WebApp / Shared Host / Godaddy / Dreamhost / etc. Can I use this guide: [veruspay.io/setup](https://veruspay.io/setup)?
+= I'm running a Woocommerce shop on an Azure hosted WebApp / Shared Host / Godaddy / Dreamhost / etc. Can I use this guide: [veruspay.io/setup](https://veruspay.io/setup)? =
 
 Yes, you can follow the published guide from GitHub and just follow the recommended procedure (your wallet server will be a seperate/new server you setup with DigitalOcean).
 
-**How do I withdraw funds from my store wallet(s)?
+= How do I withdraw funds from my store wallet(s)? =
 
 *NEW* You can now withdraw funds from any of your wallet stores using the 1-Click Cashout feature added in v0.3.0.  Simply navigate to the VerusPay settings within WordPress and expand the Wallet Management section, from which you can withdraw funds to your preset Cashout Address for the wallet in question.
 
@@ -122,7 +126,7 @@ For Verus: `/opt/verus/verus.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"addres
 
 For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"address\": \"RECEIVEADDRESS\", \"amount\":AMOUNT}]"`
 
-## Screenshots
+== Screenshots ==
  
 1. This is the main settings area for VerusPay within WooCommerce's "Settings->Payments" section. Each of the headings expand upon clicking.
 
@@ -142,7 +146,7 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 
 9. After payment is detected on the blockchain, the purchase waits for the store-set minimum confirmations and delivers the digital product or completes the sale when it's reached.
 
-## Changelog
+=== Changelog ===
 
 = 2019.09.19 - version 0.5.0 =
 
@@ -150,11 +154,8 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 - PBaaS Support
 
 = 2019.08.03 - version 0.4.0-beta =
-*** Beta Testing ONLY release for upcoming version 0.4.0 ***
 
-= 2019.06.08 - version 0.3.6 =
-
-- Minor bug fixes
+- *** Beta Testing ONLY release for upcoming version 0.4.0 ***
 
 = 2019.05.25 - version 0.3.5 =
 
@@ -242,11 +243,7 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 - Discount or Fee option for store owners allows a discount or fee % to be set for when a customer chooses to pay in Verus Coin (VRSC).
 - Test mode to allow enabling the plugin only for logged in Admins
 
-## Upgrade Notice
-
-= 2019.06.08 - version 0.3.6 =
-
-Bug Fixes
+== Upgrade Notice ==
 
 = 2019.05.25 - version 0.3.5 =
 
@@ -276,10 +273,10 @@ Bug fixes
 = 0.1.1 =
 Add QR Invoice functionality
 
-## Support
+=== Support ===
 
 If you encounter any errors during install and configuration of VerusPay, please report them to me via email at johnwestbrook@pm.me or you can contact me via the Verus Coin official Discord at [VerusCoin Official Discord](https://discord.gg/VRKMP2S)
 
-* Learn about the [Verus Coin official site](https://veruscoin.io) for more information about the community project
-* Join the [Verus Coin Discord](https://discord.gg/VRKMP2S) for support. 
-* More documentation is available at [VerusPay Official Site](https://veruspay.io)
+* Learn about the Verus Coin official site: https://veruscoin.io for more information about the community project
+* Join the Verus Coin Discord: https://discord.gg/VRKMP2S for support. 
+* More documentation is available at VerusPay Official Site: https://veruspay.io/setup
