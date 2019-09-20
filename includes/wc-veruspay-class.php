@@ -27,7 +27,7 @@ class WC_Gateway_VerusPay extends WC_Payment_Gateway {
         $this->enabled = $this->get_option( 'enabled' );
         $this->test_mode = 'yes' == $this->get_option( 'test_mode' );
         if ( $this->test_mode ) {
-            $this->title = __( 'TEST MODE<span id=wc_veruspay_title_sub>'.$this->get_option( 'title_sub').'</span>', 'veruspay-verus-gateway' );
+            $this->title = __( '<span id=wc_veruspay_title>TEST MODE</span><span id=wc_veruspay_title_sub>'.$this->get_option( 'title_sub').'</span>', 'veruspay-verus-gateway' );
             $this->testmsg = '<span sclass="wc_veruspay_red">TEST MODE ENABLED</span>';
         }
         else {
