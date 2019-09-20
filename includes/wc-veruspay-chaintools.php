@@ -174,6 +174,10 @@ function wc_veruspay_get( $chain, $method, $params = NULL ) {
  */
 function wc_veruspay_price( $chain, $currency ) {
     global $wc_veruspay_global;
+    // For Debugging and usage with VRSCTEST (testnet)
+    if ( $chain == 'VRSCTEST' || $chain == 'vrsctest' ) {
+        $chain = 'vrsc';
+    }
     $_cur_up = strtoupper( $currency );
     $_cur_lo = strtolower( $currency );
     $_chain_up = strtoupper( $chain );

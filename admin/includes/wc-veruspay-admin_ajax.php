@@ -25,11 +25,11 @@ function wc_veruspay_cashout_do() {
 	$_chain_up = strtoupper( sanitize_text_field( $_POST['coin'] ) );
 	$_chain_lo = strtolower( $_chain_up );
 	if ( $vtype == 'cashout_t' ) {
-		$wc_veruspay_cashout_results = wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, $vtype );
+		$wc_veruspay_cashout_results = wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, $vtype );
 		require_once( $wc_veruspay_global['paths']['admin_modal-0'] );
 	}
 	if ( $vtype == 'cashout_z' ) {
-		$wc_veruspay_cashout_results = json_decode( wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, $vtype ), TRUE );
+		$wc_veruspay_cashout_results = json_decode( wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, $vtype ), TRUE );
 		require_once( $wc_veruspay_global['paths']['admin_modal-1'] );
 		foreach( $wc_veruspay_cashout_results as $key => $item ) {
 			require_once( $wc_veruspay_global['paths']['admin_modal-2'] );
@@ -47,7 +47,7 @@ function wc_veruspay_balance_refresh() {
 	$ctype = sanitize_text_field( $_POST['type'] );
 	$_chain_up = strtoupper( sanitize_text_field( $_POST['coin'] ) );
 	$_chain_lo = strtolower( $_chain_up );
-	$wc_veruspay_balance_refresh = json_decode( wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'bal' ), TRUE )[$ctype];
+	$wc_veruspay_balance_refresh = json_decode( wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'bal' ), TRUE )[$ctype];
 	if ( strpos( $wc_veruspay_balance_refresh, 'Not Found' ) !== FALSE ) {
 		echo 'Err: ' . $wc_veruspay_global['text_help']['admin_0'];
 	}
@@ -71,12 +71,12 @@ function wc_veruspay_generate_ctrl() {
 	$_chain_up = strtoupper( sanitize_text_field( $_POST['coin'] ) );
 	$_chain_lo = strtolower( $_chain_up );
 	// Disable all generate first
-	wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( FALSE ), TRUE ) );
-	$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
+	wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( FALSE ), TRUE ) );
+	$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
 	
 	while ( $_get_stat['generate'] == TRUE ) {
-		wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( FALSE ), TRUE ) );
-		$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
+		wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( FALSE ), TRUE ) );
+		$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
 	}
 
 	if ( ! isset( $_get_stat['generate'] ) || empty( $_get_stat ) || $_get_stat['generate'] != 0 || $_get_stat['generate'] != FALSE ) {
@@ -85,8 +85,8 @@ function wc_veruspay_generate_ctrl() {
 	}
 	switch( $_gentype ) {
 		case 'stakeOn':
-			wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( TRUE, 0 ), TRUE ) );
-			$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
+			wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( TRUE, 0 ), TRUE ) );
+			$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
 			// Keep trying to start staking
 			while ( $_get_stat['staking'] != TRUE ) {
 				if ( $_get_stat['staking'] != 0 || $_get_stat['staking'] != FALSE ) {
@@ -94,15 +94,15 @@ function wc_veruspay_generate_ctrl() {
 					die();
 				}
 				else {
-					wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( TRUE, 0 ), TRUE ) );
-					$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
+					wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( TRUE, 0 ), TRUE ) );
+					$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
 				}
 			}
 			echo '1';
 			die();
 		case 'mineOn':
-			wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( TRUE, (int)$_threads ), TRUE ) );
-			$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
+			wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( TRUE, (int)$_threads ), TRUE ) );
+			$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
 			// Keep trying to start staking
 			while ( $_get_stat['generate'] != TRUE ) {
 				if ( $_get_stat['generate'] != 0 || $_get_stat['generate'] != FALSE ) {
@@ -110,16 +110,16 @@ function wc_veruspay_generate_ctrl() {
 					die();
 				}
 				else {
-					wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( TRUE, (int)$_threads ), TRUE ) );
-					$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
+					wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( TRUE, (int)$_threads ), TRUE ) );
+					$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
 				}
 			}
 			echo '1';
 			die();
 		case 'generateOn':
-			wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( TRUE, 0 ), TRUE ) );
-			wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( TRUE, (int)$_threads ), TRUE ) );
-			$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
+			wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( TRUE, 0 ), TRUE ) );
+			wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( TRUE, (int)$_threads ), TRUE ) );
+			$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
 			// Keep trying to start staking
 			while ( $_get_stat['staking'] != TRUE ) {
 				if ( $_get_stat['staking'] != 0 || $_get_stat['staking'] != FALSE ) {
@@ -127,23 +127,23 @@ function wc_veruspay_generate_ctrl() {
 					die();
 				}
 				else {
-					wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( TRUE, 0 ), TRUE ) );
-					wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( TRUE, (int)$_threads ), TRUE ) );
-					$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
+					wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( TRUE, 0 ), TRUE ) );
+					wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( TRUE, (int)$_threads ), TRUE ) );
+					$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
 				}
 			}
 			echo '1';
 			die();
 		case 'generateOff':
-			$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
+			$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
 			while ( $_get_stat['generate'] == TRUE ) {
 				if ( $_get_stat['generate'] != 0 || $_get_stat['generate'] != FALSE ) {
 					echo '2';
 					die();
 				}
 				else {
-					wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( FALSE ), TRUE ) );
-					$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains[$_chain_up]['DC'], $wc_veruspay_chains[$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
+					wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'setgenerate', json_encode( array( FALSE ), TRUE ) );
+					$_get_stat = json_decode( wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'getgenerate' ), TRUE );
 				}
 			}
 			echo '1';

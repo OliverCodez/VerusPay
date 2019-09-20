@@ -791,6 +791,14 @@ $wc_veruspay_init_options = array(
         'desc_tip' => TRUE,
         'class' => 'wc_veruspay_options-toggle',
       ),
+    'title_sub' => array(
+        'title' => __( 'Custom Payment Option Subtitle', 'veruspay-verus-gateway' ),
+        'type' => 'text',
+        'description' => __( 'Optional sub title displayed under VerusPay Logo at checkout', 'veruspay-verus-gateway' ),
+        'default' => '',
+        'desc_tip' => TRUE,
+        'class' => 'wc_veruspay_options-toggle',
+    ),
     // Discount or Fee Options
     'discount_fee' => array(
         'title' => __( 'Set Discount/Fee?', 'veruspay-verus-gateway' ),

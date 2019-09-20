@@ -148,6 +148,11 @@ For Pirate: `/opt/pirate/pirate.sh z_sendmany "STOREADDRESSSENDINGFROM" "[{\"add
 
 === Changelog ===
 
+= 2019.09.19 - version 0.5.0 =
+
+- Major release, change entire codebase and layout, function, with new functions for next release configured
+- PBaaS Support
+
 = 2019.08.03 - version 0.4.0-beta =
 
 - *** Beta Testing ONLY release for upcoming version 0.4.0 ***
