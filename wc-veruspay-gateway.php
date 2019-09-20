@@ -276,6 +276,9 @@ function wc_veruspay_set_address( $order_id ) {
 	$wc_veruspay_chains = $wc_veruspay_settings['wc_veruspay_chains'];
 	// Only proceed if processing a VerusPay payment
 	if ( ! empty( get_post_meta( $order_id, '_wc_veruspay_coin', TRUE ) ) ) {
+		// TODO: DEBUGGING
+echo 'Made it here';die();
+		// END
 		// If store is in Native mode and reachable, get a fresh address
 		$_chain_up = strtoupper( get_post_meta( $order_id, '_wc_veruspay_coin', TRUE ) );
 		$_chain_lo = strtolower( $_chain_up );
