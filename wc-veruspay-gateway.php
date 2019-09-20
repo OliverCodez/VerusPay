@@ -294,7 +294,7 @@ function wc_veruspay_set_address( $order_id ) {
 				else { // If Not Sapling, get Transparent
 					$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'getnewaddress' );
 					//TODO Debug
-					echo $wc_veruspay_address;die();
+					print_r($wc_veruspay_address);die();
 					//END
 					while ( wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'z_getbalance', json_encode( $wc_veruspay_address, TRUE ) ) > 0 ) {
 						$wc_veruspay_address = wc_veruspay_go( $wc_veruspay_chains['daemon'][$_chain_up]['DC'], $wc_veruspay_chains['daemon'][$_chain_up]['IP'], $_chain_up, 'getnewaddress' );
