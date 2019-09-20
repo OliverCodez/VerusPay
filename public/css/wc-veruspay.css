@@ -37,8 +37,9 @@
     background-position: center;
     background-size: cover;
 }
+/* Settings for Title at Checkout */
 label[for=payment_method_veruspay_verus_gateway] img {
-    margin-top: -60px;
+    margin-top: -65px;
 }
 #wc_veruspay_title_sub {
     display:block;
@@ -46,6 +47,7 @@ label[for=payment_method_veruspay_verus_gateway] img {
     padding:10px 0;
     height:40px;
 }
+/* == */
 .wc_veruspay_icon-sml {
     margin: 0 5px;
 }
