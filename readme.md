@@ -12,6 +12,10 @@
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
 
+## NEW
+
+This latest version of VerusPay requires only that VerusChainTools (the latest version) be installed on your wallet/daemon server and you follow the simple on-screen steps when installing the VerusPay plugin in WordPress. A working bitcoin-based daemon server is necessary to use the full functionality of VerusPay, but not required as VerusPay has options for utilizing a list of crypto addresses.  This allows you to use VerusPay with ANY cryptocurrency, with a few "kinks" still being ironed out by development.
+
 ## Description
 
 ### Requires: WooCommerce 3.5.6+
@@ -19,10 +23,6 @@
 ### Supporting Repos:
 
 >> Verus Chain Tools - https://github.com/joliverwestbrook/VerusChainTools
-
-and 
-
->> VerusPay Install Scripts - https://github.com/joliverwestbrook/VerusPayInstallScripts
 
 This plugin extends WooCommerce and integrates with the Verus blockchain, adding the ability to accept cryptocurrency payments in Verus Coin (VRSC) using either an on-store wallet daemon (not recommended) or in conjunction with a remote wallet server (recommended).
 
@@ -51,13 +51,25 @@ This can be the same server as your web store (NOT RECOMMENDED) or a remote and 
 Consider setting up a DigitalOcean server for this using this guide: [How to Setup a DigitalOcean $5 VerusCoin Server](http://bit.ly/2Ca6LIK) but choose a 2GB minimum server as your Wallet Server.
 
 ### Installation
-Follow this guide to setup your crypto wallet daemon server and the Verus Chain Tools, required for full blockchain integrated features of VerusPay:
+Follow these steps to configure VerusPay for full blockchain integrated features of VerusPay:
 
-[OFFICIAL GUIDE: Wallet Server & Verus Chain Tools Install and Script](https://github.com/joliverwestbrook/VerusPayInstallScripts/blob/master/README.md)
+1. From your wallet/daemon server, where you're running the crypto daemon (e.g. VerusCoin or Pirate), install a basic PHP/Apache web server and then download/extract the latest release of VerusChainTools (VCT) into a web folder at your server.
 
-After the install finishes, it will display IMPORTANT information for you to write down in a secure location. BE SURE TO WRITE THIS INFORMATION DOWN. 
+[Latest Release of VCT v.0.5.2](https://github.com/joliverwestbrook/VerusChainTools/releases/tag/0.5.2)
 
-### Upgrade
+2. From your browser, visit the web address location of your extracted VCT (e.g. if you extracted to /var/www/html/vct you'd go to https://yourserverIP/vct)
+
+3. Copy and save both the Access Code and Update Code generated, then follow the simple instructions to configure VCT for the installed daemon(s) on your web/daemon server.
+
+4. Close public access to this server/IP using your hosting provider's network or firewall tools, or from within your server, depending on your setup.  You'll want to allow JUST your store IP through the firewall over port 443.
+
+5. From your WordPress/WooCommerce store, login and install the VerusPay plugin from the plugin directory. After the install, simply Activate and then configure the plugin with the Access Code you copied earlier and the IP of your wallet/daemon server.
+
+6. After you save your settings in VerusPay, when you refresh the VerusPay Settings screen you'll see the status of your daemon server and the configured daemons/coins, along with balances, etc.
+
+7. Go to the Options tab and configure the options for your VerusPay install.  Be sure to TEST EVERYTHING before turning the plugin on, using the Test feature at the top of the VerusPay Settings page.
+
+### Upgrading to the New Version
 
 To upgrade from any version below v0.3.0 you MUST first upgrade your VerusChainTools and wallet daemon server settings, following the steps found [here](https://github.com/joliverwestbrook/VerusPayInstallScripts)
 
