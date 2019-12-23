@@ -50,9 +50,10 @@ This can be the same server as your web store (NOT RECOMMENDED) or a remote and 
 
 Consider setting up a DigitalOcean server for this using this guide: [How to Setup a DigitalOcean $5 VerusCoin Server](http://bit.ly/2Ca6LIK) but choose a 2GB minimum server as your Wallet Server.
 
+### First-time Installation
 Follow this guide to setup your crypto wallet daemon server and the Verus Chain Tools, required for full blockchain integrated features of VerusPay:
 
-[Wallet Server & Verus Chain Tools Install Guide and Script](https://github.com/joliverwestbrook/VerusPayInstallScripts/blob/master/README.md)
+[OFFICIAL GUIDE: Wallet Server & Verus Chain Tools Install and Script](https://github.com/joliverwestbrook/VerusPayInstallScripts/blob/master/README.md)
 
 After the install finishes, it will display IMPORTANT information for you to write down in a secure location. BE SURE TO WRITE THIS INFORMATION DOWN. 
 
